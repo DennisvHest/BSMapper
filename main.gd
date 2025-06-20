@@ -15,3 +15,9 @@ func _ready() -> void:
 		get_viewport().use_xr = true
 	else:
 		print("OpenXR not initialized, please check if your headset is connected")
+
+func _on_right_hand_button_pressed(name: String) -> void:
+	print("Right hand button pressed %s" % name)
+	
+	if name == "ax_button":
+		get_tree().reload_current_scene()
