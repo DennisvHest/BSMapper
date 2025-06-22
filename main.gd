@@ -1,11 +1,14 @@
 extends Node3D
 
+@export var debug_without_vr: bool = false
+@export_file("*.dat") var beatmap_file_path: String
+
 var xr_interface: XRInterface
 
 func _ready() -> void:
 	xr_interface = XRServer.find_interface("OpenXR")
 	
-	if xr_interface and xr_interface.is_initialized():
+	if !debug_without_vr and xr_interface and xr_interface.is_initialized():
 		print("OpenXR initialized successfully")
 		
 		# OpenXR handles sync on its own.
@@ -16,7 +19,9 @@ func _ready() -> void:
 	else:
 		print("OpenXR not initialized, please check if your headset is connected")
 	
-	BeatMapManager.load_beatmap("res://test_beatmaps/1a605 (Devil Town - Emilia)/ExpertPlusStandard.dat")
+	$XROrigin3D/XRCamera3D.position.y = GlobalSettings.player_height
+	
+	BeatMapManager.load_beatmap(beatmap_file_path)
 
 func _on_right_hand_button_pressed(name: String) -> void:
 	print("Right hand button pressed %s" % name)

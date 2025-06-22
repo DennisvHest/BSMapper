@@ -15,6 +15,8 @@ sky = SubResource("Sky_ig7tw")
 
 [node name="Main" type="Node3D"]
 script = ExtResource("1_ig7tw")
+debug_without_vr = true
+beatmap_file_path = "res://test_beatmaps/1feab (Turn It Up - abcbadq)/ExpertStandard.dat"
 
 [node name="XROrigin3D" type="XROrigin3D" parent="."]
 
@@ -42,5 +44,7 @@ transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 7, 
 environment = SubResource("Environment_ig7tw")
 
 [node name="NoteBlockLane" parent="." instance=ExtResource("3_h2yge")]
+lane_width = 1.0
+lane_height = 2.0
 
 [connection signal="button_pressed" from="XROrigin3D/RightHand" to="." method="_on_right_hand_button_pressed"]

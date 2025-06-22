@@ -18,6 +18,7 @@ config/icon="res://icon.svg"
 [autoload]
 
 BeatMapManager="*res://beat_map_manager.gd"
+GlobalSettings="*res://global_settings.gd"
 
 [dotnet]
 

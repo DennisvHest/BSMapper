@@ -2,7 +2,7 @@ extends Node3D
 
 class_name NoteBlock
 
-static var speed: float = 6
+static var speed: float = 19
 
 func initialize(initial_position: Vector3):
 	position = initial_position
