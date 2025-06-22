@@ -3,7 +3,7 @@ extends Node3D
 @export var speed: float = 400
 
 func _process(delta: float) -> void:
-	var velocity = Vector3.BACK * speed
+	var velocity: Vector3 = Vector3.BACK * speed
 	
 	position += velocity * delta
 

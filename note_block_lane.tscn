@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://bwh2pgll34g30"]
+
+[ext_resource type="Script" uid="uid://dnl6j8aigxtj8" path="res://note_block_lane.gd" id="1_p2bkp"]
+
+[node name="NoteBlockLane" type="Node3D"]
+script = ExtResource("1_p2bkp")
+beatmap_file = "res://test_beatmaps/1a605 (Devil Town - Emilia)/ExpertPlusStandard.dat"
