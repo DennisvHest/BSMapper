@@ -1,8 +1,8 @@
 [gd_scene load_steps=7 format=3 uid="uid://dujhi4qdtiee8"]
 
 [ext_resource type="Script" uid="uid://kmyet12v7cjt" path="res://main.gd" id="1_ig7tw"]
-[ext_resource type="PackedScene" uid="uid://bfhf8qgxqfrw6" path="res://note_block.tscn" id="2_0xm2m"]
 [ext_resource type="PackedScene" uid="uid://dhng0rh22itx5" path="res://saber.tscn" id="2_h2yge"]
+[ext_resource type="PackedScene" uid="uid://bwh2pgll34g30" path="res://note_block_lane.tscn" id="3_h2yge"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_ig7tw"]
 
@@ -41,16 +41,6 @@ transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 7, 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_ig7tw")
 
-[node name="NoteBlock" parent="." instance=ExtResource("2_0xm2m")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, -10.5)
-speed = 5.0
-
-[node name="NoteBlock2" parent="." instance=ExtResource("2_0xm2m")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 1, -16.5)
-speed = 5.0
-
-[node name="NoteBlock3" parent="." instance=ExtResource("2_0xm2m")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 2, -12.5)
-speed = 5.0
+[node name="NoteBlockLane" parent="." instance=ExtResource("3_h2yge")]
 
 [connection signal="button_pressed" from="XROrigin3D/RightHand" to="." method="_on_right_hand_button_pressed"]

@@ -15,9 +15,9 @@ run/main_scene="uid://dujhi4qdtiee8"
 config/features=PackedStringArray("4.4", "Forward Plus")
 config/icon="res://icon.svg"
 
-[debug]
+[autoload]
 
-gdscript/warnings/untyped_declaration=2
+BeatMapManager="*res://beat_map_manager.gd"
 
 [dotnet]
 

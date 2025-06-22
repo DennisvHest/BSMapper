@@ -15,6 +15,8 @@ func _ready() -> void:
 		get_viewport().use_xr = true
 	else:
 		print("OpenXR not initialized, please check if your headset is connected")
+	
+	BeatMapManager.load_beatmap("res://test_beatmaps/1a605 (Devil Town - Emilia)/ExpertPlusStandard.dat")
 
 func _on_right_hand_button_pressed(name: String) -> void:
 	print("Right hand button pressed %s" % name)

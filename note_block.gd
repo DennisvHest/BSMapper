@@ -1,6 +1,11 @@
 extends Node3D
 
-@export var speed: float = 400
+class_name NoteBlock
+
+static var speed: float = 6
+
+func initialize(initial_position: Vector3):
+	position = initial_position
 
 func _process(delta: float) -> void:
 	var velocity: Vector3 = Vector3.BACK * speed
