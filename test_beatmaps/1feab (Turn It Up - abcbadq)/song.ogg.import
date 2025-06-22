@@ -1,0 +1,19 @@
+[remap]
+
+importer="oggvorbisstr"
+type="AudioStreamOggVorbis"
+uid="uid://cpehqjc3d3h2h"
+path="res://.godot/imported/song.ogg-5bbac038bcf5f2e54e3876eaefb2961b.oggvorbisstr"
+
+[deps]
+
+source_file="res://test_beatmaps/1feab (Turn It Up - abcbadq)/song.ogg"
+dest_files=["res://.godot/imported/song.ogg-5bbac038bcf5f2e54e3876eaefb2961b.oggvorbisstr"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

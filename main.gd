@@ -22,6 +22,7 @@ func _ready() -> void:
 	$XROrigin3D/XRCamera3D.position.y = GlobalSettings.player_height
 	
 	BeatMapManager.load_beatmap(beatmap_file_path)
+	$Music.play()
 
 func _on_right_hand_button_pressed(name: String) -> void:
 	print("Right hand button pressed %s" % name)

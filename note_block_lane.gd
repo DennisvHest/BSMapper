@@ -14,7 +14,6 @@ func _on_current_beatmap_changed(current_beatmap: Variant):
 	for note_block in current_beatmap._notes:
 		# How far in time (seconds) the note should be positioned initially using the BPM
 		var hit_time: float = note_block._time * 60 / bpm
-		
 		# Position the note block (in meters) from the origin position of the note block lane -> forward direction -> using the speed of the note block
 		var note_block_position: Vector3 = position + Vector3.FORWARD * NoteBlock.speed * hit_time
 		
@@ -33,6 +32,6 @@ func _on_current_beatmap_changed(current_beatmap: Variant):
 		note_block_position += Vector3.UP * GlobalSettings.player_height / 2
 		
 		var note_block_node: NoteBlock = note_block_scene.instantiate()
-		note_block_node.initialize(note_block_position)
+		note_block_node.initialize(note_block_position, note_block._type)
 		
 		add_child(note_block_node)
