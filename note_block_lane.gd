@@ -32,6 +32,6 @@ func _on_current_beatmap_changed(current_beatmap: Variant):
 		note_block_position += Vector3.UP * GlobalSettings.player_height / 2
 		
 		var note_block_node: NoteBlock = note_block_scene.instantiate()
-		note_block_node.initialize(note_block_position, note_block._type)
+		note_block_node.initialize(note_block_position, note_block)
 		
 		add_child(note_block_node)
