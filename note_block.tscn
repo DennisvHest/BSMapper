@@ -1,6 +1,7 @@
-[gd_scene load_steps=5 format=3 uid="uid://bfhf8qgxqfrw6"]
+[gd_scene load_steps=6 format=3 uid="uid://bfhf8qgxqfrw6"]
 
 [ext_resource type="Script" uid="uid://bas20ig74n46j" path="res://note_block.gd" id="1_yqdrt"]
+[ext_resource type="Texture2D" uid="uid://b7xf7noovx35q" path="res://textures/note_block_texture.png" id="2_ftk3i"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_xx8hl"]
 resource_local_to_scene = true
@@ -25,5 +26,9 @@ transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0, 0)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]
 shape = SubResource("BoxShape3D_xx8hl")
+
+[node name="CutDirectionTriangle" type="Sprite3D" parent="."]
+transform = Transform3D(0.058, 0, 0, 0, 0.058, 0, 0, 0, 0.058, 0, 0, 0.151)
+texture = ExtResource("2_ftk3i")
 
 [connection signal="area_entered" from="Area3D" to="." method="_on_area_3d_area_entered"]

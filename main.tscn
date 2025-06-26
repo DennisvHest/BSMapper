@@ -16,7 +16,6 @@ sky = SubResource("Sky_ig7tw")
 
 [node name="Main" type="Node3D"]
 script = ExtResource("1_ig7tw")
-debug_without_vr = true
 beatmap_file_path = "res://test_beatmaps/1feab (Turn It Up - abcbadq)/ExpertStandard.dat"
 
 [node name="XROrigin3D" type="XROrigin3D" parent="."]
