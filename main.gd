@@ -21,11 +21,16 @@ func _ready() -> void:
 	
 	$XROrigin3D/XRCamera3D.position.y = GlobalSettings.player_height
 	
+	GameEvents.note_block_hit.connect(_on_note_block_hit)
+	
 	BeatMapManager.load_beatmap(beatmap_file_path)
 	$Music.play()
 
-func _on_right_hand_button_pressed(name: String) -> void:
-	print("Right hand button pressed %s" % name)
+func _on_right_hand_button_pressed(button_name: String) -> void:
+	print("Right hand button pressed %s" % button_name)
 	
-	if name == "ax_button":
+	if button_name == "ax_button":
 		get_tree().reload_current_scene()
+
+func _on_note_block_hit():
+	$HitSound.play()

@@ -19,6 +19,7 @@ config/icon="res://icon.svg"
 
 BeatMapManager="*res://beat_map_manager.gd"
 GlobalSettings="*res://global_settings.gd"
+GameEvents="*res://game_events.gd"
 
 [dotnet]
 
@@ -31,7 +32,7 @@ version_control/autoload_on_startup=true
 
 [physics]
 
-common/physics_ticks_per_second=90
+common/physics_ticks_per_second=120
 
 [rendering]
 

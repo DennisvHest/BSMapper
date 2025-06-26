@@ -1,9 +1,10 @@
-[gd_scene load_steps=8 format=3 uid="uid://dujhi4qdtiee8"]
+[gd_scene load_steps=9 format=3 uid="uid://dujhi4qdtiee8"]
 
 [ext_resource type="Script" uid="uid://kmyet12v7cjt" path="res://main.gd" id="1_ig7tw"]
 [ext_resource type="PackedScene" uid="uid://dhng0rh22itx5" path="res://saber.tscn" id="2_h2yge"]
 [ext_resource type="PackedScene" uid="uid://bwh2pgll34g30" path="res://note_block_lane.tscn" id="3_h2yge"]
 [ext_resource type="AudioStream" uid="uid://cpehqjc3d3h2h" path="res://test_beatmaps/1feab (Turn It Up - abcbadq)/song.ogg" id="4_1bvp3"]
+[ext_resource type="AudioStream" uid="uid://ci872t5wv5mi5" path="res://sounds/OSU_click.ogg" id="5_lquwl"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_ig7tw"]
 
@@ -49,5 +50,9 @@ lane_height = 2.0
 
 [node name="Music" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("4_1bvp3")
+
+[node name="HitSound" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("5_lquwl")
+max_polyphony = 10
 
 [connection signal="button_pressed" from="XROrigin3D/RightHand" to="." method="_on_right_hand_button_pressed"]

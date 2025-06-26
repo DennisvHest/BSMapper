@@ -17,18 +17,18 @@ func initialize(initial_position: Vector3, note_block: Variant):
 	set_cut_direction(note_block)
 
 func set_cut_direction(note_block: Variant):
-	var rotation = 0;
+	var block_rotation = 0;
 	
 	match note_block._cutDirection:
-		1.0: rotation = 180
-		2.0: rotation = -90
-		3.0: rotation = 90
-		4.0: rotation = 45
-		5.0: rotation = -45
-		6.0: rotation = 135
-		7.0: rotation = -135
+		1.0: block_rotation = 180
+		2.0: block_rotation = -90
+		3.0: block_rotation = 90
+		4.0: block_rotation = 45
+		5.0: block_rotation = -45
+		6.0: block_rotation = 135
+		7.0: block_rotation = -135
 		
-	rotate_z(deg_to_rad(rotation));
+	rotate_z(deg_to_rad(block_rotation));
 	
 	if note_block._cutDirection == 8.0:
 		$CutDirectionTriangle.visible = false
@@ -40,4 +40,5 @@ func _process(delta: float) -> void:
 
 func _on_area_3d_area_entered(area: Area3D) -> void:
 	if area.is_in_group("sabers"):
+		GameEvents.note_block_hit.emit()
 		queue_free()
