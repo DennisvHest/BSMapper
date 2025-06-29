@@ -33,4 +33,4 @@ func _on_right_hand_button_pressed(button_name: String) -> void:
 		get_tree().reload_current_scene()
 
 func _on_note_block_hit():
-	$HitSound.play()
+	$HitSound.play(0.15) #: Hit sounds are played at an offset, otherwise it feels like the sound plays before the block is even hit
