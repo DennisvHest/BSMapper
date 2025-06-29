@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://kmyet12v7cjt" path="res://main.gd" id="1_ig7tw"]
 [ext_resource type="PackedScene" uid="uid://dhng0rh22itx5" path="res://saber.tscn" id="2_h2yge"]
 [ext_resource type="PackedScene" uid="uid://bwh2pgll34g30" path="res://note_block_lane.tscn" id="3_h2yge"]
-[ext_resource type="AudioStream" uid="uid://cpehqjc3d3h2h" path="res://test_beatmaps/1feab (Turn It Up - abcbadq)/song.ogg" id="4_1bvp3"]
+[ext_resource type="AudioStream" uid="uid://dhunvampj2m4n" path="res://test_beatmaps/TEST_MAP/song.ogg" id="4_lquwl"]
 [ext_resource type="AudioStream" uid="uid://ci872t5wv5mi5" path="res://sounds/OSU_click.ogg" id="5_lquwl"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_ig7tw"]
@@ -20,7 +20,8 @@ size = Vector3(3, 2, 1)
 
 [node name="Main" type="Node3D"]
 script = ExtResource("1_ig7tw")
-beatmap_file_path = "res://test_beatmaps/1feab (Turn It Up - abcbadq)/ExpertStandard.dat"
+debug_without_vr = true
+beatmap_file_path = "res://test_beatmaps/TEST_MAP/ExpertPlusStandard.dat"
 
 [node name="XROrigin3D" type="XROrigin3D" parent="."]
 
@@ -52,7 +53,7 @@ lane_width = 1.0
 lane_height = 2.0
 
 [node name="Music" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("4_1bvp3")
+stream = ExtResource("4_lquwl")
 volume_db = -10.0
 
 [node name="HitSound" type="AudioStreamPlayer" parent="."]

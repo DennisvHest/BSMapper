@@ -10,10 +10,10 @@ albedo_color = Color(1, 0, 0, 1)
 [sub_resource type="BoxMesh" id="BoxMesh_yqdrt"]
 resource_local_to_scene = true
 material = SubResource("StandardMaterial3D_xx8hl")
-size = Vector3(0.3, 0.3, 0.3)
+size = Vector3(0.4, 0.4, 0.4)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_xx8hl"]
-size = Vector3(0.944336, 0.830078, 1.11542)
+size = Vector3(1.256, 1.107, 1.484)
 
 [node name="NoteBlock" type="Node3D"]
 script = ExtResource("1_yqdrt")
@@ -29,7 +29,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.121349)
 shape = SubResource("BoxShape3D_xx8hl")
 
 [node name="CutDirectionTriangle" type="Sprite3D" parent="."]
-transform = Transform3D(0.058, 0, 0, 0, 0.058, 0, 0, 0, 0.058, 0, 0, 0.151)
+transform = Transform3D(0.077, 0, 0, 0, 0.077, 0, 0, 0, 0.077, 0, 0, 0.201)
 texture = ExtResource("2_ftk3i")
 
 [connection signal="area_entered" from="Area3D" to="." method="_on_area_3d_area_entered"]
