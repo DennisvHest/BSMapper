@@ -36,7 +36,7 @@ func _on_note_block_hit(note_block_type):
 	$HitSound.play(0.15) #: Hit sounds are played at an offset, otherwise it feels like the sound plays before the block is even hit
 	
 	if note_block_type == NoteBlock.NoteBlockType.LEFT:
-		$XROrigin3D/LeftHand.trigger_haptic_pulse("haptic", 0.0, 1.0, 0.1, 0.0)
+		$XROrigin3D/LeftHand.trigger_haptic_pulse("haptic", 0.0, 1.0, 0.15, 0.0)
 	else:
-		$XROrigin3D/RightHand.trigger_haptic_pulse("haptic", 0.0, 1.0, 0.1, 0.0)
+		$XROrigin3D/RightHand.trigger_haptic_pulse("haptic", 0.0, 1.0, 0.15, 0.0)
 	

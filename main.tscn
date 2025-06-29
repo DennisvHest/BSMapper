@@ -20,8 +20,7 @@ size = Vector3(3, 2, 1)
 
 [node name="Main" type="Node3D"]
 script = ExtResource("1_ig7tw")
-debug_without_vr = true
-beatmap_file_path = "res://test_beatmaps/TEST_MAP/ExpertPlusStandard.dat"
+beatmap_file_path = "res://test_beatmaps/1feab (Turn It Up - abcbadq)/ExpertStandard.dat"
 
 [node name="XROrigin3D" type="XROrigin3D" parent="."]
 
@@ -49,8 +48,8 @@ transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 7, 
 environment = SubResource("Environment_ig7tw")
 
 [node name="NoteBlockLane" parent="." instance=ExtResource("3_h2yge")]
-lane_width = 1.0
-lane_height = 2.0
+lane_width = 2.0
+lane_height = 1.5
 
 [node name="Music" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("4_lquwl")

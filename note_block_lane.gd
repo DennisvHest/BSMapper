@@ -24,12 +24,13 @@ func _on_current_beatmap_changed(current_beatmap: Variant):
 		note_block_position += Vector3.RIGHT * note_block_line_width * note_block._lineIndex
 		note_block_position += Vector3.UP * note_block_line_height * note_block._lineLayer
 		
-		# Center the note block lane horizontally and vertically
+		# Center the note block lane horizontally
 		note_block_position += Vector3.LEFT * lane_width / 2
-		note_block_position += Vector3.DOWN * note_block_line_height / 2
+		note_block_position += Vector3.RIGHT * note_block_line_width / 2
 		
-		# move the note block lane up to the player height
-		note_block_position += Vector3.UP * GlobalSettings.player_height / 2
+		# Move the note block lane up to the player height (the middle between the top and middle lane is at eye height)
+		note_block_position += Vector3.UP * GlobalSettings.player_height * 1 / 3
+		note_block_position += Vector3.UP * 0.2 # Move up by half the note block height
 		
 		var note_block_node: NoteBlock = note_block_scene.instantiate()
 		note_block_node.initialize(note_block_position, note_block)
