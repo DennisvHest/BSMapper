@@ -2,16 +2,22 @@ extends Node3D
 
 class_name NoteBlock
 
+enum NoteBlockType { LEFT = 0, RIGHT = 1 }
+
 static var speed: float = 19
+
+var type: NoteBlockType
 
 func initialize(initial_position: Vector3, note_block: Variant):
 	position = initial_position
 	
 	var material: StandardMaterial3D = $MeshInstance3D.get_active_material(0)
 	
-	if note_block._type == 0:
+	if note_block._type == NoteBlockType.LEFT:
+		type = NoteBlockType.LEFT
 		material.albedo_color = Color.RED
-	elif note_block._type == 1:
+	elif note_block._type == NoteBlockType.RIGHT:
+		type = NoteBlockType.RIGHT
 		material.albedo_color = Color.BLUE
 	
 	set_cut_direction(note_block)
@@ -40,5 +46,5 @@ func _process(delta: float) -> void:
 
 func _on_area_3d_area_entered(area: Area3D) -> void:
 	if area.is_in_group("sabers"):
-		GameEvents.note_block_hit.emit()
+		GameEvents.note_block_hit.emit(type)
 		queue_free()
