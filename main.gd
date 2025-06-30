@@ -24,7 +24,7 @@ func _ready() -> void:
 	GameEvents.note_block_hit.connect(_on_note_block_hit)
 	
 	BeatMapManager.load_beatmap(beatmap_file_path)
-	$Music.play()
+	$PlaybackManager.play()
 
 func _on_right_hand_button_pressed(button_name: String) -> void:
 	print("Right hand button pressed %s" % button_name)
@@ -39,18 +39,3 @@ func _on_note_block_hit(note_block_type):
 		$XROrigin3D/LeftHand.trigger_haptic_pulse("haptic", 0.0, 1.0, 0.15, 0.0)
 	else:
 		$XROrigin3D/RightHand.trigger_haptic_pulse("haptic", 0.0, 1.0, 0.15, 0.0)
-	
-
-func _on_music_progress_bar_drag_started() -> void:
-	$Music.stream_paused = true
-
-func _on_music_progress_bar_drag_ended(value_changed: bool) -> void:
-	if !value_changed:
-		pass
-	
-	var music_stream: AudioStream = $Music.stream
-	
-	var progress = $DebugUI/MusicProgressBar.value
-	var new_position = music_stream.get_length() * progress
-	
-	$Music.play(new_position)

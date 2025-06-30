@@ -10,12 +10,10 @@ var velocity: Vector3 = Vector3.BACK * speed
 
 var initial_position: Vector3
 var type: NoteBlockType
-var music: AudioStreamPlayer
 
-func initialize(_music: AudioStreamPlayer, _initial_position: Vector3, note_block: Variant):
+func initialize(_initial_position: Vector3, note_block: Variant):
 	initial_position = _initial_position
 	position = initial_position
-	music = _music
 	
 	var material: StandardMaterial3D = $MeshInstance3D.get_active_material(0)
 	
@@ -46,12 +44,7 @@ func set_cut_direction(note_block: Variant):
 		$CutDirectionTriangle.visible = false
 
 func _process(delta: float) -> void:
-	if music.stream_paused:
-		return
-	
-	var playback_position = music.get_playback_position() + AudioServer.get_time_since_last_mix()
-			
-	position = initial_position + velocity * playback_position
+	position = initial_position + velocity * PlaybackManager.playback_position
 
 func _on_area_3d_area_entered(area: Area3D) -> void:
 	if area.is_in_group("sabers"):
