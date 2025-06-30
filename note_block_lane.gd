@@ -1,6 +1,7 @@
 extends Node3D
 
 @export var note_block_scene: PackedScene
+@export var music: AudioStreamPlayer
 
 @export var lane_width: float = 4
 @export var lane_height: float = 3
@@ -33,6 +34,6 @@ func _on_current_beatmap_changed(current_beatmap: Variant):
 		note_block_position += Vector3.UP * 0.2 # Move up by half the note block height
 		
 		var note_block_node: NoteBlock = note_block_scene.instantiate()
-		note_block_node.initialize(note_block_position, note_block)
+		note_block_node.initialize(music, note_block_position, note_block)
 		
 		add_child(note_block_node)

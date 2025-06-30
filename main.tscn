@@ -1,10 +1,11 @@
-[gd_scene load_steps=10 format=3 uid="uid://dujhi4qdtiee8"]
+[gd_scene load_steps=11 format=3 uid="uid://dujhi4qdtiee8"]
 
 [ext_resource type="Script" uid="uid://kmyet12v7cjt" path="res://main.gd" id="1_ig7tw"]
 [ext_resource type="PackedScene" uid="uid://dhng0rh22itx5" path="res://saber.tscn" id="2_h2yge"]
 [ext_resource type="PackedScene" uid="uid://bwh2pgll34g30" path="res://note_block_lane.tscn" id="3_h2yge"]
 [ext_resource type="AudioStream" uid="uid://dhunvampj2m4n" path="res://test_beatmaps/TEST_MAP/song.ogg" id="4_lquwl"]
 [ext_resource type="AudioStream" uid="uid://ci872t5wv5mi5" path="res://sounds/OSU_click.ogg" id="5_lquwl"]
+[ext_resource type="Script" uid="uid://b4t26d8d1mo7k" path="res://debug_ui.gd" id="6_7mycd"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_ig7tw"]
 
@@ -20,6 +21,7 @@ size = Vector3(3, 2, 1)
 
 [node name="Main" type="Node3D"]
 script = ExtResource("1_ig7tw")
+debug_without_vr = true
 beatmap_file_path = "res://test_beatmaps/1feab (Turn It Up - abcbadq)/ExpertStandard.dat"
 
 [node name="XROrigin3D" type="XROrigin3D" parent="."]
@@ -47,7 +49,8 @@ transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 7, 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_ig7tw")
 
-[node name="NoteBlockLane" parent="." instance=ExtResource("3_h2yge")]
+[node name="NoteBlockLane" parent="." node_paths=PackedStringArray("music") instance=ExtResource("3_h2yge")]
+music = NodePath("../Music")
 lane_width = 2.0
 lane_height = 1.5
 
@@ -69,4 +72,29 @@ visible = false
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0.5)
 shape = SubResource("BoxShape3D_lquwl")
 
+[node name="DebugUI" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("6_7mycd")
+
+[node name="MusicProgressBar" type="HSlider" parent="DebugUI"]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 22.0
+offset_top = -38.0
+offset_right = -22.0
+offset_bottom = -22.0
+grow_horizontal = 2
+grow_vertical = 0
+max_value = 1.0
+step = 0.01
+
 [connection signal="button_pressed" from="XROrigin3D/RightHand" to="." method="_on_right_hand_button_pressed"]
+[connection signal="drag_ended" from="DebugUI/MusicProgressBar" to="." method="_on_music_progress_bar_drag_ended"]

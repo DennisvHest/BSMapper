@@ -40,3 +40,15 @@ func _on_note_block_hit(note_block_type):
 	else:
 		$XROrigin3D/RightHand.trigger_haptic_pulse("haptic", 0.0, 1.0, 0.15, 0.0)
 	
+
+
+func _on_music_progress_bar_drag_ended(value_changed: bool) -> void:
+	if !value_changed:
+		pass
+	
+	var music_stream: AudioStream = $Music.stream
+	
+	var progress = $DebugUI/MusicProgressBar.value
+	var new_position = music_stream.get_length() * progress
+	
+	$Music.play(new_position)
