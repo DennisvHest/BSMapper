@@ -46,8 +46,11 @@ func set_cut_direction(note_block: Variant):
 		$CutDirectionTriangle.visible = false
 
 func _process(delta: float) -> void:
+	if music.stream_paused:
+		return
+	
 	var playback_position = music.get_playback_position() + AudioServer.get_time_since_last_mix()
-		
+			
 	position = initial_position + velocity * playback_position
 
 func _on_area_3d_area_entered(area: Area3D) -> void:

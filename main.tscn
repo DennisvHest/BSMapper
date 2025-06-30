@@ -98,3 +98,4 @@ step = 0.01
 
 [connection signal="button_pressed" from="XROrigin3D/RightHand" to="." method="_on_right_hand_button_pressed"]
 [connection signal="drag_ended" from="DebugUI/MusicProgressBar" to="." method="_on_music_progress_bar_drag_ended"]
+[connection signal="drag_started" from="DebugUI/MusicProgressBar" to="." method="_on_music_progress_bar_drag_started"]
