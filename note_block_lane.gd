@@ -7,6 +7,7 @@ extends Node3D
 @export var lane_height: float = 3
 
 @export var bpm: int = 175
+@export var njs: int = 16
 
 func _ready() -> void:
 	BeatMapManager.current_beatmap_changed.connect(_on_current_beatmap_changed)
@@ -34,6 +35,6 @@ func _on_current_beatmap_changed(current_beatmap: Variant):
 		note_block_position += Vector3.UP * 0.2 # Move up by half the note block height
 		
 		var note_block_node: NoteBlock = note_block_scene.instantiate()
-		note_block_node.initialize(note_block_position, note_block)
+		note_block_node.initialize(note_block_position, note_block, bpm, -0.15)
 		
 		add_child(note_block_node)

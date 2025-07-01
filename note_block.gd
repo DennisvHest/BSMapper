@@ -4,16 +4,22 @@ class_name NoteBlock
 
 enum NoteBlockType { LEFT = 0, RIGHT = 1 }
 
-static var speed: float = 19
+static var speed: float = 16
 
 var velocity: Vector3 = Vector3.BACK * speed
 
 var initial_position: Vector3
+var spawn_distance: Vector3
 var type: NoteBlockType
 
-func initialize(_initial_position: Vector3, note_block: Variant):
+func initialize(_initial_position: Vector3, note_block: Variant, bpm: float, note_jump_start_beat_offset: float):
 	initial_position = _initial_position
 	position = initial_position
+	
+	#: Not sure if this is the right calculation
+	var jump_duration = max(0.65, (60 / bpm) * (note_jump_start_beat_offset + 4))
+	var jump_distance = speed * jump_duration
+	spawn_distance = Vector3.FORWARD * jump_distance / 2
 	
 	var material: StandardMaterial3D = $MeshInstance3D.get_active_material(0)
 	
@@ -45,6 +51,11 @@ func set_cut_direction(note_block: Variant):
 
 func _process(delta: float) -> void:
 	position = initial_position + velocity * PlaybackManager.playback_position
+	
+	if position.z < spawn_distance.z:
+		visible = false
+	else:
+		visible = true
 
 func _on_area_3d_area_entered(area: Area3D) -> void:
 	if area.is_in_group("sabers"):
