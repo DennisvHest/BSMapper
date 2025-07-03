@@ -107,7 +107,7 @@
             "_lineLayer": 0,
             "a": 0,
             "_type": 0,
-            "_cutDirection": 2
+            "_cutDirection": 0
         },
         {
             "_time": 10,
@@ -115,7 +115,7 @@
             "_lineLayer": 0,
             "a": 0,
             "_type": 0,
-            "_cutDirection": 3
+            "_cutDirection": 1
         },
         {
             "_time": 12,
@@ -123,7 +123,7 @@
             "_lineLayer": 0,
             "a": 0,
             "_type": 0,
-            "_cutDirection": 1
+            "_cutDirection": 2
         },
         {
             "_time": 14,
@@ -131,7 +131,7 @@
             "_lineLayer": 0,
             "a": 0,
             "_type": 0,
-            "_cutDirection": 0
+            "_cutDirection": 3
         },
         {
             "_time": 15,
@@ -139,7 +139,7 @@
             "_lineLayer": 0,
             "a": 0,
             "_type": 0,
-            "_cutDirection": 1
+            "_cutDirection": 4
         },
         {
             "_time": 16,
@@ -147,7 +147,7 @@
             "_lineLayer": 0,
             "a": 0,
             "_type": 0,
-            "_cutDirection": 0
+            "_cutDirection": 5
         },
         {
             "_time": 17,
@@ -155,7 +155,7 @@
             "_lineLayer": 0,
             "a": 0,
             "_type": 0,
-            "_cutDirection": 1
+            "_cutDirection": 6
         },
         {
             "_time": 18,
@@ -163,7 +163,7 @@
             "_lineLayer": 0,
             "a": 0,
             "_type": 0,
-            "_cutDirection": 0
+            "_cutDirection": 7
         },
         {
             "_time": 19,
@@ -171,7 +171,7 @@
             "_lineLayer": 0,
             "a": 0,
             "_type": 0,
-            "_cutDirection": 1
+            "_cutDirection": 8
         }
     ],
     "bombNotes": [],

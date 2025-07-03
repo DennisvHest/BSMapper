@@ -13,7 +13,9 @@ var initial_position: Vector3
 var jump_duration: float
 var half_jump_duration: float
 var spawn_distance: Vector3
+var reaction_time: float
 var type: NoteBlockType
+var block_rotation: float = 0
 
 func initialize(_initial_position: Vector3, note_block: Variant, bpm: float, note_jump_start_beat_offset: float):
 	hit_time = note_block._time * 60 / bpm
@@ -25,6 +27,7 @@ func initialize(_initial_position: Vector3, note_block: Variant, bpm: float, not
 	half_jump_duration = jump_duration / 2
 	var jump_distance = speed * jump_duration
 	spawn_distance = Vector3.FORWARD * jump_distance / 2
+	reaction_time = abs(spawn_distance.z / speed)
 	
 	var material: StandardMaterial3D = $Visual/MeshInstance3D.get_active_material(0)
 	
@@ -37,19 +40,15 @@ func initialize(_initial_position: Vector3, note_block: Variant, bpm: float, not
 	
 	set_cut_direction(note_block)
 
-func set_cut_direction(note_block: Variant):
-	var block_rotation = 0;
-	
+func set_cut_direction(note_block: Variant):	
 	match note_block._cutDirection:
-		1.0: block_rotation = 180
-		2.0: block_rotation = 90
-		3.0: block_rotation = -90
-		4.0: block_rotation = 45
-		5.0: block_rotation = -45
-		6.0: block_rotation = 135
-		7.0: block_rotation = -135
-		
-	rotate_z(deg_to_rad(block_rotation));
+		0.0: block_rotation = 180
+		2.0: block_rotation = -90
+		3.0: block_rotation = 90
+		4.0: block_rotation = -135
+		5.0: block_rotation = 135
+		6.0: block_rotation = -45
+		7.0: block_rotation = 45
 	
 	if note_block._cutDirection == 8.0:
 		$Visual/CutDirectionTriangle.visible = false
@@ -74,6 +73,29 @@ func _process(delta: float) -> void:
 	else:
 		# Currently in jump animation
 		$Visual.position.z = warmup_position + move_speed * -timeOffset;
+	
+	
+	var jump_time = PlaybackManager.playback_position + reaction_time
+	
+	#if hit_time > jump_time:
+		#position.y = 0
+	#else:
+		#var d_squared = pow(spawn_distance.z / 2, 2)
+		#var t_squared = pow(position.z, 2)
+		#
+		#var movement_range = initial_position.y - GlobalSettings.player_height * 1 / 3
+		#
+		#position.y = clamp(-(movement_range / d_squared) * t_squared + initial_position.y, -9999.0, 9999.0)
+	
+	var jump_progress = (jump_time - hit_time) / reaction_time
+	
+	if (jump_progress <= 0):
+		rotation.z = deg_to_rad(block_rotation)
+	else:
+		var rotation_progress = jump_progress / 0.3
+		var angle_dist = ease(rotation_progress, 0.5)
+		
+		rotation.z = deg_to_rad(block_rotation * angle_dist)
 
 func _on_area_3d_area_entered(area: Area3D) -> void:
 	if area.is_in_group("sabers"):
