@@ -42,8 +42,8 @@ func set_cut_direction(note_block: Variant):
 	
 	match note_block._cutDirection:
 		1.0: block_rotation = 180
-		2.0: block_rotation = -90
-		3.0: block_rotation = 90
+		2.0: block_rotation = 90
+		3.0: block_rotation = -90
 		4.0: block_rotation = 45
 		5.0: block_rotation = -45
 		6.0: block_rotation = 135
