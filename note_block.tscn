@@ -1,7 +1,8 @@
-[gd_scene load_steps=6 format=3 uid="uid://bfhf8qgxqfrw6"]
+[gd_scene load_steps=7 format=3 uid="uid://bfhf8qgxqfrw6"]
 
 [ext_resource type="Script" uid="uid://bas20ig74n46j" path="res://note_block.gd" id="1_yqdrt"]
 [ext_resource type="Texture2D" uid="uid://b7xf7noovx35q" path="res://textures/note_block_texture.png" id="2_ftk3i"]
+[ext_resource type="Texture2D" uid="uid://dquhwpf3rdi53" path="res://textures/note_block_any_cut_direction_texture.png" id="3_rqh18"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_xx8hl"]
 resource_local_to_scene = true
@@ -27,6 +28,10 @@ skeleton = NodePath("../..")
 [node name="CutDirectionTriangle" type="Sprite3D" parent="Visual"]
 transform = Transform3D(-0.077, 6.73155e-09, 0, -6.73155e-09, -0.077, 0, 0, 0, 0.077, 0, 0, 0.201)
 texture = ExtResource("2_ftk3i")
+
+[node name="AnyCutDirectionCircle" type="Sprite3D" parent="Visual"]
+transform = Transform3D(0.077, -1.34631e-08, 0, 1.34631e-08, 0.077, 0, 0, 0, 0.077, 0, 0, 0.201)
+texture = ExtResource("3_rqh18")
 
 [node name="Area3D" type="Area3D" parent="."]
 transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0, 0)

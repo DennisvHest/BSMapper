@@ -55,6 +55,10 @@ func set_cut_direction(note_block: Variant):
 	
 	if note_block._cutDirection == 8.0:
 		$Visual/CutDirectionTriangle.visible = false
+		$Visual/AnyCutDirectionCircle.visible = true
+	else:
+		$Visual/CutDirectionTriangle.visible = true
+		$Visual/AnyCutDirectionCircle.visible = false
 
 func set_note_block_color(note_block: Variant):
 	var material: StandardMaterial3D = $Visual/MeshInstance3D.get_active_material(0)
