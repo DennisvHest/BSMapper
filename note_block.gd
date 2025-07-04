@@ -53,8 +53,6 @@ func set_cut_direction(note_block: Variant):
 	
 	if note_block._cutDirection == 8.0:
 		$Visual/CutDirectionTriangle.visible = false
-	
-	rotate_z(deg_to_rad(block_rotation))
 
 func set_note_block_color(note_block: Variant):
 	var material: StandardMaterial3D = $Visual/MeshInstance3D.get_active_material(0)
@@ -79,6 +77,17 @@ func _process(delta: float) -> void:
 		distance = half_jump_distance + (65 * time_dist)
 		
 	position.z = -distance
+	
+	var jump_progress = (jump_time - note_time) / reaction_time
+	var rotation_animation_time = 0.2
+	
+	if jump_progress <= 0:
+		rotation.z = 0
+	elif jump_progress < rotation_animation_time:
+		var rotation_progress = jump_progress / rotation_animation_time
+		var angle_dist = ease(rotation_progress, 0.5)
+		
+		rotation.z = deg_to_rad(block_rotation * angle_dist)
 
 func _on_area_3d_area_entered(area: Area3D) -> void:
 	if area.is_in_group("sabers"):
