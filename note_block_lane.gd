@@ -17,7 +17,7 @@ func _on_current_beatmap_changed(current_beatmap: Variant):
 		# How far in time (seconds) the note should be positioned initially using the BPM
 		var hit_time: float = note_block._time * 60 / bpm
 		# Position the note block (in meters) from the origin position of the note block lane -> forward direction -> using the speed of the note block
-		var note_block_position: Vector3 = position + Vector3.FORWARD * NoteBlock.speed * hit_time
+		var note_block_position: Vector3 = position + Vector3.FORWARD * NoteBlock.njs * hit_time
 		
 		# Position note block along the line index (horizontal) and line layer (vertical)
 		var note_block_line_width = lane_width / 4
