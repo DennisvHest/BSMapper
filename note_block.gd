@@ -103,7 +103,7 @@ func _get_note_visual_rotation(jump_time: float) -> float:
 		
 		return deg_to_rad(block_rotation * angle_dist)
 	
-	# After rotation animation, so rotated to final rot/ation
+	# After rotation animation, so rotated to final rotation
 	return deg_to_rad(block_rotation)
 
 func _on_area_3d_area_entered(area: Area3D) -> void:
