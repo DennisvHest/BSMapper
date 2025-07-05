@@ -6,18 +6,17 @@ extends Node3D
 @export var lane_width: float = 4
 @export var lane_height: float = 3
 
-@export var bpm: int = 175
-@export var njs: int = 16
-
 func _ready() -> void:
 	BeatMapManager.current_beatmap_changed.connect(_on_current_beatmap_changed)
 	
 func _on_current_beatmap_changed(current_beatmap: Variant):
+	var map_info = BeatMapDifficultyInfo.new()
+	
 	for note_block in current_beatmap._notes:
 		# How far in time (seconds) the note should be positioned initially using the BPM
-		var hit_time: float = note_block._time * 60 / bpm
+		var hit_time: float = note_block._time * 60 / map_info.bpm
 		# Position the note block (in meters) from the origin position of the note block lane -> forward direction -> using the speed of the note block
-		var note_block_position: Vector3 = position + Vector3.FORWARD * NoteBlock.njs * hit_time
+		var note_block_position: Vector3 = position + Vector3.FORWARD * map_info.njs * hit_time
 		
 		# Position note block along the line index (horizontal) and line layer (vertical)
 		var note_block_line_width = lane_width / 4
@@ -35,6 +34,6 @@ func _on_current_beatmap_changed(current_beatmap: Variant):
 		note_block_position += Vector3.UP * 0.2 # Move up by half the note block height
 		
 		var note_block_node: NoteBlock = note_block_scene.instantiate()
-		note_block_node.initialize(note_block_position, note_block, bpm, -0.15)
+		note_block_node.initialize(note_block_position, map_info, note_block)
 		
 		add_child(note_block_node)

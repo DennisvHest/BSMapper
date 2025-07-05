@@ -4,44 +4,24 @@ class_name NoteBlock
 
 enum NoteBlockType { LEFT = 0, RIGHT = 1 }
 
-static var njs: float = 16
-var hjd: float
-var bpm: float
+var map_info: BeatMapDifficultyInfo
 
 var type: NoteBlockType
 var block_rotation: float = 0
-var jump_distance: float
-var reaction_time: float
-var half_jump_distance: float
 var note_block: Variant
 var note_time: float
 var initial_position: Vector3
 
-func initialize(_initial_position: Vector3, _note_block: Variant, _bpm: float, note_jump_start_beat_offset: float):
+func initialize(_initial_position: Vector3, _map_info: BeatMapDifficultyInfo, _note_block: Variant):
 	initial_position = _initial_position
 	position = initial_position
+	map_info = _map_info
 	note_block = _note_block
-	bpm = _bpm
 	
-	var default_hjd: = 4.0
-	
-	while get_jump_distance(default_hjd) > 35.998:
-		default_hjd /= 2
-	
-	hjd = max(default_hjd + note_jump_start_beat_offset, 0.25)
-	
-	jump_distance = get_jump_distance(hjd)
-	reaction_time = jump_distance / 2 / njs
-	half_jump_distance = reaction_time * njs
-	
-	note_time = note_block._time / bpm * 60
+	note_time = note_block._time / map_info.bpm * 60
 	
 	set_note_block_color(note_block)
 	set_cut_direction(note_block)
-
-func get_jump_distance(hjd: float):
-	var rt = 60.0 / bpm * hjd
-	return njs * 2 * rt
 
 func set_cut_direction(note_block: Variant):	
 	match note_block._cutDirection:
@@ -71,28 +51,28 @@ func set_note_block_color(note_block: Variant):
 		material.albedo_color = Color.BLUE
 
 func _process(delta: float) -> void:
-	var jump_time = PlaybackManager.playback_position + reaction_time
+	var jump_time = PlaybackManager.playback_position + map_info.reaction_time
 	
 	var distance: float	
 	
 	if note_time <= jump_time:
 		var time_dist = note_time - PlaybackManager.playback_position
-		distance = time_dist * njs
+		distance = time_dist * map_info.njs
 	else:
 		var time_dist = (note_time - jump_time) / 0.2
-		distance = half_jump_distance + (65 * time_dist)
+		distance = map_info.half_jump_distance_meters + (65 * time_dist)
 		
 	position.z = -distance
 	
 	if note_time > jump_time:
 		position.y = 0
 	else:
-		var d_squared = pow(half_jump_distance, 2)
+		var d_squared = pow(map_info.half_jump_distance_meters, 2)
 		var t_squared = pow(distance, 2)
 		
 		position.y = clamp(-(initial_position.y / d_squared) * t_squared + initial_position.y, -9999.0, 9999.0)
 	
-	var jump_progress = (jump_time - note_time) / reaction_time
+	var jump_progress = (jump_time - note_time) / map_info.reaction_time
 	var rotation_animation_time = 0.2
 	
 	if jump_progress <= 0:
