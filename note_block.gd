@@ -42,6 +42,8 @@ func set_cut_direction(note_block: Variant):
 		6.0: block_rotation = -45
 		7.0: block_rotation = 45
 	
+	rotation.z = deg_to_rad(block_rotation)
+	
 	if note_block._cutDirection == 8.0:
 		$Visual/CutDirectionTriangle.visible = false
 		$Visual/AnyCutDirectionCircle.visible = true
@@ -62,17 +64,21 @@ func set_note_block_color(note_block: Variant):
 func _process(delta: float) -> void:
 	var jump_time = PlaybackManager.playback_position + map_info.reaction_time
 	
-	var distance: float = _get_note_distance(jump_time)
+	position.z = -_get_note_distance(jump_time)
 	
-	position.z = -distance
-	position.y = _get_note_visual_y(jump_time, distance)
-	rotation.z = _get_note_visual_rotation(jump_time)
+	var visual_distance: float = _get_note_visual_distance(jump_time)
+	$Visual.global_position.z = -visual_distance
+	$Visual.global_position.y = _get_note_visual_y(jump_time, visual_distance)
+	$Visual.global_rotation.z = _get_note_visual_rotation(jump_time)
 
 func _get_note_distance(jump_time: float) -> float:
+	var time_dist = note_time - PlaybackManager.playback_position
+	return time_dist * map_info.njs
+
+func _get_note_visual_distance(jump_time: float) -> float:
 	if note_time <= jump_time:
 		# Note block has already done it's jump animation, so move it towards the player at the note jump speed.
-		var time_dist = note_time - PlaybackManager.playback_position
-		return time_dist * map_info.njs
+		return _get_note_distance(jump_time)
 	else:
 		# Note block is not yet at the time to jump. Set the distance according to the snap in animation.
 		var time_dist = (note_time - jump_time) / SNAP_IN_ANIMATION_TIME
