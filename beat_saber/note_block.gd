@@ -11,8 +11,8 @@ var block_rotation: float = 0
 func initialize(_initial_position: Vector3, _map_info: BeatMapDifficultyInfo, _note_block: Variant):
 	super.initialize(_initial_position, _map_info, _note_block)
 	
-	set_note_block_color(note_block)
-	set_cut_direction(note_block)
+	set_note_block_color(_note_block)
+	set_cut_direction(_note_block)
 
 func set_cut_direction(note_block: Variant):	
 	match note_block._cutDirection:
@@ -54,7 +54,7 @@ func _process(delta: float) -> void:
 	$Visual.global_rotation.z = _get_note_visual_rotation(jump_time)
 
 func _get_note_visual_rotation(jump_time: float) -> float:
-	var jump_progress = (jump_time - note_time) / map_info.reaction_time
+	var jump_progress = (jump_time - object_time) / map_info.reaction_time
 	var ROTATION_ANIMATION_TIME = 0.2
 	
 	if jump_progress <= 0:

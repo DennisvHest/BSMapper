@@ -12,40 +12,40 @@ const SNAP_IN_ANIMATION_DISTANCE := 65
 
 var map_info: BeatMapDifficultyInfo
 
-var note_block: Variant
+var beatmap_object: Variant
 var initial_position: Vector3
-var note_time: float
+var object_time: float
 
-func initialize(_initial_position: Vector3, _map_info: BeatMapDifficultyInfo, _note_block: Variant):
+func initialize(_initial_position: Vector3, _map_info: BeatMapDifficultyInfo, _beatmap_object: Variant):
 	initial_position = _initial_position
 	position = initial_position
 	map_info = _map_info
-	note_block = _note_block
+	beatmap_object = _beatmap_object
 	
-	note_time = note_block._time / map_info.bpm * 60
+	object_time = beatmap_object._time / map_info.bpm * 60
 
 func _get_jump_time() -> float:
 	return PlaybackManager.playback_position + map_info.reaction_time
 
 func _get_distance(jump_time: float) -> float:
-	var time_dist = note_time - PlaybackManager.playback_position
+	var time_dist = object_time - PlaybackManager.playback_position
 	return time_dist * map_info.njs
 
 func _get_visual_distance(jump_time: float) -> float:
-	if note_time <= jump_time:
-		# Note block has already done it's jump animation, so move it towards the player at the note jump speed.
+	if object_time <= jump_time:
+		# Object has already done it's jump animation, so move it towards the player at the note jump speed.
 		return _get_distance(jump_time)
 	else:
-		# Note block is not yet at the time to jump. Set the distance according to the snap in animation.
-		var time_dist = (note_time - jump_time) / SNAP_IN_ANIMATION_TIME
+		# Object is not yet at the time to jump. Set the distance according to the snap in animation.
+		var time_dist = (object_time - jump_time) / SNAP_IN_ANIMATION_TIME
 		return map_info.half_jump_distance_meters + (SNAP_IN_ANIMATION_DISTANCE * time_dist)
 
 func _get_visual_y(jump_time: float, distance: float) -> float:
-	if note_time > jump_time:
+	if object_time > jump_time:
 		# Not jumping yet, so stay at the bottom
 		return 0
 	else:
-		# Make note block jump up
+		# Make object jump up
 		var d_squared = pow(map_info.half_jump_distance_meters, 2)
 		var t_squared = pow(distance, 2)
 		
