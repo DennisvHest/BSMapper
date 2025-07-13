@@ -180,10 +180,75 @@
             "a": 0,
             "_type": 0,
             "_cutDirection": 8
+        },
+        {
+            "_time": 20,
+            "_lineIndex": 1,
+            "_lineLayer": 2,
+            "a": 0,
+            "_type": 0,
+            "_cutDirection": 8
         }
     ],
     "bombNotes": [],
-    "_obstacles": [],
+    "_obstacles": [
+        {
+            "_time": 10,
+            "_lineIndex": 0,
+            "_type": 0,
+            "_duration": 0.5,
+            "_width": 1
+        },
+        {
+            "_time": 10,
+            "_lineIndex": 1,
+            "_type": 0,
+            "_duration": 0.5,
+            "_width": 1
+        },
+        {
+            "_time": 10,
+            "_lineIndex": 2,
+            "_type": 0,
+            "_duration": 0.5,
+            "_width": 1
+        },
+        {
+            "_time": 10,
+            "_lineIndex": 3,
+            "_type": 0,
+            "_duration": 0.5,
+            "_width": 1
+        },
+        {
+            "_time": 20,
+            "_lineIndex": 0,
+            "_type": 1,
+            "_duration": 0.5,
+            "_width": 1
+        },
+        {
+            "_time": 20,
+            "_lineIndex": 1,
+            "_type": 1,
+            "_duration": 0.5,
+            "_width": 1
+        },
+        {
+            "_time": 20,
+            "_lineIndex": 2,
+            "_type": 1,
+            "_duration": 0.5,
+            "_width": 1
+        },
+        {
+            "_time": 20,
+            "_lineIndex": 3,
+            "_type": 1,
+            "_duration": 0.5,
+            "_width": 1
+        }
+    ],
     "sliders": [],
     "burstSliders": [],
     "waypoints": [],
