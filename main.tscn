@@ -1,9 +1,9 @@
 [gd_scene load_steps=11 format=3 uid="uid://dujhi4qdtiee8"]
 
 [ext_resource type="Script" uid="uid://kmyet12v7cjt" path="res://main.gd" id="1_ig7tw"]
-[ext_resource type="PackedScene" uid="uid://dhng0rh22itx5" path="res://saber.tscn" id="2_h2yge"]
-[ext_resource type="PackedScene" uid="uid://bwh2pgll34g30" path="res://note_block_lane.tscn" id="3_h2yge"]
-[ext_resource type="Script" uid="uid://cec7xbd0hljmr" path="res://playback_manager.gd" id="4_272bh"]
+[ext_resource type="PackedScene" uid="uid://dhng0rh22itx5" path="res://beat_saber/saber.tscn" id="2_h2yge"]
+[ext_resource type="PackedScene" uid="uid://bwh2pgll34g30" path="res://beat_saber/note_block_lane.tscn" id="3_h2yge"]
+[ext_resource type="Script" uid="uid://cec7xbd0hljmr" path="res://editor/playback_manager.gd" id="4_272bh"]
 [ext_resource type="AudioStream" uid="uid://dhunvampj2m4n" path="res://test_beatmaps/TEST_MAP/song.ogg" id="4_lquwl"]
 [ext_resource type="AudioStream" uid="uid://ci872t5wv5mi5" path="res://sounds/OSU_click.ogg" id="5_lquwl"]
 
@@ -96,7 +96,7 @@ offset_bottom = -22.0
 grow_horizontal = 2
 grow_vertical = 0
 max_value = 1.0
-step = 0.01
+step = 0.001
 
 [connection signal="button_pressed" from="XROrigin3D/RightHand" to="." method="_on_right_hand_button_pressed"]
 [connection signal="drag_ended" from="DebugUI/MusicProgressBar" to="PlaybackManager" method="_on_music_progress_bar_drag_ended"]

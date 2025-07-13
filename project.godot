@@ -17,7 +17,7 @@ config/icon="res://icon.svg"
 
 [autoload]
 
-BeatMapManager="*res://beat_map_manager.gd"
+BeatMapManager="*res://beat_saber/maps/beat_map_manager.gd"
 GlobalSettings="*res://global_settings.gd"
 GameEvents="*res://game_events.gd"
 

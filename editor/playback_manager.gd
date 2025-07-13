@@ -14,9 +14,13 @@ func play(from_position: float = 0):
 
 func _process(delta: float) -> void:
 	if $Music.stream_paused:
-		playback_position = get_playback_position()
+		PlaybackManager.playback_position = get_playback_position()
 	else:
-		playback_position = $Music.get_playback_position() + AudioServer.get_time_since_last_mix()
+		PlaybackManager.playback_position = $Music.get_playback_position() + AudioServer.get_time_since_last_mix()
+		
+	var music_stream: AudioStream = $Music.stream
+	
+	progress_bar.value = PlaybackManager.playback_position / music_stream.get_length()
 
 func _on_music_progress_bar_drag_started() -> void:
 	$Music.stream_paused = true

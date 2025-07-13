@@ -1,8 +1,0 @@
-[gd_scene load_steps=3 format=3 uid="uid://bwh2pgll34g30"]
-
-[ext_resource type="Script" uid="uid://dnl6j8aigxtj8" path="res://note_block_lane.gd" id="1_p2bkp"]
-[ext_resource type="PackedScene" uid="uid://bfhf8qgxqfrw6" path="res://note_block.tscn" id="2_il36q"]
-
-[node name="NoteBlockLane" type="Node3D"]
-script = ExtResource("1_p2bkp")
-note_block_scene = ExtResource("2_il36q")
