@@ -22,6 +22,7 @@ func _ready() -> void:
 	$XROrigin3D/XRCamera3D.position.y = GlobalSettings.player_height
 	
 	GameEvents.note_block_hit.connect(_on_note_block_hit)
+	GameEvents.bomb_hit.connect(_on_bomb_hit)
 	
 	BeatMapManager.load_beatmap(beatmap_file_path)
 	$PlaybackManager.play()
@@ -32,10 +33,16 @@ func _on_right_hand_button_pressed(button_name: String) -> void:
 	if button_name == "ax_button":
 		get_tree().reload_current_scene()
 
-func _on_note_block_hit(note_block_type):
+func _on_note_block_hit(saber_type):
 	$HitSound.play(0.15) #: Hit sounds are played at an offset, otherwise it feels like the sound plays before the block is even hit
-	
-	if note_block_type == BeatmapObject.BeatmapObjectType.NOTE_BLOCK_LEFT:
+	_trigger_saber_haptic_pulse(saber_type)
+
+func _on_bomb_hit(saber_type):
+	$BadCutSound.play()
+	_trigger_saber_haptic_pulse(saber_type)
+
+func _trigger_saber_haptic_pulse(saber_type):
+	if saber_type == Saber.SaberType.LEFT:
 		$XROrigin3D/LeftHand.trigger_haptic_pulse("haptic", 0.0, 1.0, 0.15, 0.0)
 	else:
 		$XROrigin3D/RightHand.trigger_haptic_pulse("haptic", 0.0, 1.0, 0.15, 0.0)

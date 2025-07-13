@@ -1,4 +1,6 @@
-[gd_scene load_steps=3 format=3 uid="uid://dhng0rh22itx5"]
+[gd_scene load_steps=4 format=3 uid="uid://dhng0rh22itx5"]
+
+[ext_resource type="Script" uid="uid://be5qb5vykod5k" path="res://beat_saber/saber.gd" id="1_hbvue"]
 
 [sub_resource type="CylinderMesh" id="CylinderMesh_qnpbl"]
 
@@ -7,6 +9,7 @@ height = 1.0
 radius = 0.025
 
 [node name="Saber" type="Node3D"]
+script = ExtResource("1_hbvue")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
 transform = Transform3D(0.05, 0, 0, 0, 0.5, 0, 0, 0, 0.05, 0, 0.5, 0)

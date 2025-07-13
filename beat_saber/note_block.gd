@@ -71,6 +71,10 @@ func _get_note_visual_rotation(jump_time: float) -> float:
 	return deg_to_rad(block_rotation)
 
 func _on_area_3d_area_entered(area: Area3D) -> void:
-	if area.is_in_group("sabers"):
-		GameEvents.note_block_hit.emit(type)
+	if area.is_in_group(Groups.sabers):
+		var saber: Saber = area.get_parent()
+		
+		assert(saber is Saber, "Expected parent to be Saber")
+		
+		GameEvents.note_block_hit.emit(saber.type)
 		queue_free()
