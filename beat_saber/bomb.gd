@@ -2,8 +2,8 @@ extends BeatmapObject
 
 class_name Bomb
 
-func initialize(_initial_position: Vector3, _map_info: BeatMapDifficultyInfo, _note_block: Variant):
-	super.initialize(_initial_position, _map_info, _note_block)
+func initialize(_initial_position: Vector3, _map_info: BeatMapDifficultyInfo, _bomb: Variant):
+	super.initialize(_initial_position, _map_info, _bomb)
 
 func _process(delta: float) -> void:
 	var jump_time = _get_jump_time()

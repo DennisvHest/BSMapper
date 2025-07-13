@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://dujhi4qdtiee8"]
+[gd_scene load_steps=14 format=3 uid="uid://dujhi4qdtiee8"]
 
 [ext_resource type="Script" uid="uid://kmyet12v7cjt" path="res://main.gd" id="1_ig7tw"]
 [ext_resource type="PackedScene" uid="uid://dhng0rh22itx5" path="res://beat_saber/saber.tscn" id="2_h2yge"]
@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://cj4lx8kmvad2b" path="res://beat_saber/bomb.tscn" id="4_5vw27"]
 [ext_resource type="Script" uid="uid://cec7xbd0hljmr" path="res://editor/playback_manager.gd" id="4_272bh"]
 [ext_resource type="AudioStream" uid="uid://dhunvampj2m4n" path="res://test_beatmaps/TEST_MAP/song.ogg" id="4_lquwl"]
+[ext_resource type="PackedScene" uid="uid://djk61jv0t7qmi" path="res://beat_saber/wall.tscn" id="5_kek77"]
 [ext_resource type="AudioStream" uid="uid://ci872t5wv5mi5" path="res://sounds/hit_sound.ogg" id="5_lquwl"]
 [ext_resource type="AudioStream" uid="uid://db4a55dhoebuh" path="res://sounds/bad_cut.wav" id="8_5vw27"]
 
@@ -23,7 +24,8 @@ size = Vector3(3, 2, 1)
 
 [node name="Main" type="Node3D"]
 script = ExtResource("1_ig7tw")
-beatmap_file_path = "res://test_beatmaps/TEST_MAP/ExpertPlusStandard.dat"
+debug_without_vr = true
+beatmap_file_path = "res://test_beatmaps/1feab (Turn It Up - abcbadq)/ExpertStandard.dat"
 
 [node name="XROrigin3D" type="XROrigin3D" parent="."]
 
@@ -53,6 +55,7 @@ environment = SubResource("Environment_ig7tw")
 
 [node name="NoteBlockLane" parent="." node_paths=PackedStringArray("music") instance=ExtResource("3_h2yge")]
 bomb_scene = ExtResource("4_5vw27")
+wall_scene = ExtResource("5_kek77")
 music = NodePath("../PlaybackManager/Music")
 lane_width = 2.0
 lane_height = 1.5

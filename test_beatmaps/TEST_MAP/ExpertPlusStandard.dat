@@ -183,7 +183,7 @@
         }
     ],
     "bombNotes": [],
-    "obstacles": [],
+    "_obstacles": [],
     "sliders": [],
     "burstSliders": [],
     "waypoints": [],

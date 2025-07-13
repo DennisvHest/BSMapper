@@ -1,0 +1,25 @@
+[gd_scene load_steps=5 format=3 uid="uid://djk61jv0t7qmi"]
+
+[ext_resource type="Script" uid="uid://bcmkcykn51n1b" path="res://beat_saber/wall.gd" id="1_xxgf6"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_oh6kn"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_oh6kn"]
+transparency = 1
+albedo_color = Color(1, 0, 0, 0.501961)
+
+[sub_resource type="BoxMesh" id="BoxMesh_xxgf6"]
+material = SubResource("StandardMaterial3D_oh6kn")
+
+[node name="Wall" type="Node3D"]
+script = ExtResource("1_xxgf6")
+
+[node name="Area3D" type="Area3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]
+shape = SubResource("BoxShape3D_oh6kn")
+
+[node name="Visual" type="Node3D" parent="."]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Visual"]
+mesh = SubResource("BoxMesh_xxgf6")
