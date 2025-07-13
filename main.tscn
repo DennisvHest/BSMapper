@@ -1,8 +1,9 @@
-[gd_scene load_steps=11 format=3 uid="uid://dujhi4qdtiee8"]
+[gd_scene load_steps=12 format=3 uid="uid://dujhi4qdtiee8"]
 
 [ext_resource type="Script" uid="uid://kmyet12v7cjt" path="res://main.gd" id="1_ig7tw"]
 [ext_resource type="PackedScene" uid="uid://dhng0rh22itx5" path="res://beat_saber/saber.tscn" id="2_h2yge"]
 [ext_resource type="PackedScene" uid="uid://bwh2pgll34g30" path="res://beat_saber/note_block_lane.tscn" id="3_h2yge"]
+[ext_resource type="PackedScene" uid="uid://cj4lx8kmvad2b" path="res://beat_saber/bomb.tscn" id="4_5vw27"]
 [ext_resource type="Script" uid="uid://cec7xbd0hljmr" path="res://editor/playback_manager.gd" id="4_272bh"]
 [ext_resource type="AudioStream" uid="uid://dhunvampj2m4n" path="res://test_beatmaps/TEST_MAP/song.ogg" id="4_lquwl"]
 [ext_resource type="AudioStream" uid="uid://ci872t5wv5mi5" path="res://sounds/OSU_click.ogg" id="5_lquwl"]
@@ -50,6 +51,7 @@ transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 7, 
 environment = SubResource("Environment_ig7tw")
 
 [node name="NoteBlockLane" parent="." node_paths=PackedStringArray("music") instance=ExtResource("3_h2yge")]
+bomb_scene = ExtResource("4_5vw27")
 music = NodePath("../PlaybackManager/Music")
 lane_width = 2.0
 lane_height = 1.5

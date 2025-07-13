@@ -1,0 +1,29 @@
+[gd_scene load_steps=5 format=3 uid="uid://cj4lx8kmvad2b"]
+
+[ext_resource type="Script" uid="uid://1mibyfxs6j1m" path="res://beat_saber/bomb.gd" id="1_rm1ti"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_k8m2o"]
+albedo_color = Color(0.165656, 0.165656, 0.165656, 1)
+
+[sub_resource type="SphereMesh" id="SphereMesh_rm1ti"]
+material = SubResource("StandardMaterial3D_k8m2o")
+radius = 0.2
+height = 0.4
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_k8m2o"]
+size = Vector3(1.256, 1.107, 1.484)
+
+[node name="Bomb" type="Node3D"]
+script = ExtResource("1_rm1ti")
+
+[node name="Visual" type="Node3D" parent="."]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Visual"]
+mesh = SubResource("SphereMesh_rm1ti")
+
+[node name="Area3D" type="Area3D" parent="."]
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.121349)
+shape = SubResource("BoxShape3D_k8m2o")

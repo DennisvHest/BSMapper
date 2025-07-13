@@ -2,12 +2,10 @@ extends BeatmapObject
 
 class_name NoteBlock
 
-enum NoteBlockType { LEFT = 0, RIGHT = 1 }
-
 ## Note block rotates to correct cut direction during jump animation. Sets time (in seconds) of animation.
 const ROTATION_ANIMATION_TIME := 0.2
 
-var type: NoteBlockType
+var type: BeatmapObjectType
 var block_rotation: float = 0
 
 func initialize(_initial_position: Vector3, _map_info: BeatMapDifficultyInfo, _note_block: Variant):
@@ -38,15 +36,15 @@ func set_cut_direction(note_block: Variant):
 func set_note_block_color(note_block: Variant):
 	var material: StandardMaterial3D = $Visual/MeshInstance3D.get_active_material(0)
 	
-	if note_block._type == NoteBlockType.LEFT:
-		type = NoteBlockType.LEFT
+	if note_block._type == BeatmapObjectType.NOTE_BLOCK_LEFT:
+		type = BeatmapObjectType.NOTE_BLOCK_LEFT
 		material.albedo_color = Color.RED
-	elif note_block._type == NoteBlockType.RIGHT:
-		type = NoteBlockType.RIGHT
+	elif note_block._type == BeatmapObjectType.NOTE_BLOCK_RIGHT:
+		type = BeatmapObjectType.NOTE_BLOCK_RIGHT
 		material.albedo_color = Color.BLUE
 
 func _process(delta: float) -> void:
-	var jump_time = PlaybackManager.playback_position + map_info.reaction_time
+	var jump_time = _get_jump_time()
 	
 	position.z = -_get_distance(jump_time)
 	

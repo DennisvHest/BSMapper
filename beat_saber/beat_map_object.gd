@@ -2,6 +2,8 @@ extends Node3D
 
 class_name BeatmapObject
 
+enum BeatmapObjectType { NOTE_BLOCK_LEFT = 0, NOTE_BLOCK_RIGHT = 1, BOMB = 3 }
+
 ## Time in seconds of the "snap in" animation. This is the animation before the note jump that moves the note block towards the half jump distance.
 const SNAP_IN_ANIMATION_TIME := 0.2
 
@@ -21,6 +23,9 @@ func initialize(_initial_position: Vector3, _map_info: BeatMapDifficultyInfo, _n
 	note_block = _note_block
 	
 	note_time = note_block._time / map_info.bpm * 60
+
+func _get_jump_time() -> float:
+	return PlaybackManager.playback_position + map_info.reaction_time
 
 func _get_distance(jump_time: float) -> float:
 	var time_dist = note_time - PlaybackManager.playback_position
