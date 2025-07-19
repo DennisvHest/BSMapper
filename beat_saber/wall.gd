@@ -28,6 +28,11 @@ func initialize(_initial_position: Vector3, _map_info: BeatMapDifficultyInfo, _w
 	scale.z *= duration_in_meters
 
 func _process(delta: float) -> void:
+	super._process(delta)
+	
+	if not visible:
+		return
+	
 	var jump_time = _get_jump_time()
 	
 	position.z = -_get_distance(jump_time)

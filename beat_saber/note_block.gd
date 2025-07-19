@@ -44,6 +44,11 @@ func set_note_block_color(note_block: Variant):
 		material.albedo_color = Color.BLUE
 
 func _process(delta: float) -> void:
+	super._process(delta)
+	
+	if not visible:
+		return
+	
 	var jump_time = _get_jump_time()
 	
 	position.z = -_get_distance(jump_time)

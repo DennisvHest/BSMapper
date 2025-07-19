@@ -24,6 +24,17 @@ func initialize(_initial_position: Vector3, _map_info: BeatMapDifficultyInfo, _b
 	
 	object_time = beatmap_object._time / map_info.bpm * 60
 
+func _process(delta: float) -> void:
+	var jump_time = _get_jump_time()
+	var object_spawn_time = jump_time * 2
+	
+	if object_time <= object_spawn_time:
+		if not visible:
+			show()
+	else:
+		if visible:
+			hide()
+
 func _get_jump_time() -> float:
 	return PlaybackManager.playback_position + map_info.reaction_time
 
