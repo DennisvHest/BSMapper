@@ -31,8 +31,8 @@ func _process(delta: float) -> void:
 	var jump_time = _get_jump_time()
 	
 	position.z = -_get_distance(jump_time)
-	position.z -= ((duration_in_meters / 2) * 0.5) - 0.25
+	position.z -= (duration_in_meters / 2) - 0.25
 	
 	var visual_distance: float = _get_visual_distance(jump_time)
 	$Visual.global_position.z = -visual_distance
-	$Visual.global_position.z -= ((duration_in_meters / 2) * 0.5) - 0.25
+	$Visual.global_position.z -= (duration_in_meters / 2) - 0.25
