@@ -188,6 +188,38 @@
             "a": 0,
             "_type": 0,
             "_cutDirection": 8
+        },
+        {
+            "_time": 30,
+            "_lineIndex": 1,
+            "_lineLayer": 1,
+            "a": 0,
+            "_type": 0,
+            "_cutDirection": 8
+        },
+        {
+            "_time": 30,
+            "_lineIndex": 2,
+            "_lineLayer": 1,
+            "a": 0,
+            "_type": 0,
+            "_cutDirection": 8
+        },
+        {
+            "_time": 30,
+            "_lineIndex": 1,
+            "_lineLayer": 2,
+            "a": 0,
+            "_type": 0,
+            "_cutDirection": 8
+        },
+        {
+            "_time": 30,
+            "_lineIndex": 2,
+            "_lineLayer": 2,
+            "a": 0,
+            "_type": 0,
+            "_cutDirection": 8
         }
     ],
     "bombNotes": [],
@@ -247,6 +279,15 @@
             "_type": 1,
             "_duration": 0.5,
             "_width": 1
+        },
+        {
+            "_time": 30,
+            "_lineIndex": 1,
+            "_lineLayer": 1,
+            "_type": 2,
+            "_duration": 2,
+            "_width": 2,
+            "_height": 2
         }
     ],
     "sliders": [],

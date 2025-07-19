@@ -55,7 +55,7 @@ func _get_beatmap_object_initial_position(beatmap_object: Variant, map_info: Bea
 	if "_lineLayer"  in beatmap_object:
 		line_layer = beatmap_object._lineLayer
 	else:
-		line_layer = 1 # Wall origin is placed in the vertically in the middle
+		line_layer = 0
 	
 	object_position += Vector3.UP * note_block_line_height * line_layer
 	
