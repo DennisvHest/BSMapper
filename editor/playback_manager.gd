@@ -20,9 +20,7 @@ func _physics_process(delta: float) -> void:
 	var leftJoystickPosition: Vector2 = leftHand.get_vector2("primary")
 	
 	if leftJoystickPosition.x != 0.0:
-		var progress_value = progress_bar.value + leftJoystickPosition.x * PLAYBACK_SCRUB_VELOCITY * delta;
-		progress_bar.value = progress_value
-		print(progress_bar.value)
+		progress_bar.value += + leftJoystickPosition.x * PLAYBACK_SCRUB_VELOCITY * delta;
 
 func _process(delta: float) -> void:
 	if $Music.stream_paused:
