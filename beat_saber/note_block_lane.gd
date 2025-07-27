@@ -1,13 +1,18 @@
 extends Node3D
 
+class_name NoteBlockLane
+
 @export var note_block_scene: PackedScene
 @export var bomb_scene: PackedScene
 @export var wall_scene: PackedScene
 
 @export var music: AudioStreamPlayer
 
-@export var lane_width: float = 4
-@export var lane_height: float = 3
+# Width/height of the line in which the note block/bomb resides
+const BEATMAP_OBJECT_LINE_SIZE: float = 0.5
+
+const lane_width: float = BEATMAP_OBJECT_LINE_SIZE * 4
+const lane_height: float = BEATMAP_OBJECT_LINE_SIZE * 3
 
 func _ready() -> void:
 	BeatMapManager.current_beatmap_changed.connect(_on_current_beatmap_changed)
@@ -46,10 +51,7 @@ func _get_beatmap_object_initial_position(beatmap_object: Variant, map_info: Bea
 	var object_position: Vector3 = position + Vector3.FORWARD * map_info.njs * hit_time
 	
 	# Position object along the line index (horizontal) and line layer (vertical)
-	var note_block_line_width = lane_width / 4
-	var note_block_line_height = lane_height / 3
-	
-	object_position += Vector3.RIGHT * note_block_line_width * beatmap_object._lineIndex
+	object_position += Vector3.RIGHT * BEATMAP_OBJECT_LINE_SIZE * beatmap_object._lineIndex
 	
 	var line_layer: int
 	if "_lineLayer"  in beatmap_object:
@@ -57,14 +59,14 @@ func _get_beatmap_object_initial_position(beatmap_object: Variant, map_info: Bea
 	else:
 		line_layer = 0
 	
-	object_position += Vector3.UP * note_block_line_height * line_layer
+	object_position += Vector3.UP * BEATMAP_OBJECT_LINE_SIZE * line_layer
 	
 	# Center the note block lane horizontally
 	object_position += Vector3.LEFT * lane_width / 2
-	object_position += Vector3.RIGHT * note_block_line_width / 2
+	object_position += Vector3.RIGHT * BEATMAP_OBJECT_LINE_SIZE / 2
 	
 	# Move the note block lane up to the player height (the middle between the top and middle lane is at eye height)
 	object_position += Vector3.UP * GlobalSettings.player_height * 1 / 3
-	object_position += Vector3.UP * 0.2 # Move up by half the note block height
+	object_position += Vector3.UP * BEATMAP_OBJECT_LINE_SIZE / 2
 	
 	return object_position

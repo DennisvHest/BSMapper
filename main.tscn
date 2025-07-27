@@ -24,7 +24,7 @@ size = Vector3(3, 2, 1)
 
 [node name="Main" type="Node3D"]
 script = ExtResource("1_ig7tw")
-beatmap_file_path = "res://test_beatmaps/1feab (Turn It Up - abcbadq)/ExpertStandard.dat"
+beatmap_file_path = "res://test_beatmaps/TEST_MAP/ExpertPlusStandard.dat"
 
 [node name="XROrigin3D" type="XROrigin3D" parent="."]
 
@@ -56,8 +56,6 @@ environment = SubResource("Environment_ig7tw")
 bomb_scene = ExtResource("4_5vw27")
 wall_scene = ExtResource("5_kek77")
 music = NodePath("../PlaybackManager/Music")
-lane_width = 2.0
-lane_height = 1.5
 
 [node name="PlaybackManager" type="Node" parent="."]
 script = ExtResource("4_272bh")
