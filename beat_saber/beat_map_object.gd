@@ -26,9 +26,10 @@ func initialize(_initial_position: Vector3, _map_info: BeatMapDifficultyInfo, _b
 
 func _process(delta: float) -> void:
 	var jump_time = _get_jump_time()
-	var object_spawn_time = jump_time * 2
+	var object_spawn_time = jump_time + map_info.reaction_time
+	var object_despawn_time = object_spawn_time - map_info.reaction_time * 4
 	
-	if object_time <= object_spawn_time:
+	if object_time <= object_spawn_time and object_time >= object_despawn_time:
 		if not visible:
 			show()
 	else:
