@@ -24,7 +24,8 @@ size = Vector3(3, 2, 1)
 
 [node name="Main" type="Node3D"]
 script = ExtResource("1_ig7tw")
-beatmap_file_path = "res://test_beatmaps/TEST_MAP/ExpertPlusStandard.dat"
+debug_without_vr = true
+beatmap_file_path = "res://test_beatmaps/1feab (Turn It Up - abcbadq)/ExpertStandard.dat"
 
 [node name="XROrigin3D" type="XROrigin3D" parent="."]
 
@@ -102,8 +103,9 @@ offset_bottom = -22.0
 grow_horizontal = 2
 grow_vertical = 0
 max_value = 1.0
-step = 0.001
+step = 0.0
 
+[connection signal="input_vector2_changed" from="XROrigin3D/LeftHand" to="PlaybackManager" method="_on_left_hand_input_vector_2_changed"]
 [connection signal="button_pressed" from="XROrigin3D/RightHand" to="." method="_on_right_hand_button_pressed"]
 [connection signal="drag_ended" from="DebugUI/MusicProgressBar" to="PlaybackManager" method="_on_music_progress_bar_drag_ended"]
 [connection signal="drag_started" from="DebugUI/MusicProgressBar" to="PlaybackManager" method="_on_music_progress_bar_drag_started"]
