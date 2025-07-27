@@ -2,7 +2,16 @@ extends BeatmapObject
 
 class_name Wall
 
+
 var duration_in_meters: float
+
+const FULL_WALL_TYPE: float = 0.0
+const FULL_WALL_HEIGHT: float = 5.0
+
+const CROUCH_WALL_TYPE: float = 1.0
+const CROUCH_WALL_HEIGHT: float = 3.0
+
+const FREE_WALL_TYPE: float = 2.0
 
 func initialize(_initial_position: Vector3, _map_info: BeatMapDifficultyInfo, _wall: Variant):
 	super.initialize(_initial_position, _map_info, _wall)
@@ -11,9 +20,9 @@ func initialize(_initial_position: Vector3, _map_info: BeatMapDifficultyInfo, _w
 	var wall_height; 
 	
 	match _wall._type: 
-		0.0: wall_height = 5 # Full-height walls
-		1.0: wall_height = 3; position.y += 2 * 0.5 # Crouch walls (set position hard to middle layer)
-		2.0: wall_height = _wall._height # Free walls (custom width/height)
+		FULL_WALL_TYPE: wall_height = FULL_WALL_HEIGHT # Full-height walls
+		CROUCH_WALL_TYPE: wall_height = CROUCH_WALL_HEIGHT; position.y += 2 * 0.5 # Crouch walls (set position hard to middle layer)
+		FREE_WALL_TYPE: wall_height = _wall._height # Free walls (custom width/height)
 	
 	scale.y *= wall_height
 	scale.x *= wall_width
