@@ -50,10 +50,9 @@ transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 7, 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_ig7tw")
 
-[node name="NoteBlockLane" parent="." node_paths=PackedStringArray("music") instance=ExtResource("3_h2yge")]
+[node name="NoteBlockLane" parent="." instance=ExtResource("3_h2yge")]
 bomb_scene = ExtResource("4_5vw27")
 wall_scene = ExtResource("5_kek77")
-music = NodePath("")
 
 [node name="HitSound" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("5_lquwl")

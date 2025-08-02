@@ -16,6 +16,8 @@ var beatmap_object: Variant
 var initial_position: Vector3
 var object_time: float
 
+var jump_animation_enabled: bool = true
+
 func initialize(_initial_position: Vector3, _map_info: BeatMapDifficultyInfo, _beatmap_object: Variant):
 	initial_position = _initial_position
 	position = initial_position
@@ -36,6 +38,9 @@ func _process(delta: float) -> void:
 		if visible:
 			hide()
 
+func set_jump_animation_enabled(enabled: bool) -> void:
+	jump_animation_enabled = enabled
+
 func _get_jump_time() -> float:
 	return PlaybackManager.playback_position + map_info.reaction_time
 
@@ -44,7 +49,7 @@ func _get_distance(jump_time: float) -> float:
 	return time_dist * map_info.njs
 
 func _get_visual_distance(jump_time: float) -> float:
-	if object_time <= jump_time:
+	if object_time <= jump_time or not jump_animation_enabled:
 		# Object has already done it's jump animation, so move it towards the player at the note jump speed.
 		return _get_distance(jump_time)
 	else:
@@ -53,12 +58,18 @@ func _get_visual_distance(jump_time: float) -> float:
 		return map_info.half_jump_distance_meters + (SNAP_IN_ANIMATION_DISTANCE * time_dist)
 
 func _get_visual_y(jump_time: float, distance: float) -> float:
+	if not jump_animation_enabled:
+		return _clamp_visual_y(0)
+
 	if object_time > jump_time:
 		# Not jumping yet, so stay at the bottom
 		return 0
 	else:
 		# Make object jump up
-		var d_squared = pow(map_info.half_jump_distance_meters, 2)
-		var t_squared = pow(distance, 2)
+		return _clamp_visual_y(distance)
+
+func _clamp_visual_y(distance: float) -> float:
+	var d_squared = pow(map_info.half_jump_distance_meters, 2)
+	var t_squared = pow(distance, 2)
 		
-		return clamp(-(initial_position.y / d_squared) * t_squared + initial_position.y, -9999.0, 9999.0)
+	return clamp(-(initial_position.y / d_squared) * t_squared + initial_position.y, -9999.0, 9999.0)

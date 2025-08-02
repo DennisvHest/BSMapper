@@ -59,8 +59,10 @@ func _process(delta: float) -> void:
 	$Visual.global_rotation.z = _get_note_visual_rotation(jump_time)
 
 func _get_note_visual_rotation(jump_time: float) -> float:
+	if not jump_animation_enabled:
+		return deg_to_rad(block_rotation)
+
 	var jump_progress = (jump_time - object_time) / map_info.reaction_time
-	var ROTATION_ANIMATION_TIME = 0.2
 	
 	if jump_progress <= 0:
 		return 0 # Before rotation animation, so no rotation

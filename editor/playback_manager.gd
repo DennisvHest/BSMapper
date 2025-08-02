@@ -1,5 +1,7 @@
 extends Node
 
+signal mode_changed
+
 var progress_bar: HSlider
 var leftHand: XRController3D
 var music: AudioStreamPlayer
@@ -78,6 +80,8 @@ func change_mode(new_mode: EditMode) -> void:
 		pause()
 		print("Playback paused")
 
+	mode_changed.emit()
+
 
 func _on_left_hand_input_vector_2_changed(name: String, value: Vector2) -> void:
 	if name != "primary":
@@ -99,6 +103,7 @@ func _on_left_hand_input_vector_2_changed(name: String, value: Vector2) -> void:
 		play(snapped_pos)
 
 func _on_left_hand_button_pressed(button_name: String) -> void:
+	print("Left hand button pressed %s" % button_name)
 	if button_name == "ax_button":
 		if mode == EditMode.EDITING:
 			change_mode(EditMode.PLAYING)

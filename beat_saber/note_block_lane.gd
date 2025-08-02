@@ -16,7 +16,19 @@ const lane_height: float = BEATMAP_OBJECT_LINE_SIZE * 3
 
 func _ready() -> void:
 	BeatMapManager.current_beatmap_changed.connect(_on_current_beatmap_changed)
-	
+	PlaybackManager.mode_changed.connect(_on_playback_mode_changed)
+
+func _on_playback_mode_changed() -> void:
+	# Jump animation should be disabled in editing mode, so that the note blocks don't jump around when editing
+	for beatmap_object in get_children():
+		if not beatmap_object is BeatmapObject:
+			continue
+		
+		if PlaybackManager.mode == PlaybackManager.EditMode.EDITING:
+			beatmap_object.set_jump_animation_enabled(false)
+		else:
+			beatmap_object.set_jump_animation_enabled(true)
+
 func _on_current_beatmap_changed(current_beatmap: Variant):
 	var map_info = BeatMapDifficultyInfo.new()
 	
