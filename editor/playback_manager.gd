@@ -8,6 +8,10 @@ var playback_position: float = 0
 
 const PLAYBACK_SCRUB_VELOCITY: float = 0.01
 
+enum EditMode { PLAYING, EDITING }
+
+var mode: EditMode = EditMode.PLAYING
+
 func _ready() -> void:
 	progress_bar = get_parent().get_node("Main/DebugUI/MusicProgressBar")
 	progress_bar.drag_started.connect(_on_music_progress_bar_drag_started)
@@ -15,6 +19,7 @@ func _ready() -> void:
 
 	leftHand = get_parent().get_node("Main/XROrigin3D/LeftHand")
 	leftHand.input_vector2_changed.connect(_on_left_hand_input_vector_2_changed)
+	leftHand.button_pressed.connect(_on_left_hand_button_pressed)
 
 	music = AudioStreamPlayer.new()
 	music.stream = preload("res://test_beatmaps/1feab (Turn It Up - abcbadq)/song.ogg")
@@ -23,7 +28,13 @@ func _ready() -> void:
 	get_parent().add_child.call_deferred(music)
 
 func play(from_position: float = 0):
-	music.play(from_position)
+	playback_position = from_position
+
+	if mode == EditMode.PLAYING:
+		music.play(from_position)
+
+func pause():
+	music.stream_paused = true
 
 func _physics_process(delta: float) -> void:
 	var leftJoystickPosition: Vector2 = leftHand.get_vector2("primary")
@@ -54,13 +65,26 @@ func get_playback_position() -> float:
 	var music_stream: AudioStream = music.stream
 	return music_stream.get_length() * progress_bar.value
 
+func change_mode(new_mode: EditMode) -> void:
+	if mode == new_mode:
+		return
+	
+	mode = new_mode
+
+	if mode == EditMode.PLAYING:
+		play(get_playback_position())
+		print("Playback started")
+	else:
+		pause()
+		print("Playback paused")
+
 
 func _on_left_hand_input_vector_2_changed(name: String, value: Vector2) -> void:
 	if name != "primary":
 		return
 
 	if value.x != 0.0:
-		music.stream_paused = true
+		pause()
 	else:
 		# Snap to nearest beat based on BPM
 		var beatmap = BeatMapDifficultyInfo.new()
@@ -72,4 +96,11 @@ func _on_left_hand_input_vector_2_changed(name: String, value: Vector2) -> void:
 		var music_stream: AudioStream = music.stream
 		progress_bar.value = snapped_pos / music_stream.get_length()
 
-		music.play(snapped_pos)
+		play(snapped_pos)
+
+func _on_left_hand_button_pressed(button_name: String) -> void:
+	if button_name == "ax_button":
+		if mode == EditMode.EDITING:
+			change_mode(EditMode.PLAYING)
+		else:
+			change_mode(EditMode.EDITING)
