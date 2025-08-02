@@ -49,8 +49,18 @@ func get_playback_position() -> float:
 func _on_left_hand_input_vector_2_changed(name: String, value: Vector2) -> void:
 	if name != "primary":
 		return
-	
+
 	if value.x != 0.0:
 		$Music.stream_paused = true
 	else:
-		$Music.play(get_playback_position())
+		# Snap to nearest beat based on BPM
+		var beatmap = BeatMapDifficultyInfo.new()
+		var beat_duration = 60.0 / beatmap.bpm
+		var playback_pos = get_playback_position()
+		var snapped_pos = round(playback_pos / beat_duration) * beat_duration
+
+		# Set progress bar to snapped position
+		var music_stream: AudioStream = $Music.stream
+		progress_bar.value = snapped_pos / music_stream.get_length()
+
+		$Music.play(snapped_pos)
