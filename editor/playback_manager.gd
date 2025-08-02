@@ -29,6 +29,7 @@ func _process(delta: float) -> void:
 		PlaybackManager.playback_position = $Music.get_playback_position() + AudioServer.get_time_since_last_mix()
 		
 	var music_stream: AudioStream = $Music.stream
+	# test
 	
 	progress_bar.value = PlaybackManager.playback_position / music_stream.get_length()
 
