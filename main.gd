@@ -25,7 +25,7 @@ func _ready() -> void:
 	GameEvents.bomb_hit.connect(_on_bomb_hit)
 	
 	BeatMapManager.load_beatmap(beatmap_file_path)
-	$PlaybackManager.play()
+	PlaybackManager.play.call_deferred()
 
 func _on_right_hand_button_pressed(button_name: String) -> void:
 	print("Right hand button pressed %s" % button_name)

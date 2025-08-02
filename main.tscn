@@ -1,11 +1,9 @@
-[gd_scene load_steps=14 format=3 uid="uid://dujhi4qdtiee8"]
+[gd_scene load_steps=12 format=3 uid="uid://dujhi4qdtiee8"]
 
 [ext_resource type="Script" uid="uid://kmyet12v7cjt" path="res://main.gd" id="1_ig7tw"]
 [ext_resource type="PackedScene" uid="uid://dhng0rh22itx5" path="res://beat_saber/saber.tscn" id="2_h2yge"]
 [ext_resource type="PackedScene" uid="uid://bwh2pgll34g30" path="res://beat_saber/note_block_lane.tscn" id="3_h2yge"]
 [ext_resource type="PackedScene" uid="uid://cj4lx8kmvad2b" path="res://beat_saber/bomb.tscn" id="4_5vw27"]
-[ext_resource type="Script" uid="uid://cec7xbd0hljmr" path="res://editor/playback_manager.gd" id="4_272bh"]
-[ext_resource type="AudioStream" uid="uid://dhunvampj2m4n" path="res://test_beatmaps/TEST_MAP/song.ogg" id="4_lquwl"]
 [ext_resource type="PackedScene" uid="uid://djk61jv0t7qmi" path="res://beat_saber/wall.tscn" id="5_kek77"]
 [ext_resource type="AudioStream" uid="uid://ci872t5wv5mi5" path="res://sounds/hit_sound.ogg" id="5_lquwl"]
 [ext_resource type="AudioStream" uid="uid://db4a55dhoebuh" path="res://sounds/bad_cut.wav" id="8_5vw27"]
@@ -24,6 +22,7 @@ size = Vector3(3, 2, 1)
 
 [node name="Main" type="Node3D"]
 script = ExtResource("1_ig7tw")
+debug_without_vr = true
 beatmap_file_path = "res://test_beatmaps/1feab (Turn It Up - abcbadq)/ExpertStandard.dat"
 
 [node name="XROrigin3D" type="XROrigin3D" parent="."]
@@ -55,14 +54,7 @@ environment = SubResource("Environment_ig7tw")
 [node name="NoteBlockLane" parent="." node_paths=PackedStringArray("music") instance=ExtResource("3_h2yge")]
 bomb_scene = ExtResource("4_5vw27")
 wall_scene = ExtResource("5_kek77")
-music = NodePath("../PlaybackManager/Music")
-
-[node name="PlaybackManager" type="Node" parent="."]
-script = ExtResource("4_272bh")
-
-[node name="Music" type="AudioStreamPlayer" parent="PlaybackManager"]
-stream = ExtResource("4_lquwl")
-volume_db = -10.0
+music = NodePath("")
 
 [node name="HitSound" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("5_lquwl")
@@ -104,7 +96,4 @@ grow_vertical = 0
 max_value = 1.0
 step = 0.0
 
-[connection signal="input_vector2_changed" from="XROrigin3D/LeftHand" to="PlaybackManager" method="_on_left_hand_input_vector_2_changed"]
 [connection signal="button_pressed" from="XROrigin3D/RightHand" to="." method="_on_right_hand_button_pressed"]
-[connection signal="drag_ended" from="DebugUI/MusicProgressBar" to="PlaybackManager" method="_on_music_progress_bar_drag_ended"]
-[connection signal="drag_started" from="DebugUI/MusicProgressBar" to="PlaybackManager" method="_on_music_progress_bar_drag_started"]

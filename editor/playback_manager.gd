@@ -1,20 +1,29 @@
 extends Node
 
-class_name PlaybackManager
-
 var progress_bar: HSlider
 var leftHand: XRController3D
+var music: AudioStreamPlayer
 
-static var playback_position: float = 0
+var playback_position: float = 0
 
 const PLAYBACK_SCRUB_VELOCITY: float = 0.01
 
 func _ready() -> void:
-	progress_bar = get_parent().get_node("DebugUI/MusicProgressBar")
-	leftHand = get_parent().get_node("XROrigin3D/LeftHand")
+	progress_bar = get_parent().get_node("Main/DebugUI/MusicProgressBar")
+	progress_bar.drag_started.connect(_on_music_progress_bar_drag_started)
+	progress_bar.drag_ended.connect(_on_music_progress_bar_drag_ended)
+
+	leftHand = get_parent().get_node("Main/XROrigin3D/LeftHand")
+	leftHand.input_vector2_changed.connect(_on_left_hand_input_vector_2_changed)
+
+	music = AudioStreamPlayer.new()
+	music.stream = preload("res://test_beatmaps/1feab (Turn It Up - abcbadq)/song.ogg")
+	music.volume_db = -10
+
+	get_parent().add_child.call_deferred(music)
 
 func play(from_position: float = 0):
-	$Music.play(from_position)
+	music.play(from_position)
 
 func _physics_process(delta: float) -> void:
 	var leftJoystickPosition: Vector2 = leftHand.get_vector2("primary")
@@ -23,26 +32,26 @@ func _physics_process(delta: float) -> void:
 		progress_bar.value += + leftJoystickPosition.x * PLAYBACK_SCRUB_VELOCITY * delta;
 
 func _process(delta: float) -> void:
-	if $Music.stream_paused:
+	if music.stream_paused:
 		PlaybackManager.playback_position = get_playback_position()
 	else:
-		PlaybackManager.playback_position = $Music.get_playback_position() + AudioServer.get_time_since_last_mix()
-		
-	var music_stream: AudioStream = $Music.stream
+		PlaybackManager.playback_position = music.get_playback_position() + AudioServer.get_time_since_last_mix()
+
+	var music_stream: AudioStream = music.stream
 	
 	progress_bar.value = PlaybackManager.playback_position / music_stream.get_length()
 
 func _on_music_progress_bar_drag_started() -> void:
-	$Music.stream_paused = true
+	music.stream_paused = true
 
 func _on_music_progress_bar_drag_ended(value_changed: bool) -> void:
 	if !value_changed:
 		return
-	
-	$Music.play(get_playback_position())
+
+	music.play(get_playback_position())
 
 func get_playback_position() -> float:
-	var music_stream: AudioStream = $Music.stream
+	var music_stream: AudioStream = music.stream
 	return music_stream.get_length() * progress_bar.value
 
 
@@ -51,7 +60,7 @@ func _on_left_hand_input_vector_2_changed(name: String, value: Vector2) -> void:
 		return
 
 	if value.x != 0.0:
-		$Music.stream_paused = true
+		music.stream_paused = true
 	else:
 		# Snap to nearest beat based on BPM
 		var beatmap = BeatMapDifficultyInfo.new()
@@ -60,7 +69,7 @@ func _on_left_hand_input_vector_2_changed(name: String, value: Vector2) -> void:
 		var snapped_pos = round(playback_pos / beat_duration) * beat_duration
 
 		# Set progress bar to snapped position
-		var music_stream: AudioStream = $Music.stream
+		var music_stream: AudioStream = music.stream
 		progress_bar.value = snapped_pos / music_stream.get_length()
 
-		$Music.play(snapped_pos)
+		music.play(snapped_pos)
