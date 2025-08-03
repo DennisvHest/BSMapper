@@ -1,6 +1,7 @@
-[gd_scene load_steps=12 format=3 uid="uid://dujhi4qdtiee8"]
+[gd_scene load_steps=13 format=3 uid="uid://dujhi4qdtiee8"]
 
 [ext_resource type="Script" uid="uid://kmyet12v7cjt" path="res://main.gd" id="1_ig7tw"]
+[ext_resource type="PackedScene" path="res://addons/godot-xr-tools/misc/vr_common_shader_cache.tscn" id="2_5vw27"]
 [ext_resource type="PackedScene" uid="uid://dhng0rh22itx5" path="res://beat_saber/saber.tscn" id="2_h2yge"]
 [ext_resource type="PackedScene" uid="uid://bwh2pgll34g30" path="res://beat_saber/note_block_lane.tscn" id="3_h2yge"]
 [ext_resource type="PackedScene" uid="uid://cj4lx8kmvad2b" path="res://beat_saber/bomb.tscn" id="4_5vw27"]
@@ -28,6 +29,8 @@ beatmap_file_path = "res://test_beatmaps/1feab (Turn It Up - abcbadq)/ExpertStan
 
 [node name="XRCamera3D" type="XRCamera3D" parent="XROrigin3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.7, 0)
+
+[node name="VRCommonShaderCache" parent="XROrigin3D/XRCamera3D" instance=ExtResource("2_5vw27")]
 
 [node name="LeftHand" type="XRController3D" parent="XROrigin3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5, 1, -0.5)

@@ -22,6 +22,8 @@ GlobalSettings="*res://global_settings.gd"
 GameEvents="*res://game_events.gd"
 DebugMenu="*res://addons/debug_menu/debug_menu.tscn"
 PlaybackManager="*res://editor/playback_manager.gd"
+XRToolsUserSettings="*res://addons/godot-xr-tools/user_settings/user_settings.gd"
+XRToolsRumbleManager="*res://addons/godot-xr-tools/rumble/rumble_manager.gd"
 
 [display]
 
@@ -33,7 +35,11 @@ project/assembly_name="BSMapper"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/debug_menu/plugin.cfg")
+enabled=PackedStringArray("res://addons/debug_menu/plugin.cfg", "res://addons/godot-xr-tools/plugin.cfg")
+
+[filesystem]
+
+import/blender/enabled=false
 
 [physics]
 
