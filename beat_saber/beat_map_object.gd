@@ -19,6 +19,10 @@ var object_time: float
 
 var jump_animation_enabled: bool = true
 
+var despawned: bool:
+	get:
+		return process_mode == ProcessMode.PROCESS_MODE_DISABLED
+
 func _ready() -> void:
 	PlaybackManager.mode_changed.connect(_on_playback_mode_changed)
 
@@ -44,13 +48,26 @@ func _process(delta: float) -> void:
 
 func _on_playback_mode_changed() -> void:
 	# Jump animation should be disabled in editing mode, so that the note blocks don't jump around when editing
+	# Also respawn the object in edit mode, so hit blocks are visible again
 	if PlaybackManager.mode == PlaybackManager.EditMode.EDITING:
+		_spawn()
 		set_jump_animation_enabled(false)
 	else:
 		set_jump_animation_enabled(true)
 
 func set_jump_animation_enabled(enabled: bool) -> void:
 	jump_animation_enabled = enabled
+
+func _spawn() -> void:
+	set_deferred('process_mode', ProcessMode.PROCESS_MODE_INHERIT)
+	call_deferred('show')
+
+## Despawn the object, hiding it instead of freeing it, so that it can be reused later.
+## When going into editing mode, the objects are shown again.
+## In edit mode, the objects are not despawned, so that they can be edited.
+func _despawn() -> void:
+	hide()
+	set_deferred('process_mode', ProcessMode.PROCESS_MODE_DISABLED)
 
 func _get_jump_time() -> float:
 	return PlaybackManager.playback_position + map_info.reaction_time
