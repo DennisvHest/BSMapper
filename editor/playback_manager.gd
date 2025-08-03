@@ -15,6 +15,11 @@ enum EditMode { PLAYING, EDITING }
 var mode: EditMode = EditMode.PLAYING
 
 func _ready() -> void:
+	# TODO: remove this HACK: check the main node to see if we are running the application or just a scene
+	if not get_parent().has_node("Main"):
+		process_mode = ProcessMode.PROCESS_MODE_DISABLED
+		return
+
 	progress_bar = get_parent().get_node("Main/DebugUI/MusicProgressBar")
 	progress_bar.drag_started.connect(_on_music_progress_bar_drag_started)
 	progress_bar.drag_ended.connect(_on_music_progress_bar_drag_ended)

@@ -11,8 +11,11 @@ class_name NoteBlockLane
 # Width/height of the line in which the note block/bomb resides
 const BEATMAP_OBJECT_LINE_SIZE: float = 0.5
 
-const lane_width: float = BEATMAP_OBJECT_LINE_SIZE * 4
-const lane_height: float = BEATMAP_OBJECT_LINE_SIZE * 3
+const GRID_WIDTH: int = 4
+const GRID_HEIGHT: int = 3
+
+const LANE_WIDTH: float = BEATMAP_OBJECT_LINE_SIZE * GRID_WIDTH
+const LANE_HEIGHT: float = BEATMAP_OBJECT_LINE_SIZE * GRID_HEIGHT
 
 func _ready() -> void:
 	BeatMapManager.current_beatmap_changed.connect(_on_current_beatmap_changed)
@@ -63,7 +66,7 @@ func _get_beatmap_object_initial_position(beatmap_object: Variant, map_info: Bea
 	object_position += Vector3.UP * BEATMAP_OBJECT_LINE_SIZE * line_layer
 	
 	# Center the note block lane horizontally
-	object_position += Vector3.LEFT * lane_width / 2
+	object_position += Vector3.LEFT * LANE_WIDTH / 2
 	object_position += Vector3.RIGHT * BEATMAP_OBJECT_LINE_SIZE / 2
 	
 	# Move the note block lane up to the player height (the middle between the top and middle lane is at eye height)
