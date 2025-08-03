@@ -1,6 +1,17 @@
-extends Node3D
 
+extends Node3D
 class_name BeatmapObject
+
+func _ready() -> void:
+	if PlaybackManager.mode_changed:
+		PlaybackManager.mode_changed.connect(_on_playback_mode_changed)
+
+func _on_playback_mode_changed() -> void:
+	# Jump animation should be disabled in editing mode, so that the note blocks don't jump around when editing
+	if PlaybackManager.mode == PlaybackManager.EditMode.EDITING:
+		set_jump_animation_enabled(false)
+	else:
+		set_jump_animation_enabled(true)
 
 enum BeatmapObjectType { NOTE_BLOCK_LEFT = 0, NOTE_BLOCK_RIGHT = 1, BOMB = 3 }
 
