@@ -3,8 +3,7 @@ extends Node3D
 class_name BeatmapObject
 
 func _ready() -> void:
-	if PlaybackManager.mode_changed:
-		PlaybackManager.mode_changed.connect(_on_playback_mode_changed)
+	PlaybackManager.mode_changed.connect(_on_playback_mode_changed)
 
 func _on_playback_mode_changed() -> void:
 	# Jump animation should be disabled in editing mode, so that the note blocks don't jump around when editing
