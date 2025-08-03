@@ -23,6 +23,8 @@ func _ready() -> void:
 	
 	GameEvents.note_block_hit.connect(_on_note_block_hit)
 	GameEvents.bomb_hit.connect(_on_bomb_hit)
+
+	PlaybackManager.mode_changed.connect(_on_playback_mode_changed)
 	
 	BeatMapManager.load_beatmap(beatmap_file_path)
 	PlaybackManager.play.call_deferred()
@@ -32,6 +34,29 @@ func _on_right_hand_button_pressed(button_name: String) -> void:
 	
 	if button_name == "ax_button":
 		get_tree().reload_current_scene()
+
+func _on_playback_mode_changed():
+	var left_pointer: XRToolsFunctionPointer = $XROrigin3D/LeftHand/FunctionPointer
+	var right_pointer: XRToolsFunctionPointer = $XROrigin3D/RightHand/FunctionPointer
+	var left_saber: Saber = $XROrigin3D/LeftHand/Saber
+	var right_saber: Saber = $XROrigin3D/RightHand/Saber
+
+	if PlaybackManager.mode == PlaybackManager.EditMode.EDITING:
+		left_pointer.set_enabled(true)
+		right_pointer.set_enabled(true)
+		left_pointer.set_show_laser(XRToolsFunctionPointer.LaserShow.SHOW)
+		right_pointer.set_show_laser(XRToolsFunctionPointer.LaserShow.SHOW)
+
+		left_saber.hide()
+		right_saber.hide()
+	else:
+		left_pointer.set_enabled(false)
+		right_pointer.set_enabled(false)
+		left_pointer.set_show_laser(XRToolsFunctionPointer.LaserShow.HIDE)
+		right_pointer.set_show_laser(XRToolsFunctionPointer.LaserShow.HIDE)
+
+		left_saber.show()
+		right_saber.show()
 
 func _on_note_block_hit(saber_type):
 	$HitSound.play(0.15) #: Hit sounds are played at an offset, otherwise it feels like the sound plays before the block is even hit
