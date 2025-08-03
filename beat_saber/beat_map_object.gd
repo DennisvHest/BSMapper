@@ -1,16 +1,7 @@
 
 extends Node3D
+
 class_name BeatmapObject
-
-func _ready() -> void:
-	PlaybackManager.mode_changed.connect(_on_playback_mode_changed)
-
-func _on_playback_mode_changed() -> void:
-	# Jump animation should be disabled in editing mode, so that the note blocks don't jump around when editing
-	if PlaybackManager.mode == PlaybackManager.EditMode.EDITING:
-		set_jump_animation_enabled(false)
-	else:
-		set_jump_animation_enabled(true)
 
 enum BeatmapObjectType { NOTE_BLOCK_LEFT = 0, NOTE_BLOCK_RIGHT = 1, BOMB = 3 }
 
@@ -27,6 +18,9 @@ var initial_position: Vector3
 var object_time: float
 
 var jump_animation_enabled: bool = true
+
+func _ready() -> void:
+	PlaybackManager.mode_changed.connect(_on_playback_mode_changed)
 
 func initialize(_initial_position: Vector3, _map_info: BeatMapDifficultyInfo, _beatmap_object: Variant):
 	initial_position = _initial_position
@@ -47,6 +41,13 @@ func _process(delta: float) -> void:
 	else:
 		if visible:
 			hide()
+
+func _on_playback_mode_changed() -> void:
+	# Jump animation should be disabled in editing mode, so that the note blocks don't jump around when editing
+	if PlaybackManager.mode == PlaybackManager.EditMode.EDITING:
+		set_jump_animation_enabled(false)
+	else:
+		set_jump_animation_enabled(true)
 
 func set_jump_animation_enabled(enabled: bool) -> void:
 	jump_animation_enabled = enabled
