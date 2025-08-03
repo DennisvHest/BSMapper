@@ -9,3 +9,4 @@ script = ExtResource("1_p2bkp")
 note_block_scene = ExtResource("2_il36q")
 
 [node name="ObjectEditPlane" parent="." instance=ExtResource("3_3sbvc")]
+visible = false

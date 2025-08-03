@@ -4,6 +4,7 @@ extends Node3D
 
 func _ready() -> void:
     _spawn_grid_cells()
+    PlaybackManager.mode_changed.connect(_on_playback_mode_changed)
 
 func _spawn_grid_cells():
     for x in NoteBlockLane.GRID_WIDTH:
@@ -23,3 +24,9 @@ func _spawn_grid_cells():
             cell.position += Vector3.UP * NoteBlockLane.BEATMAP_OBJECT_LINE_SIZE / 2
 
             add_child(cell)
+
+func _on_playback_mode_changed() -> void:
+    if PlaybackManager.mode == PlaybackManager.EditMode.EDITING:
+        show()
+    else:
+        hide()
