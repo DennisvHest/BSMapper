@@ -3,6 +3,7 @@ extends Node3D
 @export var object_edit_plane_cell_scene: PackedScene
 
 func _ready() -> void:
+    _on_playback_mode_changed()
     _spawn_grid_cells()
     PlaybackManager.mode_changed.connect(_on_playback_mode_changed)
 
