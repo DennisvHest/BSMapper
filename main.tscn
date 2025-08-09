@@ -24,7 +24,6 @@ size = Vector3(3, 2, 1)
 
 [node name="Main" type="Node3D"]
 script = ExtResource("1_ig7tw")
-debug_without_vr = true
 beatmap_file_path = "res://test_beatmaps/1feab (Turn It Up - abcbadq)/ExpertStandard.dat"
 
 [node name="XROrigin3D" type="XROrigin3D" parent="."]
@@ -43,6 +42,9 @@ transform = Transform3D(1, 0, 0, 0, 0.707107, 0.707107, 0, -0.707107, 0.707107, 
 
 [node name="FunctionPointer" parent="XROrigin3D/LeftHand" instance=ExtResource("4_kek77")]
 show_laser = 0
+laser_length = 1
+collide_with_bodies = false
+collide_with_areas = true
 
 [node name="RightHand" type="XRController3D" parent="XROrigin3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 1, -0.5)
@@ -54,6 +56,9 @@ type = 1
 
 [node name="FunctionPointer" parent="XROrigin3D/RightHand" instance=ExtResource("4_kek77")]
 show_laser = 0
+laser_length = 1
+collide_with_bodies = false
+collide_with_areas = true
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 7, 0)

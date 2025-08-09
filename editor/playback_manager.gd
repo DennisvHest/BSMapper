@@ -6,7 +6,16 @@ var progress_bar: HSlider
 var leftHand: XRController3D
 var music: AudioStreamPlayer
 
+var beatmap = BeatMapDifficultyInfo.new()
+
 var playback_position: float = 0
+
+var playback_beat: float:
+	get:
+		if beatmap.bpm == 0:
+			return 0.0
+		
+		return playback_position / (60.0 / beatmap.bpm)
 
 const PLAYBACK_SCRUB_VELOCITY: float = 0.01
 
@@ -96,7 +105,6 @@ func _on_left_hand_input_vector_2_changed(name: String, value: Vector2) -> void:
 		pause()
 	else:
 		# Snap to nearest beat based on BPM
-		var beatmap = BeatMapDifficultyInfo.new()
 		var beat_duration = 60.0 / beatmap.bpm
 		var playback_pos = get_playback_position()
 		var snapped_pos = round(playback_pos / beat_duration) * beat_duration

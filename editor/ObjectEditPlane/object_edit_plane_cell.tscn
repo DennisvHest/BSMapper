@@ -1,4 +1,7 @@
-[gd_scene load_steps=4 format=3 uid="uid://22flelof1n0w"]
+[gd_scene load_steps=6 format=3 uid="uid://22flelof1n0w"]
+
+[ext_resource type="Script" uid="uid://bfonitwkp02np" path="res://editor/ObjectEditPlane/edit_area.gd" id="1_nhfvl"]
+[ext_resource type="Script" uid="uid://d0ujeneeokonh" path="res://editor/ObjectEditPlane/object_edit_plane_cell.gd" id="1_tdoa1"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_aambp"]
 transparency = 1
@@ -13,11 +16,17 @@ size = Vector3(1, 0.1, 1)
 
 [node name="ObjectEditPlaneCell" type="Node3D"]
 transform = Transform3D(0.5, 0, 0, 0, -2.18557e-08, -0.5, 0, 0.5, -2.18557e-08, 0, 0, 0)
+script = ExtResource("1_tdoa1")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
 mesh = SubResource("BoxMesh_nhfvl")
 
-[node name="Area3D" type="Area3D" parent="."]
+[node name="EditArea" type="Area3D" parent="."]
+collision_layer = 1048576
+collision_mask = 0
+script = ExtResource("1_nhfvl")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="EditArea"]
 shape = SubResource("BoxShape3D_tdoa1")
+
+[connection signal="pointer_event" from="EditArea" to="." method="_on_edit_area_pointer_event"]

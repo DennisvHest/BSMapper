@@ -22,6 +22,8 @@ func _ready() -> void:
 
 
 func _on_current_beatmap_changed(current_beatmap: Variant):
+	clear_objects()
+
 	var map_info = BeatMapDifficultyInfo.new()
 	
 	for beatmap_object in current_beatmap._notes:
@@ -74,3 +76,8 @@ func _get_beatmap_object_initial_position(beatmap_object: Variant, map_info: Bea
 	object_position += Vector3.UP * BEATMAP_OBJECT_LINE_SIZE / 2
 	
 	return object_position
+
+func clear_objects() -> void:
+	for child in get_children():
+		if child is BeatmapObject:
+			child.queue_free()

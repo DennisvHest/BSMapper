@@ -15,4 +15,8 @@ func load_beatmap(file_path: String) -> void:
 	
 	current_beatmap = json.data
 	
+	change_beatmap(current_beatmap)
+
+func change_beatmap(beatmap: Variant) -> void:
+	current_beatmap = beatmap
 	current_beatmap_changed.emit(current_beatmap)
