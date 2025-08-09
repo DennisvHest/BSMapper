@@ -8,8 +8,10 @@ var music: AudioStreamPlayer
 
 var beatmap = BeatMapDifficultyInfo.new()
 
+## The current playback position of the song in seconds
 var playback_position: float = 0
 
+## The current playback beat of the song
 var playback_beat: float:
 	get:
 		if beatmap.bpm == 0:
