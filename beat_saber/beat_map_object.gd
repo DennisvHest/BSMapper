@@ -24,6 +24,7 @@ var despawned: bool:
 		return process_mode == ProcessMode.PROCESS_MODE_DISABLED
 
 func _ready() -> void:
+	_on_playback_mode_changed()
 	PlaybackManager.mode_changed.connect(_on_playback_mode_changed)
 
 func initialize(_initial_position: Vector3, _map_info: BeatMapDifficultyInfo, _beatmap_object: Variant):
