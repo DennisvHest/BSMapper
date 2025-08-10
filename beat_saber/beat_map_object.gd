@@ -13,7 +13,7 @@ const SNAP_IN_ANIMATION_DISTANCE := 65
 
 var map_info: BeatMapDifficultyInfo
 
-var beatmap_object: Variant
+var beatmap_object: BeatMapObjectBase
 var initial_position: Vector3
 var object_time: float
 
@@ -27,13 +27,13 @@ func _ready() -> void:
 	_on_playback_mode_changed()
 	PlaybackManager.mode_changed.connect(_on_playback_mode_changed)
 
-func initialize(_initial_position: Vector3, _map_info: BeatMapDifficultyInfo, _beatmap_object: Variant):
+func initialize(_initial_position: Vector3, _map_info: BeatMapDifficultyInfo, _beatmap_object: BeatMapObjectBase):
 	initial_position = _initial_position
 	position = initial_position
 	map_info = _map_info
 	beatmap_object = _beatmap_object
 	
-	object_time = beatmap_object._time / map_info.bpm * 60
+	object_time = beatmap_object.beat / map_info.bpm * 60
 
 func _process(delta: float) -> void:
 	var jump_time = _get_jump_time()

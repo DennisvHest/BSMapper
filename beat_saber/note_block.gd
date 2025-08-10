@@ -5,46 +5,43 @@ class_name NoteBlock
 ## Note block rotates to correct cut direction during jump animation. Sets time (in seconds) of animation.
 const ROTATION_ANIMATION_TIME := 0.2
 
-var type: BeatmapObjectType
 var block_rotation: float = 0
 
 func _ready() -> void:
 	super._ready()
 	visibility_changed.connect(_on_visibility_changed)
 
-func initialize(_initial_position: Vector3, _map_info: BeatMapDifficultyInfo, _note_block: Variant):
+func initialize_note(_initial_position: Vector3, _map_info: BeatMapDifficultyInfo, _note_block: BeatMapNote):
 	super.initialize(_initial_position, _map_info, _note_block)
 	
 	set_note_block_color(_note_block)
 	set_cut_direction(_note_block)
 
-func set_cut_direction(note_block: Variant):	
-	match note_block._cutDirection:
-		0.0: block_rotation = 180
-		2.0: block_rotation = -90
-		3.0: block_rotation = 90
-		4.0: block_rotation = -135
-		5.0: block_rotation = 135
-		6.0: block_rotation = -45
-		7.0: block_rotation = 45
-	
+func set_cut_direction(note_block: BeatMapNote):
+	match note_block.cut_direction:
+		BeatMapNote.CutDirection.UP: block_rotation = 180
+		BeatMapNote.CutDirection.LEFT: block_rotation = -90
+		BeatMapNote.CutDirection.RIGHT: block_rotation = 90
+		BeatMapNote.CutDirection.UP_LEFT: block_rotation = -135
+		BeatMapNote.CutDirection.UP_RIGHT: block_rotation = 135
+		BeatMapNote.CutDirection.DOWN_LEFT: block_rotation = -45
+		BeatMapNote.CutDirection.DOWN_RIGHT: block_rotation = 45
+
 	rotation.z = deg_to_rad(block_rotation)
-	
-	if note_block._cutDirection == 8.0:
+
+	if note_block.cut_direction == BeatMapNote.CutDirection.ANY:
 		$Visual/CutDirectionTriangle.visible = false
 		$Visual/AnyCutDirectionCircle.visible = true
 	else:
 		$Visual/CutDirectionTriangle.visible = true
 		$Visual/AnyCutDirectionCircle.visible = false
 
-func set_note_block_color(note_block: Variant):
+func set_note_block_color(note_block: BeatMapNote):
 	var material: StandardMaterial3D = $Visual/MeshInstance3D.get_active_material(0)
-	
-	if note_block._type == BeatmapObjectType.NOTE_BLOCK_LEFT:
-		type = BeatmapObjectType.NOTE_BLOCK_LEFT
+
+	if note_block.type == BeatMapNote.NoteBlockType.LEFT:
 		material.albedo_color = Color.RED
-	elif note_block._type == BeatmapObjectType.NOTE_BLOCK_RIGHT:
-		type = BeatmapObjectType.NOTE_BLOCK_RIGHT
+	elif note_block.type == BeatMapNote.NoteBlockType.RIGHT:
 		material.albedo_color = Color.BLUE
 
 func _process(delta: float) -> void:

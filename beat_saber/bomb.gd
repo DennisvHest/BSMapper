@@ -6,7 +6,7 @@ func _ready() -> void:
 	super._ready()
 	visibility_changed.connect(_on_visibility_changed)
 
-func initialize(_initial_position: Vector3, _map_info: BeatMapDifficultyInfo, _bomb: Variant):
+func initialize_bomb(_initial_position: Vector3, _map_info: BeatMapDifficultyInfo, _bomb: BeatMapBomb):
 	super.initialize(_initial_position, _map_info, _bomb)
 
 func _process(delta: float) -> void:

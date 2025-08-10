@@ -5,7 +5,7 @@ class_name ObjectEditPlaneCell
 var line_index: int = 1
 var line_layer: int = 2
 
-var current_beatmap: Variant
+var current_beatmap: BeatMap
 
 func initialize(p_line_index: int, p_line_layer: int) -> void:
     line_index = p_line_index
@@ -19,17 +19,15 @@ func _on_edit_area_pointer_event(event: XRToolsPointerEvent) -> void:
         return
     
     # Pointer has clicked on the edit area. Add a note block at this position.
-    var beatmap_object = {
-        "_type": BeatmapObject.BeatmapObjectType.NOTE_BLOCK_RIGHT,
-        "_time": PlaybackManager.playback_beat,
-        "_lineIndex": line_index,
-        "_lineLayer": line_layer,
-        "_cutDirection": 1,
-    }
+    var beatmap_object: BeatMapNote = BeatMapNote.new()
+    beatmap_object.beat = PlaybackManager.playback_beat
+    beatmap_object.line_index = line_index
+    beatmap_object.line_layer = line_layer
+    beatmap_object.cut_direction = BeatMapNote.CutDirection.DOWN
 
     if current_beatmap != null:
-        current_beatmap._notes.append(beatmap_object)
+        current_beatmap.notes.append(beatmap_object)
         BeatMapManager.change_beatmap(current_beatmap)
 
-func _on_beatmap_changed(beatmap: Variant) -> void:
+func _on_beatmap_changed(beatmap: BeatMap) -> void:
     current_beatmap = beatmap

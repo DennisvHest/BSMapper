@@ -21,47 +21,47 @@ func _ready() -> void:
 	BeatMapManager.current_beatmap_changed.connect(_on_current_beatmap_changed)
 
 
-func _on_current_beatmap_changed(current_beatmap: Variant):
+func _on_current_beatmap_changed(current_beatmap: BeatMap) -> void:
 	clear_objects()
 
 	var map_info = BeatMapDifficultyInfo.new()
 	
-	for beatmap_object in current_beatmap._notes:
-		var object_position = _get_beatmap_object_initial_position(beatmap_object, map_info)
-		
-		var beatmap_object_node: Node3D
-		
-		if beatmap_object._type == BeatmapObject.BeatmapObjectType.BOMB:
-			var bomb_node: Bomb = bomb_scene.instantiate()
-			bomb_node.initialize(object_position, map_info, beatmap_object)
-			beatmap_object_node = bomb_node
-		else:
-			var note_block_node: NoteBlock = note_block_scene.instantiate()
-			note_block_node.initialize(object_position, map_info, beatmap_object)
-			beatmap_object_node = note_block_node
-		
-		add_child(beatmap_object_node)
-		
-	for wall in current_beatmap._obstacles:
+	for note in current_beatmap.notes:
+		var object_position = _get_beatmap_object_initial_position(note, map_info)
+
+		var note_block_node: NoteBlock = note_block_scene.instantiate()
+		note_block_node.initialize_note(object_position, map_info, note)
+
+		add_child(note_block_node)
+	
+	for bomb in current_beatmap.bombs:
+		var object_position = _get_beatmap_object_initial_position(bomb, map_info)
+
+		var bomb_node: Bomb = bomb_scene.instantiate()
+		bomb_node.initialize(object_position, map_info, bomb)
+
+		add_child(bomb_node)
+	
+	for wall in current_beatmap.walls:
 		var wall_position = _get_beatmap_object_initial_position(wall, map_info)
 		
 		var wall_node: Wall = wall_scene.instantiate()
-		wall_node.initialize(wall_position, map_info, wall)
+		wall_node.initialize_wall(wall_position, map_info, wall)
 		
 		add_child(wall_node)
 
-func _get_beatmap_object_initial_position(beatmap_object: Variant, map_info: BeatMapDifficultyInfo) -> Vector3:
+func _get_beatmap_object_initial_position(beatmap_object: BeatMapObjectBase, map_info: BeatMapDifficultyInfo) -> Vector3:
 	# How far in time (seconds) the object should be positioned initially using the BPM
-	var hit_time: float = beatmap_object._time * 60 / map_info.bpm
+	var hit_time: float = beatmap_object.beat * 60 / map_info.bpm
 	# Position the object (in meters) from the origin position of the note block lane -> forward direction -> using the speed of the note block
 	var object_position: Vector3 = position + Vector3.FORWARD * map_info.njs * hit_time
 	
 	# Position object along the line index (horizontal) and line layer (vertical)
-	object_position += Vector3.RIGHT * BEATMAP_OBJECT_LINE_SIZE * beatmap_object._lineIndex
+	object_position += Vector3.RIGHT * BEATMAP_OBJECT_LINE_SIZE * beatmap_object.line_index
 	
 	var line_layer: int
-	if "_lineLayer"  in beatmap_object:
-		line_layer = beatmap_object._lineLayer
+	if "line_layer"  in beatmap_object:
+		line_layer = beatmap_object.line_layer
 	else:
 		line_layer = 0
 	

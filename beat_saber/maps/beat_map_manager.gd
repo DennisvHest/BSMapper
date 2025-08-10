@@ -1,8 +1,8 @@
 extends Node
 
-signal current_beatmap_changed(beatmap: Variant)
+signal current_beatmap_changed(beatmap: BeatMap)
 
-var current_beatmap: Variant
+var current_beatmap: BeatMap
 
 func load_beatmap(file_path: String) -> void:
 	var beatmap_file = FileAccess.open(file_path, FileAccess.READ)
@@ -12,11 +12,9 @@ func load_beatmap(file_path: String) -> void:
 	var result = json.parse(beatmap_json)
 	
 	assert(result == OK, "JSON Parse Error: %s in %s at line %s" % [json.get_error_message(), file_path, json.get_error_line()])
-	
-	current_beatmap = json.data
-	
-	change_beatmap(current_beatmap)
 
-func change_beatmap(beatmap: Variant) -> void:
+	change_beatmap(BeatMap.new(json.data))
+
+func change_beatmap(beatmap: BeatMap) -> void:
 	current_beatmap = beatmap
 	current_beatmap_changed.emit(current_beatmap)
