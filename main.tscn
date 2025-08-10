@@ -11,6 +11,10 @@
 [ext_resource type="AudioStream" uid="uid://db4a55dhoebuh" path="res://sounds/bad_cut.wav" id="8_5vw27"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_ig7tw"]
+sky_top_color = Color(0.074531, 0.0980774, 0.130821, 1)
+sky_horizon_color = Color(0.0389475, 0.0571426, 0.0867128, 1)
+ground_bottom_color = Color(0.0141781, 0.0177962, 0.0269959, 1)
+ground_horizon_color = Color(0.0392157, 0.0588235, 0.0862745, 1)
 
 [sub_resource type="Sky" id="Sky_ig7tw"]
 sky_material = SubResource("ProceduralSkyMaterial_ig7tw")
@@ -18,6 +22,9 @@ sky_material = SubResource("ProceduralSkyMaterial_ig7tw")
 [sub_resource type="Environment" id="Environment_ig7tw"]
 background_mode = 2
 sky = SubResource("Sky_ig7tw")
+ambient_light_source = 2
+ambient_light_color = Color(1, 1, 1, 1)
+ambient_light_energy = 0.1
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_lquwl"]
 size = Vector3(3, 2, 1)
@@ -62,6 +69,8 @@ collide_with_areas = true
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 7, 0)
+light_color = Color(0.774846, 0.804728, 0.879738, 1)
+light_energy = 0.8
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_ig7tw")
