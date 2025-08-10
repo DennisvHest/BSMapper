@@ -42,6 +42,9 @@ func _on_playback_mode_changed():
 	var right_saber: Saber = $XROrigin3D/RightHand/Saber
 
 	if PlaybackManager.mode == PlaybackManager.EditMode.EDITING:
+		# Move player back so the edit plane is in front of them
+		$XROrigin3D.position.z = 2
+
 		left_pointer.set_enabled(true)
 		right_pointer.set_enabled(true)
 		left_pointer.set_show_laser(XRToolsFunctionPointer.LaserShow.SHOW)
@@ -50,6 +53,9 @@ func _on_playback_mode_changed():
 		left_saber.hide()
 		right_saber.hide()
 	else:
+		# Move player back to the origin
+		$XROrigin3D.position.z = 0
+
 		left_pointer.set_enabled(false)
 		right_pointer.set_enabled(false)
 		left_pointer.set_show_laser(XRToolsFunctionPointer.LaserShow.HIDE)
