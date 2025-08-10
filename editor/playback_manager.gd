@@ -4,6 +4,7 @@ signal mode_changed
 
 var progress_bar: HSlider
 var leftHand: XRController3D
+var rightHand: XRController3D
 var music: AudioStreamPlayer
 
 var beatmap = BeatMapDifficultyInfo.new()
@@ -38,6 +39,9 @@ func _ready() -> void:
 	leftHand = get_parent().get_node("Main/XROrigin3D/LeftHand")
 	leftHand.input_vector2_changed.connect(_on_left_hand_input_vector_2_changed)
 	leftHand.button_pressed.connect(_on_left_hand_button_pressed)
+
+	rightHand = get_parent().get_node("Main/XROrigin3D/RightHand")
+	rightHand.button_pressed.connect(_on_right_hand_button_pressed)
 
 	music = AudioStreamPlayer.new()
 	music.stream = preload("res://test_beatmaps/1feab (Turn It Up - abcbadq)/song.ogg")
@@ -83,6 +87,11 @@ func get_playback_position() -> float:
 	var music_stream: AudioStream = music.stream
 	return music_stream.get_length() * progress_bar.value
 
+func set_playback_position(position: float) -> void:
+	var music_stream: AudioStream = music.stream
+	progress_bar.value = position / music_stream.get_length()
+	play(position)
+
 func change_mode(new_mode: EditMode) -> void:
 	if mode == new_mode:
 		return
@@ -93,6 +102,7 @@ func change_mode(new_mode: EditMode) -> void:
 		play(get_playback_position())
 		print("Playback started")
 	else:
+		_snap_to_nearest_beat()
 		pause()
 		print("Playback paused")
 
@@ -106,21 +116,29 @@ func _on_left_hand_input_vector_2_changed(name: String, value: Vector2) -> void:
 	if value.x != 0.0:
 		pause()
 	else:
-		# Snap to nearest beat based on BPM
-		var beat_duration = 60.0 / beatmap.bpm
-		var playback_pos = get_playback_position()
-		var snapped_pos = round(playback_pos / beat_duration) * beat_duration
-
-		# Set progress bar to snapped position
-		var music_stream: AudioStream = music.stream
-		progress_bar.value = snapped_pos / music_stream.get_length()
-
-		play(snapped_pos)
+		_snap_to_nearest_beat()
 
 func _on_left_hand_button_pressed(button_name: String) -> void:
-	print("Left hand button pressed %s" % button_name)
+	# Toggle edit mode
 	if button_name == "ax_button":
 		if mode == EditMode.EDITING:
 			change_mode(EditMode.PLAYING)
 		else:
 			change_mode(EditMode.EDITING)
+
+	# Seek backward by one beat
+	if button_name == "grip_click":
+		var playback_pos = get_playback_position()
+		set_playback_position(playback_pos - beatmap.beat_duration)
+
+func _on_right_hand_button_pressed(button_name: String) -> void:
+	# Seek forward by one beat
+	if button_name == "grip_click":
+		var playback_pos = get_playback_position()
+		set_playback_position(playback_pos + beatmap.beat_duration)
+
+## # Snap to nearest beat based on BPM
+func _snap_to_nearest_beat() -> void:
+	var playback_pos = get_playback_position()
+	var snapped_pos = round(playback_pos / beatmap.beat_duration) * beatmap.beat_duration
+	set_playback_position(snapped_pos)

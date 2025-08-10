@@ -43,6 +43,14 @@ var half_jump_distance_meters: float:
 		half_jump_distance_meters = value
 		reaction_time = half_jump_distance_meters / njs
 
+## Duration of a beat (in seconds)
+var beat_duration: float:
+	get:
+		if bpm == 0:
+			return 0.0
+
+		return 60.0 / bpm
+
 ## Time from when the note jumps up to when the player is supposed to hit it (in seconds)
 var reaction_time: float
 
