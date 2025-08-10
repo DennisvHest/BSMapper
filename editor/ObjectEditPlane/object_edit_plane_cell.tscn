@@ -1,11 +1,12 @@
-[gd_scene load_steps=6 format=3 uid="uid://22flelof1n0w"]
+[gd_scene load_steps=7 format=3 uid="uid://22flelof1n0w"]
 
 [ext_resource type="Script" uid="uid://bfonitwkp02np" path="res://editor/ObjectEditPlane/edit_area.gd" id="1_nhfvl"]
 [ext_resource type="Script" uid="uid://d0ujeneeokonh" path="res://editor/ObjectEditPlane/object_edit_plane_cell.gd" id="1_tdoa1"]
+[ext_resource type="Texture2D" uid="uid://bgqggvg2u3lce" path="res://textures/editor_grid_cell_border.png" id="2_7sbua"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_aambp"]
 transparency = 1
-albedo_color = Color(1, 0, 1, 0.196078)
+albedo_color = Color(1, 1, 1, 0.0784314)
 
 [sub_resource type="BoxMesh" id="BoxMesh_nhfvl"]
 material = SubResource("StandardMaterial3D_aambp")
@@ -20,6 +21,11 @@ script = ExtResource("1_tdoa1")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
 mesh = SubResource("BoxMesh_nhfvl")
+
+[node name="Sprite3D" type="Sprite3D" parent="MeshInstance3D"]
+transform = Transform3D(0.196, 0, 0, 0, -8.56743e-09, -0.196, 0, 0.196, -8.56743e-09, 0, 0.05, 0)
+modulate = Color(1, 1, 1, 0.117647)
+texture = ExtResource("2_7sbua")
 
 [node name="EditArea" type="Area3D" parent="."]
 collision_layer = 1048576
