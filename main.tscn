@@ -120,7 +120,7 @@ grow_vertical = 0
 max_value = 1.0
 step = 0.0
 
-[node name="Sprite3D" type="Sprite3D" parent="."]
+[node name="Floor" type="Sprite3D" parent="."]
 transform = Transform3D(0.5, 0, 0, 0, -2.18557e-08, -0.5, 0, 0.5, -2.18557e-08, 0, 0, 0)
 modulate = Color(0.46, 0.46, 0.46, 0.0392157)
 texture = ExtResource("10_4c57u")
