@@ -25,30 +25,15 @@ func _on_current_beatmap_changed(current_beatmap: BeatMap) -> void:
 	clear_objects()
 
 	var map_info = BeatMapDifficultyInfo.new()
-	
+
 	for note in current_beatmap.notes:
-		var object_position = _get_beatmap_object_initial_position(note, map_info)
-
-		var note_block_node: NoteBlock = note_block_scene.instantiate()
-		note_block_node.initialize_note(object_position, map_info, note)
-
-		add_child(note_block_node)
-	
+		add_note_block(note, map_info)
 	for bomb in current_beatmap.bombs:
-		var object_position = _get_beatmap_object_initial_position(bomb, map_info)
-
-		var bomb_node: Bomb = bomb_scene.instantiate()
-		bomb_node.initialize(object_position, map_info, bomb)
-
-		add_child(bomb_node)
-	
+		add_bomb(bomb, map_info)
 	for wall in current_beatmap.walls:
-		var wall_position = _get_beatmap_object_initial_position(wall, map_info)
-		
-		var wall_node: Wall = wall_scene.instantiate()
-		wall_node.initialize_wall(wall_position, map_info, wall)
-		
-		add_child(wall_node)
+		add_wall(wall, map_info)
+	
+	current_beatmap.object_added.connect(on_object_added)
 
 func _get_beatmap_object_initial_position(beatmap_object: BeatMapObjectBase, map_info: BeatMapDifficultyInfo) -> Vector3:
 	# How far in time (seconds) the object should be positioned initially using the BPM
@@ -81,3 +66,38 @@ func clear_objects() -> void:
 	for child in get_children():
 		if child is BeatmapObject:
 			child.queue_free()
+
+func on_object_added(beatmap_object: BeatMapObjectBase) -> void:
+	var map_info = BeatMapDifficultyInfo.new()
+	if beatmap_object is BeatMapNote:
+		add_note_block(beatmap_object, map_info)
+	elif beatmap_object is BeatMapBomb:
+		add_bomb(beatmap_object, map_info)
+	elif beatmap_object is BeatMapWall:
+		add_wall(beatmap_object, map_info)
+	else:
+		assert(false, "Unknown beatmap object type")
+
+func add_note_block(note: BeatMapNote, map_info: BeatMapDifficultyInfo) -> void:
+	var object_position = _get_beatmap_object_initial_position(note, map_info)
+
+	var note_block_node: NoteBlock = note_block_scene.instantiate()
+	note_block_node.initialize_note(object_position, map_info, note)
+
+	add_child(note_block_node)
+
+func add_bomb(bomb: BeatMapBomb, map_info: BeatMapDifficultyInfo) -> void:
+	var object_position = _get_beatmap_object_initial_position(bomb, map_info)
+
+	var bomb_node: Bomb = bomb_scene.instantiate()
+	bomb_node.initialize(object_position, map_info, bomb)
+
+	add_child(bomb_node)
+
+func add_wall(wall: BeatMapWall, map_info: BeatMapDifficultyInfo) -> void:
+	var wall_position = _get_beatmap_object_initial_position(wall, map_info)
+
+	var wall_node: Wall = wall_scene.instantiate()
+	wall_node.initialize_wall(wall_position, map_info, wall)
+
+	add_child(wall_node)

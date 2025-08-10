@@ -19,15 +19,14 @@ func _on_edit_area_pointer_event(event: XRToolsPointerEvent) -> void:
         return
     
     # Pointer has clicked on the edit area. Add a note block at this position.
-    var beatmap_object: BeatMapNote = BeatMapNote.new()
-    beatmap_object.beat = PlaybackManager.playback_beat
-    beatmap_object.line_index = line_index
-    beatmap_object.line_layer = line_layer
-    beatmap_object.cut_direction = BeatMapNote.CutDirection.DOWN
+    var new_note: BeatMapNote = BeatMapNote.new()
+    new_note.beat = PlaybackManager.playback_beat
+    new_note.line_index = line_index
+    new_note.line_layer = line_layer
+    new_note.cut_direction = BeatMapNote.CutDirection.DOWN
 
     if current_beatmap != null:
-        current_beatmap.notes.append(beatmap_object)
-        BeatMapManager.change_beatmap(current_beatmap)
+        current_beatmap.add_object(new_note)
 
 func _on_beatmap_changed(beatmap: BeatMap) -> void:
     current_beatmap = beatmap

@@ -1,5 +1,7 @@
 class_name BeatMap
 
+signal object_added(object: BeatMapObjectBase)
+
 var notes: Array[BeatMapNote] = []
 var bombs: Array[BeatMapBomb] = []
 var walls: Array[BeatMapWall] = []
@@ -15,3 +17,15 @@ func _init(map: Variant) -> void:
 
     for wall in map._obstacles:
         walls.append(BeatMapWall.from_v2_object(wall))
+
+func add_object(object: BeatMapObjectBase) -> void:
+    if object is BeatMapNote:
+        notes.append(object)
+    elif object is BeatMapBomb:
+        bombs.append(object)
+    elif object is BeatMapWall:
+        walls.append(object)
+    else:
+        assert(false, "Unknown beatmap object type")
+
+    object_added.emit(object)
