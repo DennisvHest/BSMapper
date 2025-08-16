@@ -16,8 +16,6 @@ enum CutDirection {
 	ANY = 8
 }
 
-var original_object: Variant
-
 var line_index: int
 var line_layer: int
 var type: NoteBlockType
@@ -34,3 +32,11 @@ static func from_v2_object(original: Variant) -> BeatMapNote:
 	note.cut_direction = CutDirection.values()[int(original._cutDirection)]
 
 	return note
+
+func save_v2_object() -> void:
+	super.save_v2_object()
+
+	original_object._type = type
+	original_object._cutDirection = cut_direction
+	original_object._lineIndex = line_index
+	original_object._lineLayer = line_layer

@@ -11,8 +11,6 @@ enum WallType {
 const FULL_WALL_HEIGHT: float = 5.0
 const CROUCH_WALL_HEIGHT: float = 3.0
 
-var original_object: Variant
-
 var line_index: int
 var line_layer: int
 var type: WallType
@@ -41,3 +39,11 @@ static func from_v2_object(original: Variant) -> BeatMapWall:
 			wall.height = original.has("_height") and original._height or 0
 
 	return wall
+
+func save_v2_object() -> void:
+	super.save_v2_object()
+
+	original_object._type = type
+	original_object._duration = duration
+	original_object._lineIndex = line_index
+	original_object._width = width

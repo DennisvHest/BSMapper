@@ -33,7 +33,7 @@ func _on_right_hand_button_pressed(button_name: String) -> void:
 	print("Right hand button pressed %s" % button_name)
 	
 	if button_name == "ax_button":
-		get_tree().reload_current_scene()
+		BeatMapManager.save_beatmap()
 
 func _on_playback_mode_changed():
 	var left_pointer: XRToolsFunctionPointer = $XROrigin3D/LeftHand/FunctionPointer
