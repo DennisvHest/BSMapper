@@ -1,5 +1,7 @@
 class_name BeatMapInfo
 
+var file_path: String
+
 var song_name: String
 var song_sub_name: String
 var song_author_name: String
@@ -8,8 +10,10 @@ var bpm: float
 
 var difficulty_beat_map_sets: Array[BeatMapDifficultySet] = []
 
-func _init(original: Variant) -> void:
+func _init(original: Variant, _file_path: String) -> void:
     assert(str(original._version).begins_with("2"), "Map version is not supported")
+
+    file_path = _file_path
 
     song_name = original._songName
     song_sub_name = original._songSubName

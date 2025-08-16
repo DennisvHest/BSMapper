@@ -7,7 +7,7 @@ var leftHand: XRController3D
 var rightHand: XRController3D
 var music: AudioStreamPlayer
 
-var beatmap = BeatMapDifficultyInfo.new()
+var beatmap: BeatMapDifficultyInfo
 
 ## The current playback position of the song in seconds
 var playback_position: float = 0
@@ -32,6 +32,8 @@ func _ready() -> void:
 		process_mode = ProcessMode.PROCESS_MODE_DISABLED
 		return
 
+	BeatMapManager.current_beatmap_difficulty_info_changed.connect(_on_current_beatmap_difficulty_info_changed)
+
 	progress_bar = get_parent().get_node("Main/DebugUI/MusicProgressBar")
 	progress_bar.drag_started.connect(_on_music_progress_bar_drag_started)
 	progress_bar.drag_ended.connect(_on_music_progress_bar_drag_ended)
@@ -48,6 +50,9 @@ func _ready() -> void:
 	music.volume_db = -10
 
 	get_parent().add_child.call_deferred(music)
+
+func _on_current_beatmap_difficulty_info_changed(new_beatmap: BeatMapDifficultyInfo) -> void:
+	beatmap = new_beatmap
 
 func play(from_position: float = 0):
 	playback_position = from_position

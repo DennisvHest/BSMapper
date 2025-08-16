@@ -4,6 +4,7 @@ signal current_beatmap_info_changed(beatmap_info: BeatMapInfo)
 signal current_beatmap_difficulty_info_changed(difficulty: BeatMapDifficultyInfo)
 signal current_beatmap_changed(beatmap: BeatMap)
 
+var current_beatmap_info: BeatMapInfo
 var current_beatmap_file_path: String
 var current_beatmap: BeatMap
 
@@ -15,15 +16,17 @@ func load_beatmap_info(file_path: String) -> BeatMapInfo:
 	
 	assert(result == OK, "JSON Parse Error: %s in %s at line %s" % [json.get_error_message(), file_path, json.get_error_line()])
 
-	var beatmap_info = BeatMapInfo.new(json.data)
-	current_beatmap_info_changed.emit(beatmap_info)
+	current_beatmap_info = BeatMapInfo.new(json.data, file_path)
+	current_beatmap_info_changed.emit(current_beatmap_info)
 
-	return beatmap_info
+	return current_beatmap_info
 
 func load_difficulty(difficulty: BeatMapDifficultyInfo) -> void:
 	current_beatmap_difficulty_info_changed.emit(difficulty)
+	var difficulty_file_path = current_beatmap_info.file_path.get_base_dir() + "/" + difficulty.beat_map_file_name
+	_load_beatmap(difficulty_file_path)
 
-func load_beatmap(file_path: String) -> void:
+func _load_beatmap(file_path: String) -> void:
 	var beatmap_json = FileAccess.get_file_as_string(file_path)
 	
 	var json: JSON = JSON.new()
