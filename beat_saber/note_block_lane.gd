@@ -17,22 +17,25 @@ const GRID_HEIGHT: int = 3
 const LANE_WIDTH: float = BEATMAP_OBJECT_LINE_SIZE * GRID_WIDTH
 const LANE_HEIGHT: float = BEATMAP_OBJECT_LINE_SIZE * GRID_HEIGHT
 
+var difficulty_info: BeatMapDifficultyInfo
+
 func _ready() -> void:
+	BeatMapManager.current_beatmap_difficulty_info_changed.connect(_on_current_beatmap_difficulty_info_changed)
 	BeatMapManager.current_beatmap_changed.connect(_on_current_beatmap_changed)
 
+func _on_current_beatmap_difficulty_info_changed(difficulty: BeatMapDifficultyInfo) -> void:
+	difficulty_info = difficulty
 
 func _on_current_beatmap_changed(current_beatmap: BeatMap) -> void:
 	clear_objects()
 
-	var map_info = BeatMapDifficultyInfo.new()
-
 	for note in current_beatmap.notes:
-		add_note_block(note, map_info)
+		add_note_block(note)
 	for bomb in current_beatmap.bombs:
-		add_bomb(bomb, map_info)
+		add_bomb(bomb)
 	for wall in current_beatmap.walls:
-		add_wall(wall, map_info)
-	
+		add_wall(wall)
+
 	current_beatmap.object_added.connect(on_object_added)
 
 func _get_beatmap_object_initial_position(beatmap_object: BeatMapObjectBase, map_info: BeatMapDifficultyInfo) -> Vector3:
@@ -68,36 +71,35 @@ func clear_objects() -> void:
 			child.queue_free()
 
 func on_object_added(beatmap_object: BeatMapObjectBase) -> void:
-	var map_info = BeatMapDifficultyInfo.new()
 	if beatmap_object is BeatMapNote:
-		add_note_block(beatmap_object, map_info)
+		add_note_block(beatmap_object)
 	elif beatmap_object is BeatMapBomb:
-		add_bomb(beatmap_object, map_info)
+		add_bomb(beatmap_object)
 	elif beatmap_object is BeatMapWall:
-		add_wall(beatmap_object, map_info)
+		add_wall(beatmap_object)
 	else:
 		assert(false, "Unknown beatmap object type")
 
-func add_note_block(note: BeatMapNote, map_info: BeatMapDifficultyInfo) -> void:
-	var object_position = _get_beatmap_object_initial_position(note, map_info)
+func add_note_block(note: BeatMapNote) -> void:
+	var object_position = _get_beatmap_object_initial_position(note, difficulty_info)
 
 	var note_block_node: NoteBlock = note_block_scene.instantiate()
-	note_block_node.initialize_note(object_position, map_info, note)
+	note_block_node.initialize_note(object_position, difficulty_info, note)
 
 	add_child(note_block_node)
 
-func add_bomb(bomb: BeatMapBomb, map_info: BeatMapDifficultyInfo) -> void:
-	var object_position = _get_beatmap_object_initial_position(bomb, map_info)
+func add_bomb(bomb: BeatMapBomb) -> void:
+	var object_position = _get_beatmap_object_initial_position(bomb, difficulty_info)
 
 	var bomb_node: Bomb = bomb_scene.instantiate()
-	bomb_node.initialize(object_position, map_info, bomb)
+	bomb_node.initialize(object_position, difficulty_info, bomb)
 
 	add_child(bomb_node)
 
-func add_wall(wall: BeatMapWall, map_info: BeatMapDifficultyInfo) -> void:
-	var wall_position = _get_beatmap_object_initial_position(wall, map_info)
+func add_wall(wall: BeatMapWall) -> void:
+	var wall_position = _get_beatmap_object_initial_position(wall, difficulty_info)
 
 	var wall_node: Wall = wall_scene.instantiate()
-	wall_node.initialize_wall(wall_position, map_info, wall)
+	wall_node.initialize_wall(wall_position, difficulty_info, wall)
 
 	add_child(wall_node)

@@ -26,7 +26,11 @@ func _ready() -> void:
 
 	PlaybackManager.mode_changed.connect(_on_playback_mode_changed)
 	
-	BeatMapManager.load_beatmap(beatmap_file_path)
+	var beatmap_info = BeatMapManager.load_beatmap_info(beatmap_file_path)
+	var difficulty: BeatMapDifficultyInfo = beatmap_info.difficulty_beat_map_sets[0].difficulty_beat_maps[0]
+
+	BeatMapManager.load_difficulty(difficulty)
+	BeatMapManager.load_beatmap(beatmap_file_path.get_base_dir() + "/" + difficulty.beat_map_file_name)
 	PlaybackManager.play.call_deferred()
 
 func _on_right_hand_button_pressed(button_name: String) -> void:

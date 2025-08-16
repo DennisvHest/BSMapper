@@ -1,4 +1,4 @@
-class_name BeatMapDifficultyInfo
+class_name 	BeatMapDifficultyInfo
 
 ## The default half jump distance is 4 beats away from the player.
 const DEFAULT_HALF_JUMP_DISTANCE := 4.0
@@ -9,15 +9,17 @@ const MAX_JUMP_DISTANCE_METERS := 35.998
 ## Minimum half jump distance to avoid reaction time being too short.
 const MIN_HALF_JUMP_DISTANCE := 0.25
 
+var beat_map_file_name: String
+
 ## Note jump speed: speed of note blocks in m/s
-var njs: float = 16.0
+var njs: float
 
 ## The offset of the DEFAULT_HALF_JUMP_DISTANCE (in beats).
 ## As an example, this is used by mappers to align the note jumps to the rythm of the song.
-var note_jump_start_beat_offset: float = -0.15
+var note_jump_start_beat_offset: float
 
 ## Beats per minute of the song
-var bpm := 175
+var bpm: float
 
 ## The half jump distance (in beats) is where the notes "jump" up after which they're on their target position/speed going towards the player.
 var half_jump_distance: float:
@@ -54,7 +56,7 @@ var beat_duration: float:
 ## Time from when the note jumps up to when the player is supposed to hit it (in seconds)
 var reaction_time: float
 
-func _init() -> void:
+func initialize() -> void:
 	half_jump_distance = _get_half_jump_distance(bpm, njs, note_jump_start_beat_offset)
 	jump_distance_meters = _get_jump_distance_meters(half_jump_distance, bpm, njs)
 	reaction_time = jump_distance_meters / 2 / njs
@@ -73,3 +75,15 @@ func _get_half_jump_distance(bpm: float, njs: float, note_jump_start_beat_offset
 		half_jump_distance /= 2
 	
 	return max(half_jump_distance + note_jump_start_beat_offset, MIN_HALF_JUMP_DISTANCE)
+
+static func from_v2_object(original: Variant, _bpm: float) -> BeatMapDifficultyInfo:
+	var info = BeatMapDifficultyInfo.new()
+
+	info.beat_map_file_name = original._beatmapFilename
+	info.njs = original._noteJumpMovementSpeed
+	info.note_jump_start_beat_offset = original._noteJumpStartBeatOffset
+	info.bpm = _bpm
+
+	info.initialize()
+
+	return info
