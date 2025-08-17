@@ -1,9 +1,7 @@
-[gd_scene load_steps=15 format=3 uid="uid://cjmnf87pjnu15"]
+[gd_scene load_steps=13 format=3 uid="uid://cjmnf87pjnu15"]
 
-[ext_resource type="PackedScene" path="res://addons/godot-xr-tools/misc/vr_common_shader_cache.tscn" id="1_3meo8"]
 [ext_resource type="Script" uid="uid://cm5ttwxm3vxml" path="res://editor/editor.gd" id="1_yyul4"]
-[ext_resource type="PackedScene" uid="uid://dhng0rh22itx5" path="res://beat_saber/saber.tscn" id="2_yyul4"]
-[ext_resource type="PackedScene" path="res://addons/godot-xr-tools/functions/function_pointer.tscn" id="3_loxr8"]
+[ext_resource type="PackedScene" uid="uid://bjpfk14681dot" path="res://player.tscn" id="2_aws7q"]
 [ext_resource type="PackedScene" uid="uid://bwh2pgll34g30" path="res://beat_saber/note_block_lane.tscn" id="4_dblv8"]
 [ext_resource type="PackedScene" uid="uid://cj4lx8kmvad2b" path="res://beat_saber/bomb.tscn" id="5_wux1q"]
 [ext_resource type="PackedScene" uid="uid://djk61jv0t7qmi" path="res://beat_saber/wall.tscn" id="6_anuej"]
@@ -34,39 +32,7 @@ size = Vector3(3, 2, 1)
 script = ExtResource("1_yyul4")
 beatmap_file_path = "res://test_beatmaps/1feab (Turn It Up - abcbadq)/Info.dat"
 
-[node name="XROrigin3D" type="XROrigin3D" parent="."]
-
-[node name="XRCamera3D" type="XRCamera3D" parent="XROrigin3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.7, 0)
-
-[node name="VRCommonShaderCache" parent="XROrigin3D/XRCamera3D" instance=ExtResource("1_3meo8")]
-
-[node name="LeftHand" type="XRController3D" parent="XROrigin3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5, 1, -0.5)
-tracker = &"left_hand"
-
-[node name="Saber" parent="XROrigin3D/LeftHand" instance=ExtResource("2_yyul4")]
-transform = Transform3D(1, 0, 0, 0, 0.707107, 0.707107, 0, -0.707107, 0.707107, 0, 0, 0.1)
-
-[node name="FunctionPointer" parent="XROrigin3D/LeftHand" instance=ExtResource("3_loxr8")]
-show_laser = 0
-laser_length = 1
-collide_with_bodies = false
-collide_with_areas = true
-
-[node name="RightHand" type="XRController3D" parent="XROrigin3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 1, -0.5)
-tracker = &"right_hand"
-
-[node name="Saber" parent="XROrigin3D/RightHand" instance=ExtResource("2_yyul4")]
-transform = Transform3D(1, 0, 0, 0, 0.707107, 0.707107, 0, -0.707107, 0.707107, 0, 0, 0.1)
-type = 1
-
-[node name="FunctionPointer" parent="XROrigin3D/RightHand" instance=ExtResource("3_loxr8")]
-show_laser = 0
-laser_length = 1
-collide_with_bodies = false
-collide_with_areas = true
+[node name="XROrigin3D" parent="." instance=ExtResource("2_aws7q")]
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 7, 0)

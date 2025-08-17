@@ -1,5 +1,7 @@
 extends Node3D
 
+@export var start_scene: PackedScene
+
 @export var debug_without_vr: bool = false
 
 var xr_interface: XRInterface
@@ -17,3 +19,5 @@ func _ready() -> void:
 		get_viewport().use_xr = true
 	else:
 		print("OpenXR not initialized, please check if your headset is connected")
+	
+	get_tree().change_scene_to_packed(start_scene)

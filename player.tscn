@@ -1,0 +1,39 @@
+[gd_scene load_steps=4 format=3 uid="uid://bjpfk14681dot"]
+
+[ext_resource type="PackedScene" path="res://addons/godot-xr-tools/misc/vr_common_shader_cache.tscn" id="1_i3pqv"]
+[ext_resource type="PackedScene" uid="uid://dhng0rh22itx5" path="res://beat_saber/saber.tscn" id="2_hqtel"]
+[ext_resource type="PackedScene" path="res://addons/godot-xr-tools/functions/function_pointer.tscn" id="3_sweqy"]
+
+[node name="XROrigin3D" type="XROrigin3D"]
+
+[node name="XRCamera3D" type="XRCamera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.7, 0)
+
+[node name="VRCommonShaderCache" parent="XRCamera3D" instance=ExtResource("1_i3pqv")]
+
+[node name="LeftHand" type="XRController3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5, 1, -0.5)
+tracker = &"left_hand"
+
+[node name="Saber" parent="LeftHand" instance=ExtResource("2_hqtel")]
+transform = Transform3D(1, 0, 0, 0, 0.707107, 0.707107, 0, -0.707107, 0.707107, 0, 0, 0.1)
+
+[node name="FunctionPointer" parent="LeftHand" instance=ExtResource("3_sweqy")]
+show_laser = 0
+laser_length = 1
+collide_with_bodies = false
+collide_with_areas = true
+
+[node name="RightHand" type="XRController3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 1, -0.5)
+tracker = &"right_hand"
+
+[node name="Saber" parent="RightHand" instance=ExtResource("2_hqtel")]
+transform = Transform3D(1, 0, 0, 0, 0.707107, 0.707107, 0, -0.707107, 0.707107, 0, 0, 0.1)
+type = 1
+
+[node name="FunctionPointer" parent="RightHand" instance=ExtResource("3_sweqy")]
+show_laser = 0
+laser_length = 1
+collide_with_bodies = false
+collide_with_areas = true
