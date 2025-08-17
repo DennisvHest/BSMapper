@@ -1,10 +1,19 @@
-[gd_scene load_steps=3 format=3 uid="uid://dbx6fwm1tfix4"]
+[gd_scene load_steps=6 format=3 uid="uid://chvyj7daghrn2"]
 
 [ext_resource type="PackedScene" uid="uid://bjpfk14681dot" path="res://player.tscn" id="1_jwbto"]
 [ext_resource type="PackedScene" uid="uid://dnkai887m2lu1" path="res://environment.tscn" id="2_ia0g5"]
+[ext_resource type="PackedScene" uid="uid://clujaf3u776a3" path="res://addons/godot-xr-tools/objects/viewport_2d_in_3d.tscn" id="3_ctwoq"]
+[ext_resource type="PackedScene" uid="uid://30enicfm1x4h" path="res://start_menu_window.tscn" id="4_ctwoq"]
+[ext_resource type="PackedScene" uid="uid://cjmnf87pjnu15" path="res://editor/editor.tscn" id="5_ppfnh"]
 
 [node name="StartMenu" type="Node3D"]
 
 [node name="XROrigin3D" parent="." instance=ExtResource("1_jwbto")]
 
 [node name="WorldEnvironment" parent="." instance=ExtResource("2_ia0g5")]
+
+[node name="Viewport2Din3D" parent="." instance=ExtResource("3_ctwoq")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, -3)
+scene = ExtResource("4_ctwoq")
+scene_properties_keys = PackedStringArray("start_menu_window.gd", "editor_scene")
+editor_scene = ExtResource("5_ppfnh")
