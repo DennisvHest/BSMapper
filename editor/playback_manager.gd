@@ -26,24 +26,10 @@ enum EditMode { PLAYING, EDITING }
 
 var mode: EditMode = EditMode.PLAYING
 
+var initialized: bool = false
+
 func _ready() -> void:
-	# TODO: remove this HACK: check the main node to see if we are running the application or just a scene
-	# if not get_parent().has_node("Main"):
-	# 	process_mode = ProcessMode.PROCESS_MODE_DISABLED
-	# 	return
-
 	BeatMapManager.current_beatmap_difficulty_info_changed.connect(_on_current_beatmap_difficulty_info_changed)
-
-	# progress_bar = get_parent().get_node("Main/DebugUI/MusicProgressBar")
-	# progress_bar.drag_started.connect(_on_music_progress_bar_drag_started)
-	# progress_bar.drag_ended.connect(_on_music_progress_bar_drag_ended)
-
-	# leftHand = get_parent().get_node("Main/XROrigin3D/LeftHand")
-	# leftHand.input_vector2_changed.connect(_on_left_hand_input_vector_2_changed)
-	# leftHand.button_pressed.connect(_on_left_hand_button_pressed)
-
-	# rightHand = get_parent().get_node("Main/XROrigin3D/RightHand")
-	# rightHand.button_pressed.connect(_on_right_hand_button_pressed)
 
 	music = AudioStreamPlayer.new()
 	music.stream = preload("res://test_beatmaps/1feab (Turn It Up - abcbadq)/song.ogg")
@@ -53,6 +39,21 @@ func _ready() -> void:
 
 func _on_current_beatmap_difficulty_info_changed(new_beatmap: BeatMapDifficultyInfo) -> void:
 	beatmap = new_beatmap
+
+func initialize() -> void:
+	# TODO: remove this HACK: refactor so that the PlaybackManager doesn't need to know about nodes in the Editor scene
+	progress_bar = get_parent().get_node("Editor/DebugUI/MusicProgressBar")
+	progress_bar.drag_started.connect(_on_music_progress_bar_drag_started)
+	progress_bar.drag_ended.connect(_on_music_progress_bar_drag_ended)
+
+	leftHand = get_parent().get_node("Editor/XROrigin3D/LeftHand")
+	leftHand.input_vector2_changed.connect(_on_left_hand_input_vector_2_changed)
+	leftHand.button_pressed.connect(_on_left_hand_button_pressed)
+
+	rightHand = get_parent().get_node("Editor/XROrigin3D/RightHand")
+	rightHand.button_pressed.connect(_on_right_hand_button_pressed)
+
+	initialized = true
 
 func play(from_position: float = 0):
 	playback_position = from_position
@@ -64,13 +65,18 @@ func pause():
 	music.stream_paused = true
 
 func _physics_process(delta: float) -> void:
-	pass
-	# var leftJoystickPosition: Vector2 = leftHand.get_vector2("primary")
+	if !initialized:
+		return
+
+	var leftJoystickPosition: Vector2 = leftHand.get_vector2("primary")
 	
-	# if leftJoystickPosition.x != 0.0:
-	# 	progress_bar.value += + leftJoystickPosition.x * PLAYBACK_SCRUB_VELOCITY * delta;
+	if leftJoystickPosition.x != 0.0:
+		progress_bar.value += + leftJoystickPosition.x * PLAYBACK_SCRUB_VELOCITY * delta;
 
 func _process(delta: float) -> void:
+	if !initialized:
+		return
+
 	if music.stream_paused:
 		PlaybackManager.playback_position = get_playback_position()
 	else:
@@ -78,7 +84,7 @@ func _process(delta: float) -> void:
 
 	var music_stream: AudioStream = music.stream
 	
-	# progress_bar.value = PlaybackManager.playback_position / music_stream.get_length()
+	progress_bar.value = PlaybackManager.playback_position / music_stream.get_length()
 
 func _on_music_progress_bar_drag_started() -> void:
 	music.stream_paused = true

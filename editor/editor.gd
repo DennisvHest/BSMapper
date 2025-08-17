@@ -8,6 +8,8 @@ func _ready() -> void:
 	GameEvents.note_block_hit.connect(_on_note_block_hit)
 	GameEvents.bomb_hit.connect(_on_bomb_hit)
 
+	PlaybackManager.initialize()
+
 	PlaybackManager.mode_changed.connect(_on_playback_mode_changed)
 	
 	var beatmap_info = BeatMapManager.load_beatmap_info(beatmap_file_path)
