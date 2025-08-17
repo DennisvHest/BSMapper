@@ -1,7 +1,10 @@
-[gd_scene load_steps=2 format=3 uid="uid://dbx6fwm1tfix4"]
+[gd_scene load_steps=3 format=3 uid="uid://dbx6fwm1tfix4"]
 
 [ext_resource type="PackedScene" uid="uid://bjpfk14681dot" path="res://player.tscn" id="1_jwbto"]
+[ext_resource type="PackedScene" uid="uid://dnkai887m2lu1" path="res://environment.tscn" id="2_ia0g5"]
 
 [node name="StartMenu" type="Node3D"]
 
 [node name="XROrigin3D" parent="." instance=ExtResource("1_jwbto")]
+
+[node name="WorldEnvironment" parent="." instance=ExtResource("2_ia0g5")]

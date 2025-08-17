@@ -1,29 +1,13 @@
-[gd_scene load_steps=13 format=3 uid="uid://cjmnf87pjnu15"]
+[gd_scene load_steps=10 format=3 uid="uid://cjmnf87pjnu15"]
 
 [ext_resource type="Script" uid="uid://cm5ttwxm3vxml" path="res://editor/editor.gd" id="1_yyul4"]
 [ext_resource type="PackedScene" uid="uid://bjpfk14681dot" path="res://player.tscn" id="2_aws7q"]
+[ext_resource type="PackedScene" uid="uid://dnkai887m2lu1" path="res://environment.tscn" id="3_aws7q"]
 [ext_resource type="PackedScene" uid="uid://bwh2pgll34g30" path="res://beat_saber/note_block_lane.tscn" id="4_dblv8"]
 [ext_resource type="PackedScene" uid="uid://cj4lx8kmvad2b" path="res://beat_saber/bomb.tscn" id="5_wux1q"]
 [ext_resource type="PackedScene" uid="uid://djk61jv0t7qmi" path="res://beat_saber/wall.tscn" id="6_anuej"]
 [ext_resource type="AudioStream" uid="uid://ci872t5wv5mi5" path="res://sounds/hit_sound.ogg" id="7_wj0aq"]
 [ext_resource type="AudioStream" uid="uid://db4a55dhoebuh" path="res://sounds/bad_cut.wav" id="8_icflk"]
-[ext_resource type="Texture2D" uid="uid://ddsymreyag5ky" path="res://textures/ground_circle.png" id="9_t7axt"]
-
-[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_ig7tw"]
-sky_top_color = Color(0, 0.0606667, 0.14, 1)
-sky_horizon_color = Color(0, 0.0333333, 0.08, 1)
-ground_bottom_color = Color(0, 0, 0, 1)
-ground_horizon_color = Color(0, 0.0352941, 0.0784314, 1)
-
-[sub_resource type="Sky" id="Sky_ig7tw"]
-sky_material = SubResource("ProceduralSkyMaterial_ig7tw")
-
-[sub_resource type="Environment" id="Environment_ig7tw"]
-background_mode = 2
-sky = SubResource("Sky_ig7tw")
-ambient_light_source = 2
-ambient_light_color = Color(1, 1, 1, 1)
-ambient_light_energy = 0.1
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_lquwl"]
 size = Vector3(3, 2, 1)
@@ -34,13 +18,7 @@ beatmap_file_path = "res://test_beatmaps/1feab (Turn It Up - abcbadq)/Info.dat"
 
 [node name="XROrigin3D" parent="." instance=ExtResource("2_aws7q")]
 
-[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 7, 0)
-light_color = Color(0.774846, 0.804728, 0.879738, 1)
-light_energy = 0.8
-
-[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
-environment = SubResource("Environment_ig7tw")
+[node name="WorldEnvironment" parent="." instance=ExtResource("3_aws7q")]
 
 [node name="NoteBlockLane" parent="." instance=ExtResource("4_dblv8")]
 bomb_scene = ExtResource("5_wux1q")
@@ -85,8 +63,3 @@ grow_horizontal = 2
 grow_vertical = 0
 max_value = 1.0
 step = 0.0
-
-[node name="Floor" type="Sprite3D" parent="."]
-transform = Transform3D(0.5, 0, 0, 0, -2.18557e-08, -0.5, 0, 0.5, -2.18557e-08, 0, 0, 0)
-modulate = Color(0.46, 0.46, 0.46, 0.0392157)
-texture = ExtResource("9_t7axt")
