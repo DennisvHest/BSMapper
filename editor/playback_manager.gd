@@ -28,22 +28,22 @@ var mode: EditMode = EditMode.PLAYING
 
 func _ready() -> void:
 	# TODO: remove this HACK: check the main node to see if we are running the application or just a scene
-	if not get_parent().has_node("Main"):
-		process_mode = ProcessMode.PROCESS_MODE_DISABLED
-		return
+	# if not get_parent().has_node("Main"):
+	# 	process_mode = ProcessMode.PROCESS_MODE_DISABLED
+	# 	return
 
 	BeatMapManager.current_beatmap_difficulty_info_changed.connect(_on_current_beatmap_difficulty_info_changed)
 
-	progress_bar = get_parent().get_node("Main/DebugUI/MusicProgressBar")
-	progress_bar.drag_started.connect(_on_music_progress_bar_drag_started)
-	progress_bar.drag_ended.connect(_on_music_progress_bar_drag_ended)
+	# progress_bar = get_parent().get_node("Main/DebugUI/MusicProgressBar")
+	# progress_bar.drag_started.connect(_on_music_progress_bar_drag_started)
+	# progress_bar.drag_ended.connect(_on_music_progress_bar_drag_ended)
 
-	leftHand = get_parent().get_node("Main/XROrigin3D/LeftHand")
-	leftHand.input_vector2_changed.connect(_on_left_hand_input_vector_2_changed)
-	leftHand.button_pressed.connect(_on_left_hand_button_pressed)
+	# leftHand = get_parent().get_node("Main/XROrigin3D/LeftHand")
+	# leftHand.input_vector2_changed.connect(_on_left_hand_input_vector_2_changed)
+	# leftHand.button_pressed.connect(_on_left_hand_button_pressed)
 
-	rightHand = get_parent().get_node("Main/XROrigin3D/RightHand")
-	rightHand.button_pressed.connect(_on_right_hand_button_pressed)
+	# rightHand = get_parent().get_node("Main/XROrigin3D/RightHand")
+	# rightHand.button_pressed.connect(_on_right_hand_button_pressed)
 
 	music = AudioStreamPlayer.new()
 	music.stream = preload("res://test_beatmaps/1feab (Turn It Up - abcbadq)/song.ogg")
@@ -64,10 +64,11 @@ func pause():
 	music.stream_paused = true
 
 func _physics_process(delta: float) -> void:
-	var leftJoystickPosition: Vector2 = leftHand.get_vector2("primary")
+	pass
+	# var leftJoystickPosition: Vector2 = leftHand.get_vector2("primary")
 	
-	if leftJoystickPosition.x != 0.0:
-		progress_bar.value += + leftJoystickPosition.x * PLAYBACK_SCRUB_VELOCITY * delta;
+	# if leftJoystickPosition.x != 0.0:
+	# 	progress_bar.value += + leftJoystickPosition.x * PLAYBACK_SCRUB_VELOCITY * delta;
 
 func _process(delta: float) -> void:
 	if music.stream_paused:
@@ -77,7 +78,7 @@ func _process(delta: float) -> void:
 
 	var music_stream: AudioStream = music.stream
 	
-	progress_bar.value = PlaybackManager.playback_position / music_stream.get_length()
+	# progress_bar.value = PlaybackManager.playback_position / music_stream.get_length()
 
 func _on_music_progress_bar_drag_started() -> void:
 	music.stream_paused = true
