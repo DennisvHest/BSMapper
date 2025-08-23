@@ -1,4 +1,4 @@
-extends Node3D
+extends Control
 
 @export var start_scene: PackedScene
 
@@ -6,7 +6,12 @@ extends Node3D
 
 var xr_interface: XRInterface
 
+var install_location: String
+
 func _ready() -> void:
+	pass
+
+func _start() -> void:
 	xr_interface = XRServer.find_interface("OpenXR")
 	
 	if !debug_without_vr and xr_interface and xr_interface.is_initialized():
@@ -21,3 +26,15 @@ func _ready() -> void:
 		print("OpenXR not initialized, please check if your headset is connected")
 	
 	get_tree().change_scene_to_packed(start_scene)
+
+func _on_install_location_button_pressed() -> void:
+	$InstallLocationSelector/InstallLocationFolderDialog.show()
+
+func _on_install_location_folder_dialog_dir_selected(dir: String) -> void:
+	install_location = dir
+	$InstallLocationSelector/InstallLocationLabel.text = install_location
+
+	$MapSelector.show()
+
+func _on_new_map_button_pressed() -> void:
+	$MapSelector/SongFileDialog.show()

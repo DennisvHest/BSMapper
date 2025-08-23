@@ -3,6 +3,93 @@
 [ext_resource type="Script" uid="uid://kmyet12v7cjt" path="res://main.gd" id="1_ig7tw"]
 [ext_resource type="PackedScene" uid="uid://chvyj7daghrn2" path="res://start_menu.tscn" id="2_0xm2m"]
 
-[node name="Main" type="Node3D"]
+[node name="Main" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 script = ExtResource("1_ig7tw")
 start_scene = ExtResource("2_0xm2m")
+
+[node name="InstallLocationSelector" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -144.0
+offset_top = 19.0
+offset_right = 144.0
+offset_bottom = 105.0
+grow_horizontal = 2
+
+[node name="InstallLocationFolderDialog" type="FileDialog" parent="InstallLocationSelector"]
+title = "Open a Directory"
+initial_position = 2
+ok_button_text = "Select Current Folder"
+file_mode = 2
+access = 2
+use_native_dialog = true
+
+[node name="InstallLocationButton" type="Button" parent="InstallLocationSelector"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -129.0
+offset_right = 129.0
+offset_bottom = 44.0
+grow_horizontal = 2
+text = "Select beat saber install location"
+
+[node name="InstallLocationLabel" type="Label" parent="InstallLocationSelector"]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -20.0
+offset_top = -23.0
+offset_right = 20.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="MapSelector" type="Control" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -490.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="SongFileDialog" type="FileDialog" parent="MapSelector"]
+title = "Open a File"
+initial_position = 2
+ok_button_text = "Open"
+file_mode = 0
+access = 2
+filters = PackedStringArray("*.ogg")
+use_native_dialog = true
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MapSelector"]
+layout_mode = 1
+anchors_preset = 14
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 1
+
+[node name="NewMapButton" type="Button" parent="MapSelector/HBoxContainer"]
+layout_mode = 2
+text = "Select song for new map"
+
+[connection signal="dir_selected" from="InstallLocationSelector/InstallLocationFolderDialog" to="." method="_on_install_location_folder_dialog_dir_selected"]
+[connection signal="pressed" from="InstallLocationSelector/InstallLocationButton" to="." method="_on_install_location_button_pressed"]
+[connection signal="pressed" from="MapSelector/HBoxContainer/NewMapButton" to="." method="_on_new_map_button_pressed"]
