@@ -19,9 +19,7 @@ tracker = &"left_hand"
 transform = Transform3D(1, 0, 0, 0, 0.707107, 0.707107, 0, -0.707107, 0.707107, 0, 0, 0.1)
 
 [node name="FunctionPointer" parent="LeftHand" instance=ExtResource("3_sweqy")]
-show_laser = 0
 laser_length = 1
-collide_with_bodies = false
 collide_with_areas = true
 
 [node name="RightHand" type="XRController3D" parent="."]
@@ -33,7 +31,5 @@ transform = Transform3D(1, 0, 0, 0, 0.707107, 0.707107, 0, -0.707107, 0.707107, 
 type = 1
 
 [node name="FunctionPointer" parent="RightHand" instance=ExtResource("3_sweqy")]
-show_laser = 0
 laser_length = 1
-collide_with_bodies = false
 collide_with_areas = true
