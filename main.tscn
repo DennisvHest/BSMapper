@@ -73,7 +73,7 @@ initial_position = 2
 ok_button_text = "Open"
 file_mode = 0
 access = 2
-filters = PackedStringArray("*.ogg")
+filters = PackedStringArray("*.ogg,*.egg")
 use_native_dialog = true
 
 [node name="HBoxContainer" type="HBoxContainer" parent="MapSelector"]
@@ -92,4 +92,5 @@ text = "Select song for new map"
 
 [connection signal="dir_selected" from="InstallLocationSelector/InstallLocationFolderDialog" to="." method="_on_install_location_folder_dialog_dir_selected"]
 [connection signal="pressed" from="InstallLocationSelector/InstallLocationButton" to="." method="_on_install_location_button_pressed"]
+[connection signal="file_selected" from="MapSelector/SongFileDialog" to="." method="_on_song_file_dialog_file_selected"]
 [connection signal="pressed" from="MapSelector/HBoxContainer/NewMapButton" to="." method="_on_new_map_button_pressed"]

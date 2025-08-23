@@ -6,7 +6,6 @@ extends Control
 
 var xr_interface: XRInterface
 
-var install_location: String
 
 func _ready() -> void:
 	pass
@@ -31,10 +30,16 @@ func _on_install_location_button_pressed() -> void:
 	$InstallLocationSelector/InstallLocationFolderDialog.show()
 
 func _on_install_location_folder_dialog_dir_selected(dir: String) -> void:
-	install_location = dir
-	$InstallLocationSelector/InstallLocationLabel.text = install_location
+	var wip_beatmaps_location = dir.path_join("Beat Saber_Data/CustomWIPLevels")
+	BeatMapManager.set_wip_beatmap_location(wip_beatmaps_location)
+
+	$InstallLocationSelector/InstallLocationLabel.text = wip_beatmaps_location
 
 	$MapSelector.show()
 
 func _on_new_map_button_pressed() -> void:
 	$MapSelector/SongFileDialog.show()
+
+
+func _on_song_file_dialog_file_selected(path: String) -> void:
+	BeatMapManager.new_map(path)
