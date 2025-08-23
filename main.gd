@@ -42,4 +42,5 @@ func _on_new_map_button_pressed() -> void:
 
 
 func _on_song_file_dialog_file_selected(path: String) -> void:
-	BeatMapManager.new_map(path)
+	var new_beat_map = BeatMapManager.new_map(path)
+	var new_difficulty = BeatMapManager.new_difficulty(new_beat_map, BeatMapDifficultySet.BeatmapMode.STANDARD, BeatMapDifficultyInfo.Difficulty.EXPERT, 16.0, -0.15)

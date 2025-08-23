@@ -1,5 +1,13 @@
 class_name 	BeatMapDifficultyInfo
 
+enum Difficulty {
+	EASY,
+	NORMAL,
+	HARD,
+	EXPERT,
+	EXPERT_PLUS
+}
+
 ## The default half jump distance is 4 beats away from the player.
 const DEFAULT_HALF_JUMP_DISTANCE := 4.0
 
@@ -8,6 +16,15 @@ const MAX_JUMP_DISTANCE_METERS := 35.998
 
 ## Minimum half jump distance to avoid reaction time being too short.
 const MIN_HALF_JUMP_DISTANCE := 0.25
+
+var difficulty: Difficulty
+func to_v2_object() -> Dictionary:
+	return {
+		"_difficulty": get_difficulty_name(difficulty),
+		"_beatmapFilename": beat_map_file_name,
+		"_noteJumpMovementSpeed": njs,
+		"_noteJumpStartBeatOffset": note_jump_start_beat_offset
+	}
 
 var beat_map_file_name: String
 
@@ -76,9 +93,23 @@ func _get_half_jump_distance(bpm: float, njs: float, note_jump_start_beat_offset
 	
 	return max(half_jump_distance + note_jump_start_beat_offset, MIN_HALF_JUMP_DISTANCE)
 
+static func new_difficulty(difficulty: Difficulty, mode: BeatMapDifficultySet.BeatmapMode, njs: float, note_jump_start_beat_offset: float, bpm: float) -> BeatMapDifficultyInfo:
+	var new_difficulty_info = BeatMapDifficultyInfo.new()
+
+	new_difficulty_info.difficulty = difficulty
+	new_difficulty_info.beat_map_file_name = get_file_name(difficulty, mode)
+	new_difficulty_info.njs = njs
+	new_difficulty_info.note_jump_start_beat_offset = note_jump_start_beat_offset
+	new_difficulty_info.bpm = bpm
+
+	new_difficulty_info.initialize()
+
+	return new_difficulty_info
+
 static func from_v2_object(original: Variant, _bpm: float) -> BeatMapDifficultyInfo:
 	var info = BeatMapDifficultyInfo.new()
 
+	info.difficulty = get_difficulty(original._difficulty)
 	info.beat_map_file_name = original._beatmapFilename
 	info.njs = original._noteJumpMovementSpeed
 	info.note_jump_start_beat_offset = original._noteJumpStartBeatOffset
@@ -87,3 +118,36 @@ static func from_v2_object(original: Variant, _bpm: float) -> BeatMapDifficultyI
 	info.initialize()
 
 	return info
+
+static func get_difficulty(difficulty: String) -> Difficulty:
+	match difficulty:
+		"Easy":
+			return Difficulty.EASY
+		"Normal":
+			return Difficulty.NORMAL
+		"Hard":
+			return Difficulty.HARD
+		"Expert":
+			return Difficulty.EXPERT
+		"ExpertPlus":
+			return Difficulty.EXPERT_PLUS
+		_:
+			return Difficulty.EASY # TODO: Fallback for unknown difficulties
+
+static func get_difficulty_name(difficulty: Difficulty) -> String:
+	match difficulty:
+		Difficulty.EASY:
+			return "Easy"
+		Difficulty.NORMAL:
+			return "Normal"
+		Difficulty.HARD:
+			return "Hard"
+		Difficulty.EXPERT:
+			return "Expert"
+		Difficulty.EXPERT_PLUS:
+			return "ExpertPlus"
+		_:
+			return "Easy" # TODO: Fallback for unknown difficulties
+
+static func get_file_name(difficulty: Difficulty, mode: BeatMapDifficultySet.BeatmapMode) -> String:
+	return "%s%s.dat" % [get_difficulty_name(difficulty), BeatMapDifficultySet.get_mode_name(mode)]

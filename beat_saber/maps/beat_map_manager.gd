@@ -13,7 +13,7 @@ var wip_beatmap_location: String
 func set_wip_beatmap_location(file_path: String) -> void:
 	wip_beatmap_location = file_path
 
-func new_map(song_path: String) -> void:
+func new_map(song_path: String) -> BeatMapInfo:
 	var test_map_folder = wip_beatmap_location.path_join("TEST_MAP_BS_MAPPER")
 
 	var dir = DirAccess.open(test_map_folder.get_base_dir())
@@ -33,9 +33,33 @@ func new_map(song_path: String) -> void:
 	dest_file.store_buffer(song_data)
 	dest_file.close()
 
-	# Create BeatMapInfo and save original_object as info.dat
+	# Create BeatMapInfo and save info.dat
 	var beatmap_info = BeatMapInfo.new_map(test_map_folder)
-	var info_dat_path = test_map_folder.path_join("info.dat")
+	_save_beatmap_info(beatmap_info)
+
+	return beatmap_info
+
+func new_difficulty(beatmap_info: BeatMapInfo, mode: BeatMapDifficultySet.BeatmapMode, difficulty: BeatMapDifficultyInfo.Difficulty, njs: float, note_jump_start_beat_offset: float) -> BeatMapDifficultyInfo:
+	var difficulty_info = BeatMapDifficultyInfo.new_difficulty(difficulty, mode, njs, note_jump_start_beat_offset, beatmap_info.bpm)
+
+	var difficulty_file_path = beatmap_info.file_path.path_join(difficulty_info.beat_map_file_name)
+	assert(!FileAccess.file_exists(difficulty_file_path), "Difficulty file already exists: %s" % difficulty_file_path)
+
+	var beatmap = BeatMap.new_empty()
+	var beatmap_json = JSON.stringify(beatmap.original_map, "", false)
+
+	var difficulty_file = FileAccess.open(difficulty_file_path, FileAccess.WRITE)
+	assert(difficulty_file != null, "Failed to open difficulty file for writing: %s" % difficulty_file_path)
+	difficulty_file.store_string(beatmap_json)
+	difficulty_file.close()
+
+	beatmap_info.add_difficulty(difficulty_info, mode)
+	_save_beatmap_info(beatmap_info)
+
+	return difficulty_info
+
+func _save_beatmap_info(beatmap_info: BeatMapInfo) -> void:
+	var info_dat_path = beatmap_info.file_path.path_join("info.dat")
 	var info_json = JSON.stringify(beatmap_info.original_object, "", false)
 	var info_file = FileAccess.open(info_dat_path, FileAccess.WRITE)
 	assert(info_file != null, "Failed to open info.dat for writing: %s" % info_dat_path)
@@ -69,7 +93,7 @@ func _load_beatmap(file_path: String) -> void:
 	assert(result == OK, "JSON Parse Error: %s in %s at line %s" % [json.get_error_message(), file_path, json.get_error_line()])
 
 	current_beatmap_file_path = file_path
-	change_beatmap(BeatMap.new(json.data))
+	change_beatmap(BeatMap.from_file(json.data))
 
 func change_beatmap(beatmap: BeatMap) -> void:
 	current_beatmap = beatmap

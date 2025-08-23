@@ -15,7 +15,7 @@ var playback_position: float = 0
 ## The current playback beat of the song
 var playback_beat: float:
 	get:
-		if beatmap.bpm == 0:
+		if not beatmap or beatmap.bpm == 0:
 			return 0.0
 		
 		return playback_position / (60.0 / beatmap.bpm)

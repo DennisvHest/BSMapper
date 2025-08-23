@@ -8,19 +8,36 @@ var notes: Array[BeatMapNote] = []
 var bombs: Array[BeatMapBomb] = []
 var walls: Array[BeatMapWall] = []
 
-func _init(map: Variant) -> void:
+static func new_empty() -> BeatMap:
+    var beat_map = BeatMap.new()
+
+    beat_map.original_map = {
+        _version = "2.0.0",
+        _notes = [],
+        _obstacles = [],
+        _events = [],
+        _customData = {}
+    }
+
+    return beat_map
+
+static func from_file(map: Variant) -> BeatMap:
     assert(str(map._version).begins_with("2"), "Map version is not supported")
 
-    original_map = map
+    var beat_map = BeatMap.new()
+
+    beat_map.original_map = map
 
     for object in map._notes:
         if object._type == BeatMapBomb.BOMB_TYPE:
-            bombs.append(BeatMapBomb.from_v2_object(object))
+            beat_map.bombs.append(BeatMapBomb.from_v2_object(object))
         else:
-            notes.append(BeatMapNote.from_v2_object(object))
+            beat_map.notes.append(BeatMapNote.from_v2_object(object))
 
     for wall in map._obstacles:
-        walls.append(BeatMapWall.from_v2_object(wall))
+        beat_map.walls.append(BeatMapWall.from_v2_object(wall))
+
+    return beat_map
 
 func add_object(object: BeatMapObjectBase) -> void:
     if object is BeatMapNote:
