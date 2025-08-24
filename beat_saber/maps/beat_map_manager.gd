@@ -16,24 +16,21 @@ func set_wip_beatmap_location(file_path: String) -> void:
 func new_map(song_path: String) -> BeatMapInfo:
 	var test_map_folder = wip_beatmap_location.path_join("TEST_MAP_BS_MAPPER")
 
-	var dir = DirAccess.open(test_map_folder.get_base_dir())
-	if dir == null:
-		dir = DirAccess.open("res://")
-	var mk_err = dir.make_dir_recursive(test_map_folder)
-	assert(mk_err == OK, "Failed to create directory: %s" % test_map_folder)
+	var dir = DirAccess.open(wip_beatmap_location)
+	dir.make_dir_recursive(test_map_folder)
 
-	# Copy the song file and rename to song.egg
-	var song_dest_path = test_map_folder.path_join("song.egg")
+	# Copy song for the map to the map files
+	var song_destination_path = test_map_folder.path_join("song.egg")
 	var src_file = FileAccess.open(song_path, FileAccess.READ)
 	assert(src_file != null, "Failed to open source song file: %s" % song_path)
 	var song_data = src_file.get_buffer(src_file.get_length())
 	src_file.close()
-	var dest_file = FileAccess.open(song_dest_path, FileAccess.WRITE)
-	assert(dest_file != null, "Failed to open destination song file: %s" % song_dest_path)
+
+	var dest_file = FileAccess.open(song_destination_path, FileAccess.WRITE)
+	assert(dest_file != null, "Failed to open destination song file: %s" % song_destination_path)
 	dest_file.store_buffer(song_data)
 	dest_file.close()
 
-	# Create BeatMapInfo and save info.dat
 	var beatmap_info = BeatMapInfo.new_map(test_map_folder)
 	_save_beatmap_info(beatmap_info)
 
