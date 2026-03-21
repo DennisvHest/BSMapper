@@ -5,6 +5,7 @@ signal current_beatmap_difficulty_info_changed(difficulty: BeatMapDifficultyInfo
 signal current_beatmap_changed(beatmap: BeatMap)
 
 var current_beatmap_info: BeatMapInfo
+var current_beatmap_difficulty_info: BeatMapDifficultyInfo
 var current_beatmap_file_path: String
 var current_beatmap: BeatMap
 
@@ -77,6 +78,7 @@ func load_beatmap_info(file_path: String) -> BeatMapInfo:
 	return current_beatmap_info
 
 func load_difficulty(difficulty: BeatMapDifficultyInfo) -> void:
+	current_beatmap_difficulty_info = difficulty
 	current_beatmap_difficulty_info_changed.emit(difficulty)
 	var difficulty_file_path = current_beatmap_info.file_path.get_base_dir() + "/" + difficulty.beat_map_file_name
 	_load_beatmap(difficulty_file_path)

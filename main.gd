@@ -50,4 +50,4 @@ func _on_song_file_dialog_file_selected(path: String) -> void:
 	var difficulty: BeatMapDifficultyInfo = beatmap_info.difficulty_beat_map_sets[0].difficulty_beat_maps[0]
 	BeatMapManager.load_difficulty(difficulty)
 
-	get_tree().change_scene_to_packed(start_scene)
+	_start()

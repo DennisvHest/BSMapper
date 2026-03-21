@@ -20,6 +20,8 @@ const LANE_HEIGHT: float = BEATMAP_OBJECT_LINE_SIZE * GRID_HEIGHT
 var difficulty_info: BeatMapDifficultyInfo
 
 func _ready() -> void:
+	_on_current_beatmap_difficulty_info_changed(BeatMapManager.current_beatmap_difficulty_info)
+	_on_current_beatmap_changed(BeatMapManager.current_beatmap)
 	BeatMapManager.current_beatmap_difficulty_info_changed.connect(_on_current_beatmap_difficulty_info_changed)
 	BeatMapManager.current_beatmap_changed.connect(_on_current_beatmap_changed)
 

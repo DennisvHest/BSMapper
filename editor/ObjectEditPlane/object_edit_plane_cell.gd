@@ -12,6 +12,7 @@ func initialize(p_line_index: int, p_line_layer: int) -> void:
     line_layer = p_line_layer
 
 func _ready() -> void:
+    _on_beatmap_changed(BeatMapManager.current_beatmap)
     BeatMapManager.current_beatmap_changed.connect(_on_beatmap_changed)
 
 func _on_edit_area_pointer_event(event: XRToolsPointerEvent) -> void:
