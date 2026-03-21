@@ -18,6 +18,11 @@ func new_map(song_path: String) -> BeatMapInfo:
 	var test_map_folder = wip_beatmap_location.path_join("TEST_MAP_BS_MAPPER")
 
 	var dir = DirAccess.open(wip_beatmap_location)
+	assert(dir != null, "Failed to open beatmap directory: %s" % wip_beatmap_location)
+
+	if DirAccess.dir_exists_absolute(test_map_folder):
+		_clear_directory(test_map_folder)
+
 	dir.make_dir_recursive(test_map_folder)
 
 	# Copy song for the map to the map files
@@ -41,7 +46,6 @@ func new_difficulty(beatmap_info: BeatMapInfo, mode: BeatMapDifficultySet.Beatma
 	var difficulty_info = BeatMapDifficultyInfo.new_difficulty(difficulty, mode, njs, note_jump_start_beat_offset, beatmap_info.bpm)
 
 	var difficulty_file_path = beatmap_info.file_path.path_join(difficulty_info.beat_map_file_name)
-	assert(!FileAccess.file_exists(difficulty_file_path), "Difficulty file already exists: %s" % difficulty_file_path)
 
 	var beatmap = BeatMap.new_empty()
 	var beatmap_json = JSON.stringify(beatmap.original_map, "", false)
@@ -55,6 +59,29 @@ func new_difficulty(beatmap_info: BeatMapInfo, mode: BeatMapDifficultySet.Beatma
 	_save_beatmap_info(beatmap_info)
 
 	return difficulty_info
+
+func _clear_directory(dir_path: String) -> void:
+	var dir = DirAccess.open(dir_path)
+	assert(dir != null, "Failed to open directory for clearing: %s" % dir_path)
+
+	dir.list_dir_begin()
+	var item_name = dir.get_next()
+	while item_name != "":
+		if item_name == "." or item_name == "..":
+			item_name = dir.get_next()
+			continue
+
+		var item_path = dir_path.path_join(item_name)
+		if dir.current_is_dir():
+			_clear_directory(item_path)
+			var remove_dir_error = DirAccess.remove_absolute(item_path)
+			assert(remove_dir_error == OK, "Failed to remove directory: %s" % item_path)
+		else:
+			var remove_file_error = DirAccess.remove_absolute(item_path)
+			assert(remove_file_error == OK, "Failed to remove file: %s" % item_path)
+
+		item_name = dir.get_next()
+	dir.list_dir_end()
 
 func _save_beatmap_info(beatmap_info: BeatMapInfo) -> void:
 	var info_dat_path = beatmap_info.file_path.path_join("info.dat")
