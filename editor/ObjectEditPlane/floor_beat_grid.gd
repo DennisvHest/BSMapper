@@ -11,6 +11,9 @@ const CURRENT_BEAT_LINE_THICKNESS: float = 0.088
 const VISIBLE_BEATS_AHEAD: float = 8.0
 const VISIBLE_BEATS_BEHIND: float = 2.0
 const QUARTER_BEAT_STEP: float = 0.25
+const BEAT_LABEL_OFFSET_X: float = 0.35
+const BEAT_LABEL_HEIGHT: float = 0.04
+const BEAT_LABEL_PIXEL_SIZE: float = 0.005
 
 var floor_grid_root: Node3D
 var current_beat_marker: MeshInstance3D
@@ -72,6 +75,21 @@ func _create_line(line_name: String, line_scale: Vector3, material: Material) ->
 	line.scale = line_scale
 	line.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	return line
+
+func _create_beat_label(beat_number: int, beat_position: float) -> Label3D:
+	var label := Label3D.new()
+	label.name = "BeatLabel%s" % beat_number
+	label.text = str(beat_number)
+	label.font_size = 64
+	label.pixel_size = BEAT_LABEL_PIXEL_SIZE
+	label.modulate = Color(1.0, 1.0, 1.0, 0.85)
+	label.outline_modulate = Color(0.0, 0.0, 0.0, 0.65)
+	label.outline_size = 8
+	label.no_depth_test = true
+	label.billboard = BaseMaterial3D.BILLBOARD_DISABLED
+	label.position = Vector3(NoteBlockLane.LANE_WIDTH / 2.0 + BEAT_LABEL_OFFSET_X, BEAT_LABEL_HEIGHT, -beat_position)
+	label.rotation.x = deg_to_rad(-90)
+	return label
 
 func _rebuild_floor_grid() -> void:
 	rendered_window_start_quarter = -1
@@ -142,6 +160,11 @@ func _spawn_cross_lines(window_start_quarter: int, window_end_quarter: int, beat
 
 		line.position = Vector3(0.0, FLOOR_MARKER_Y, -beat_position * beat_length_meters)
 		floor_grid_root.add_child(line)
+
+		if is_major_line:
+			var beat_number := int(round(beat_position))
+			var label := _create_beat_label(beat_number, beat_position * beat_length_meters)
+			floor_grid_root.add_child(label)
 
 func _update_floor_grid_position() -> void:
 	var difficulty := BeatMapManager.current_beatmap_difficulty_info
