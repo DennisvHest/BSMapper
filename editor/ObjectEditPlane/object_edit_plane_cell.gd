@@ -43,10 +43,6 @@ func _on_edit_area_pointer_event(event: XRToolsPointerEvent) -> void:
                 return
 
             var drag_state: Dictionary = active_pointer_drags[pointer_id]
-            drag_state.cut_direction = _get_cut_direction_from_drag(
-                drag_state.start_position,
-                to_local(event.position)
-            )
             active_pointer_drags.erase(pointer_id)
 
             if current_beatmap == null:
