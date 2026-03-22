@@ -1,8 +1,10 @@
-[gd_scene load_steps=7 format=3 uid="uid://22flelof1n0w"]
+[gd_scene load_steps=11 format=3 uid="uid://22flelof1n0w"]
 
 [ext_resource type="Script" uid="uid://bfonitwkp02np" path="res://editor/ObjectEditPlane/edit_area.gd" id="1_nhfvl"]
 [ext_resource type="Script" uid="uid://d0ujeneeokonh" path="res://editor/ObjectEditPlane/object_edit_plane_cell.gd" id="1_tdoa1"]
 [ext_resource type="Texture2D" uid="uid://bgqggvg2u3lce" path="res://textures/editor_grid_cell_border.png" id="2_7sbua"]
+[ext_resource type="Texture2D" uid="uid://b7xf7noovx35q" path="res://textures/note_block_texture.png" id="3_5jlwm"]
+[ext_resource type="Texture2D" uid="uid://dquhwpf3rdi53" path="res://textures/note_block_any_cut_direction_texture.png" id="4_6n8vr"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_aambp"]
 transparency = 1
@@ -11,6 +13,14 @@ albedo_color = Color(1, 1, 1, 0.0784314)
 [sub_resource type="BoxMesh" id="BoxMesh_nhfvl"]
 material = SubResource("StandardMaterial3D_aambp")
 size = Vector3(1, 0.1, 1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_preview"]
+transparency = 1
+albedo_color = Color(1, 0, 0, 0.6)
+
+[sub_resource type="BoxMesh" id="BoxMesh_preview"]
+material = SubResource("StandardMaterial3D_preview")
+size = Vector3(0.4, 0.4, 0.4)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_tdoa1"]
 size = Vector3(1, 0.1, 1)
@@ -26,6 +36,24 @@ mesh = SubResource("BoxMesh_nhfvl")
 transform = Transform3D(0.196, 0, 0, 0, -8.56743e-09, -0.196, 0, 0.196, -8.56743e-09, 0, 0.05, 0)
 modulate = Color(1, 1, 1, 0.117647)
 texture = ExtResource("2_7sbua")
+
+[node name="Preview" type="Node3D" parent="."]
+transform = Transform3D(2, 0, 0, 0, 0, -2, 0, 2, 0, 0, 0, 0)
+visible = false
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Preview"]
+mesh = SubResource("BoxMesh_preview")
+
+[node name="CutDirectionTriangle" type="Sprite3D" parent="Preview"]
+transform = Transform3D(0.077, 0, 0, 0, 0.077, 0, 0, 0, 0.077, 0, 0, -0.201)
+modulate = Color(1, 1, 1, 0.8)
+texture = ExtResource("3_5jlwm")
+
+[node name="AnyCutDirectionCircle" type="Sprite3D" parent="Preview"]
+transform = Transform3D(0.077, -1.34631e-08, 0, 1.34631e-08, 0.077, 0, 0, 0, 0.077, 0, 0, -0.201)
+visible = false
+modulate = Color(1, 1, 1, 0.8)
+texture = ExtResource("4_6n8vr")
 
 [node name="EditArea" type="Area3D" parent="."]
 collision_layer = 1048576
