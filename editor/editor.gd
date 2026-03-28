@@ -8,6 +8,7 @@ func _ready() -> void:
 	GameEvents.note_block_hit.connect(_on_note_block_hit)
 	GameEvents.bomb_hit.connect(_on_bomb_hit)
 
+	$XROrigin3D/LeftHand.button_pressed.connect(_on_left_hand_button_pressed)
 	$XROrigin3D/RightHand.button_pressed.connect(_on_right_hand_button_pressed)
 
 	PlaybackManager.initialize()
@@ -16,11 +17,39 @@ func _ready() -> void:
 	
 	PlaybackManager.play.call_deferred()
 
+
+func _on_left_hand_button_pressed(button_name: String) -> void:
+	if button_name == "ax_button":
+		_delete_highlighted_note_for_pointer($XROrigin3D/LeftHand/FunctionPointer)
+
 func _on_right_hand_button_pressed(button_name: String) -> void:
 	print("Right hand button pressed %s" % button_name)
 	
 	if button_name == "ax_button":
-		BeatMapManager.save_beatmap()
+		if not _delete_highlighted_note_for_pointer($XROrigin3D/RightHand/FunctionPointer):
+			BeatMapManager.save_beatmap()
+
+func _delete_highlighted_note_for_pointer(pointer: XRToolsFunctionPointer) -> bool:
+	var hovered_note := _get_hovered_note_block(pointer)
+	if hovered_note == null:
+		return false
+
+	hovered_note.delete_note_block()
+	return true
+
+func _get_hovered_note_block(pointer: XRToolsFunctionPointer) -> NoteBlock:
+	var target := pointer.target if pointer.target != null else pointer.last_target
+	if target == null:
+		return null
+
+	if target is NoteBlock:
+		return target
+
+	var target_parent := target.get_parent()
+	if target_parent is NoteBlock:
+		return target_parent
+
+	return null
 
 func _on_playback_mode_changed():
 	var left_pointer: XRToolsFunctionPointer = $XROrigin3D/LeftHand/FunctionPointer

@@ -1,6 +1,7 @@
 class_name BeatMap
 
 signal object_added(object: BeatMapObjectBase)
+signal object_removed(object: BeatMapObjectBase)
 
 var original_map: Variant
 
@@ -50,6 +51,27 @@ func add_object(object: BeatMapObjectBase) -> void:
         assert(false, "Unknown beatmap object type")
 
     object_added.emit(object)
+
+func remove_object(object: BeatMapObjectBase) -> void:
+    var removed := false
+
+    if object is BeatMapNote:
+        if notes.has(object):
+            notes.erase(object)
+            removed = true
+    elif object is BeatMapBomb:
+        if bombs.has(object):
+            bombs.erase(object)
+            removed = true
+    elif object is BeatMapWall:
+        if walls.has(object):
+            walls.erase(object)
+            removed = true
+    else:
+        assert(false, "Unknown beatmap object type")
+
+    if removed:
+        object_removed.emit(object)
 
 func save_changes() -> void:
     original_map._notes.clear()

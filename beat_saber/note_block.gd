@@ -109,6 +109,12 @@ func _on_area_3d_pointer_event(event: XRToolsPointerEvent) -> void:
 func _set_highlight_visible(visible_state: bool) -> void:
 	_highlight_outline.visible = visible_state
 
+func delete_note_block() -> void:
+	if BeatMapManager.current_beatmap != null:
+		BeatMapManager.current_beatmap.remove_object(beatmap_object)
+
+	queue_free()
+
 func _on_area_3d_area_entered(area: Area3D) -> void:
 	if area.is_in_group(Groups.sabers):
 		if PlaybackManager.mode == PlaybackManager.EditMode.EDITING:
