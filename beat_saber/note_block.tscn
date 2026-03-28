@@ -1,8 +1,9 @@
-[gd_scene load_steps=7 format=3 uid="uid://bfhf8qgxqfrw6"]
+[gd_scene load_steps=9 format=3 uid="uid://bfhf8qgxqfrw6"]
 
 [ext_resource type="Script" uid="uid://bas20ig74n46j" path="res://beat_saber/note_block.gd" id="1_yqdrt"]
 [ext_resource type="Texture2D" uid="uid://b7xf7noovx35q" path="res://textures/note_block_texture.png" id="2_ftk3i"]
 [ext_resource type="Texture2D" uid="uid://dquhwpf3rdi53" path="res://textures/note_block_any_cut_direction_texture.png" id="3_rqh18"]
+[ext_resource type="Script" uid="uid://dr2beh7toat6i" path="res://addons/godot-xr-tools/objects/interactable_area.gd" id="4_1p8d7"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_xx8hl"]
 resource_local_to_scene = true
@@ -12,6 +13,13 @@ albedo_color = Color(1, 0, 0, 1)
 resource_local_to_scene = true
 material = SubResource("StandardMaterial3D_xx8hl")
 size = Vector3(0.4, 0.4, 0.4)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_highlight"]
+resource_local_to_scene = true
+cull_mode = 1
+albedo_color = Color(0.14902, 0.533333, 1, 1)
+emission_enabled = true
+emission = Color(0.14902, 0.533333, 1, 1)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_xx8hl"]
 size = Vector3(1.256, 1.107, 1.484)
@@ -25,6 +33,13 @@ script = ExtResource("1_yqdrt")
 mesh = SubResource("BoxMesh_yqdrt")
 skeleton = NodePath("../..")
 
+[node name="HighlightOutline" type="MeshInstance3D" parent="Visual"]
+transform = Transform3D(1.06, 0, 0, 0, 1.06, 0, 0, 0, 1.06, 0, 0, 0)
+visible = false
+mesh = SubResource("BoxMesh_yqdrt")
+skeleton = NodePath("../..")
+surface_material_override/0 = SubResource("StandardMaterial3D_highlight")
+
 [node name="CutDirectionTriangle" type="Sprite3D" parent="Visual"]
 transform = Transform3D(-0.077, 6.73155e-09, 0, -6.73155e-09, -0.077, 0, 0, 0, 0.077, 0, 0, 0.201)
 texture = ExtResource("2_ftk3i")
@@ -35,9 +50,12 @@ texture = ExtResource("3_rqh18")
 
 [node name="Area3D" type="Area3D" parent="."]
 transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0, 0)
+collision_layer = 1048576
+script = ExtResource("4_1p8d7")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.121349)
 shape = SubResource("BoxShape3D_xx8hl")
 
 [connection signal="area_entered" from="Area3D" to="." method="_on_area_3d_area_entered"]
+[connection signal="pointer_event" from="Area3D" to="." method="_on_area_3d_pointer_event"]
