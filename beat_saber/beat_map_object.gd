@@ -70,6 +70,12 @@ func _despawn() -> void:
 	hide()
 	set_deferred('process_mode', ProcessMode.PROCESS_MODE_DISABLED)
 
+func delete_beatmap_object() -> void:
+	if BeatMapManager.current_beatmap != null:
+		BeatMapManager.current_beatmap.remove_object(beatmap_object)
+
+	queue_free()
+
 func _get_jump_time() -> float:
 	return PlaybackManager.playback_position + map_info.reaction_time
 

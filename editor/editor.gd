@@ -20,33 +20,33 @@ func _ready() -> void:
 
 func _on_left_hand_button_pressed(button_name: String) -> void:
 	if button_name == "ax_button":
-		_delete_highlighted_note_for_pointer($XROrigin3D/LeftHand/FunctionPointer)
+		_delete_hovered_object_for_pointer($XROrigin3D/LeftHand/FunctionPointer)
 
 func _on_right_hand_button_pressed(button_name: String) -> void:
 	print("Right hand button pressed %s" % button_name)
 	
 	if button_name == "ax_button":
-		if not _delete_highlighted_note_for_pointer($XROrigin3D/RightHand/FunctionPointer):
+		if not _delete_hovered_object_for_pointer($XROrigin3D/RightHand/FunctionPointer):
 			BeatMapManager.save_beatmap()
 
-func _delete_highlighted_note_for_pointer(pointer: XRToolsFunctionPointer) -> bool:
-	var hovered_note := _get_hovered_note_block(pointer)
-	if hovered_note == null:
+func _delete_hovered_object_for_pointer(pointer: XRToolsFunctionPointer) -> bool:
+	var hovered_object := _get_hovered_beatmap_object(pointer)
+	if hovered_object == null:
 		return false
 
-	hovered_note.delete_note_block()
+	hovered_object.delete_beatmap_object()
 	return true
 
-func _get_hovered_note_block(pointer: XRToolsFunctionPointer) -> NoteBlock:
+func _get_hovered_beatmap_object(pointer: XRToolsFunctionPointer) -> BeatmapObject:
 	var target := pointer.target if pointer.target != null else pointer.last_target
 	if target == null:
 		return null
 
-	if target is NoteBlock:
+	if target is BeatmapObject:
 		return target
 
 	var target_parent := target.get_parent()
-	if target_parent is NoteBlock:
+	if target_parent is BeatmapObject:
 		return target_parent
 
 	return null

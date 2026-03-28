@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://22flelof1n0w"]
+[gd_scene load_steps=13 format=3 uid="uid://22flelof1n0w"]
 
 [ext_resource type="Script" uid="uid://bfonitwkp02np" path="res://editor/ObjectEditPlane/edit_area.gd" id="1_nhfvl"]
 [ext_resource type="Script" uid="uid://d0ujeneeokonh" path="res://editor/ObjectEditPlane/object_edit_plane_cell.gd" id="1_tdoa1"]
@@ -22,6 +22,15 @@ albedo_color = Color(1, 0, 0, 0.6)
 material = SubResource("StandardMaterial3D_preview")
 size = Vector3(0.4, 0.4, 0.4)
 
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_bomb_preview"]
+transparency = 1
+albedo_color = Color(0.12, 0.12, 0.12, 0.75)
+
+[sub_resource type="SphereMesh" id="SphereMesh_bomb_preview"]
+material = SubResource("StandardMaterial3D_bomb_preview")
+radius = 0.2
+height = 0.4
+
 [sub_resource type="BoxShape3D" id="BoxShape3D_tdoa1"]
 size = Vector3(1, 0.1, 1)
 
@@ -41,8 +50,12 @@ texture = ExtResource("2_7sbua")
 transform = Transform3D(2, 0, 0, 0, 0, -2, 0, 2, 0, 0, 0, 0)
 visible = false
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="Preview"]
+[node name="NotePreview" type="MeshInstance3D" parent="Preview"]
 mesh = SubResource("BoxMesh_preview")
+
+[node name="BombPreview" type="MeshInstance3D" parent="Preview"]
+visible = false
+mesh = SubResource("SphereMesh_bomb_preview")
 
 [node name="CutDirectionTriangle" type="Sprite3D" parent="Preview"]
 transform = Transform3D(0.077, 0, 0, 0, 0.077, 0, 0, 0, 0.077, 0, 0, -0.201)

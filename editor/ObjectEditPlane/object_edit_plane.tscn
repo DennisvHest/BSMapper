@@ -1,8 +1,11 @@
-[gd_scene load_steps=3 format=3 uid="uid://c8jif4wpe145k"]
+[gd_scene load_steps=4 format=3 uid="uid://c8jif4wpe145k"]
 
 [ext_resource type="Script" uid="uid://ckugdgd0d1w36" path="res://editor/ObjectEditPlane/object_edit_plane.gd" id="1_x3ow5"]
 [ext_resource type="PackedScene" uid="uid://22flelof1n0w" path="res://editor/ObjectEditPlane/object_edit_plane_cell.tscn" id="2_mrxcp"]
+[ext_resource type="PackedScene" uid="uid://brfsaa28o48de" path="res://editor/ObjectEditPlane/object_type_selector.tscn" id="3_fa2rk"]
 
 [node name="ObjectEditPlane" type="Node3D"]
 script = ExtResource("1_x3ow5")
 object_edit_plane_cell_scene = ExtResource("2_mrxcp")
+
+[node name="ObjectTypeSelector" parent="." instance=ExtResource("3_fa2rk")]
