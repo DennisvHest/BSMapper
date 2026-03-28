@@ -115,9 +115,9 @@ func _get_cut_direction_rotation(cut_direction: BeatMapNote.CutDirection) -> flo
         BeatMapNote.CutDirection.UP:
             return 180.0
         BeatMapNote.CutDirection.LEFT:
-            return -90.0
-        BeatMapNote.CutDirection.RIGHT:
             return 90.0
+        BeatMapNote.CutDirection.RIGHT:
+            return -90.0
         BeatMapNote.CutDirection.UP_LEFT:
             return 135.0
         BeatMapNote.CutDirection.UP_RIGHT:
