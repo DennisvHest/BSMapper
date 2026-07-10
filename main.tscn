@@ -1,9 +1,9 @@
-[gd_scene load_steps=3 format=3 uid="uid://dujhi4qdtiee8"]
+[gd_scene format=3 uid="uid://dujhi4qdtiee8"]
 
 [ext_resource type="Script" uid="uid://kmyet12v7cjt" path="res://main.gd" id="1_ig7tw"]
 [ext_resource type="PackedScene" uid="uid://cjmnf87pjnu15" path="res://editor/editor.tscn" id="2_0xm2m"]
 
-[node name="Main" type="Control"]
+[node name="Main" type="Control" unique_id=1265216047]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -16,7 +16,7 @@ debug_start_in_editor = true
 beat_saber_install_location = "C:/BSLegacyLauncher/Installed Versions/Beat Saber 1.29.1"
 default_song_file = "uid://cpehqjc3d3h2h"
 
-[node name="InstallLocationSelector" type="Control" parent="."]
+[node name="InstallLocationSelector" type="Control" parent="." unique_id=859601268]
 layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
@@ -27,7 +27,7 @@ offset_right = 144.0
 offset_bottom = 105.0
 grow_horizontal = 2
 
-[node name="InstallLocationFolderDialog" type="FileDialog" parent="InstallLocationSelector"]
+[node name="InstallLocationFolderDialog" type="FileDialog" parent="InstallLocationSelector" unique_id=1508059708]
 title = "Open a Directory"
 initial_position = 2
 ok_button_text = "Select Current Folder"
@@ -35,7 +35,7 @@ file_mode = 2
 access = 2
 use_native_dialog = true
 
-[node name="InstallLocationButton" type="Button" parent="InstallLocationSelector"]
+[node name="InstallLocationButton" type="Button" parent="InstallLocationSelector" unique_id=2017033929]
 layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
@@ -46,7 +46,7 @@ offset_bottom = 44.0
 grow_horizontal = 2
 text = "Select beat saber install location"
 
-[node name="InstallLocationLabel" type="Label" parent="InstallLocationSelector"]
+[node name="InstallLocationLabel" type="Label" parent="InstallLocationSelector" unique_id=1227097466]
 layout_mode = 1
 anchors_preset = 7
 anchor_left = 0.5
@@ -59,7 +59,7 @@ offset_right = 20.0
 grow_horizontal = 2
 grow_vertical = 0
 
-[node name="MapSelector" type="Control" parent="."]
+[node name="MapSelector" type="Control" parent="." unique_id=937511830]
 visible = false
 layout_mode = 1
 anchors_preset = 12
@@ -70,7 +70,7 @@ offset_top = -490.0
 grow_horizontal = 2
 grow_vertical = 0
 
-[node name="SongFileDialog" type="FileDialog" parent="MapSelector"]
+[node name="SongFileDialog" type="FileDialog" parent="MapSelector" unique_id=278225847]
 title = "Open a File"
 initial_position = 2
 ok_button_text = "Open"
@@ -79,7 +79,7 @@ access = 2
 filters = PackedStringArray("*.ogg,*.egg")
 use_native_dialog = true
 
-[node name="HBoxContainer" type="HBoxContainer" parent="MapSelector"]
+[node name="HBoxContainer" type="HBoxContainer" parent="MapSelector" unique_id=1440586781]
 layout_mode = 1
 anchors_preset = 14
 anchor_top = 0.5
@@ -89,7 +89,7 @@ grow_horizontal = 2
 grow_vertical = 2
 alignment = 1
 
-[node name="NewMapButton" type="Button" parent="MapSelector/HBoxContainer"]
+[node name="NewMapButton" type="Button" parent="MapSelector/HBoxContainer" unique_id=242652222]
 layout_mode = 2
 text = "Select song for new map"
 
