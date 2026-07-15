@@ -30,7 +30,7 @@ tracker = &"right_hand"
 
 [node name="Saber" parent="RightHand" unique_id=1863092004 instance=ExtResource("2_hqtel")]
 transform = Transform3D(1, 0, 0, 0, 0.707107, 0.707107, 0, -0.707107, 0.707107, 0, 0, 0.1)
-type = 1
+Type = 1
 
 [node name="FunctionPointer" parent="RightHand" unique_id=604697389 instance=ExtResource("3_sweqy")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.02, 0.05, -0.1)

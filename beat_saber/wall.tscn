@@ -1,6 +1,6 @@
 [gd_scene load_steps=5 format=3 uid="uid://djk61jv0t7qmi"]
 
-[ext_resource type="Script" uid="uid://bcmkcykn51n1b" path="res://beat_saber/wall.gd" id="1_xxgf6"]
+[ext_resource type="Script" path="res://beat_saber/Wall.cs" id="1_xxgf6"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_oh6kn"]
 

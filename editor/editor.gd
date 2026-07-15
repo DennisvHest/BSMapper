@@ -1,5 +1,7 @@
 extends Node3D
 
+const LEFT_SABER_TYPE := 0
+
 @export_file("*.dat") var beatmap_file_path: String
 
 func _ready() -> void:
@@ -27,14 +29,14 @@ func _on_right_hand_button_pressed(button_name: String) -> void:
 	
 	if button_name == "ax_button":
 		if not _delete_hovered_object_for_pointer($XROrigin3D/RightHand/FunctionPointer):
-			BeatMapManager.save_beatmap()
+			BeatMapManager.SaveBeatmap()
 
 func _delete_hovered_object_for_pointer(pointer: XRToolsFunctionPointer) -> bool:
 	var hovered_object := _get_hovered_beatmap_object(pointer)
 	if hovered_object == null:
 		return false
 
-	hovered_object.delete_beatmap_object()
+	hovered_object.DeleteBeatmapObject()
 	return true
 
 func _get_hovered_beatmap_object(pointer: XRToolsFunctionPointer) -> BeatmapObject:
@@ -89,7 +91,7 @@ func _on_bomb_hit(saber_type):
 	_trigger_saber_haptic_pulse(saber_type)
 
 func _trigger_saber_haptic_pulse(saber_type):
-	if saber_type == Saber.SaberType.LEFT:
+	if saber_type == LEFT_SABER_TYPE:
 		$XROrigin3D/LeftHand.trigger_haptic_pulse("haptic", 0.0, 1.0, 0.15, 0.0)
 	else:
 		$XROrigin3D/RightHand.trigger_haptic_pulse("haptic", 0.0, 1.0, 0.15, 0.0)

@@ -7,28 +7,23 @@ using Array = Godot.Collections.Array;
 [GlobalClass]
 public partial class BeatMap : RefCounted
 {
-    private const string NoteScriptPath = "res://beat_saber/maps/beat_map_note.gd";
-    private const string BombScriptPath = "res://beat_saber/maps/beat_map_bomb.gd";
-    private const string WallScriptPath = "res://beat_saber/maps/beat_map_wall.gd";
-    private const double BombType = 3.0;
+    [Signal]
+    public delegate void ObjectAddedEventHandler(BeatMapObjectBase @object);
 
     [Signal]
-    public delegate void ObjectAddedEventHandler(GodotObject @object);
-
-    [Signal]
-    public delegate void ObjectRemovedEventHandler(GodotObject @object);
+    public delegate void ObjectRemovedEventHandler(BeatMapObjectBase @object);
 
     [Export]
     public Variant OriginalMap { get; set; }
 
     [Export]
-    public Array Notes { get; set; } = new();
+    public Array<BeatMapNote> Notes { get; set; } = new();
 
     [Export]
-    public Array Bombs { get; set; } = new();
+    public Array<BeatMapBomb> Bombs { get; set; } = new();
 
     [Export]
-    public Array Walls { get; set; } = new();
+    public Array<BeatMapWall> Walls { get; set; } = new();
 
     public void InitializeEmpty()
     {
@@ -59,40 +54,56 @@ public partial class BeatMap : RefCounted
         foreach (var objectVariant in mapDictionary["_notes"].AsGodotArray())
         {
             var objectDictionary = objectVariant.AsGodotDictionary();
-            if (objectDictionary["_type"].AsDouble() == BombType)
+            if (objectDictionary["_type"].AsDouble() == BeatMapBomb.BombType)
             {
-                Bombs.Add(CreateBomb(objectVariant, objectDictionary));
+                Bombs.Add(BeatMapBomb.FromV2Object(objectVariant));
             }
             else
             {
-                Notes.Add(CreateNote(objectVariant, objectDictionary));
+                Notes.Add(BeatMapNote.FromV2Object(objectVariant));
             }
         }
 
         foreach (var wallVariant in mapDictionary["_obstacles"].AsGodotArray())
         {
-            Walls.Add(CreateWall(wallVariant, wallVariant.AsGodotDictionary()));
+            Walls.Add(BeatMapWall.FromV2Object(wallVariant));
         }
     }
 
-    public void AddObject(GodotObject @object)
+    public void AddObject(BeatMapObjectBase @object)
     {
-        var target = GetObjectArray(@object);
-        target.Add(@object);
+        switch (@object)
+        {
+            case BeatMapNote note:
+                Notes.Add(note);
+                break;
+            case BeatMapBomb bomb:
+                Bombs.Add(bomb);
+                break;
+            case BeatMapWall wall:
+                Walls.Add(wall);
+                break;
+            default:
+                throw new ArgumentException("Unknown beatmap object type", nameof(@object));
+        }
+
         EmitSignal(SignalName.ObjectAdded, @object);
     }
 
-    public void RemoveObject(GodotObject @object)
+    public void RemoveObject(BeatMapObjectBase @object)
     {
-        var target = GetObjectArray(@object);
-        var index = target.IndexOf(@object);
-        if (index < 0)
+        var removed = @object switch
         {
-            return;
-        }
+            BeatMapNote note => Notes.Remove(note),
+            BeatMapBomb bomb => Bombs.Remove(bomb),
+            BeatMapWall wall => Walls.Remove(wall),
+            _ => throw new ArgumentException("Unknown beatmap object type", nameof(@object)),
+        };
 
-        target.RemoveAt(index);
-        EmitSignal(SignalName.ObjectRemoved, @object);
+        if (removed)
+        {
+            EmitSignal(SignalName.ObjectRemoved, @object);
+        }
     }
 
     public void SaveChanges()
@@ -119,74 +130,13 @@ public partial class BeatMap : RefCounted
         }
     }
 
-    private static GodotObject CreateNote(Variant original, Dictionary data)
-    {
-        var note = CreateScriptObject(NoteScriptPath);
-        note.Set("original_object", original);
-        note.Set("beat", data["_time"]);
-        note.Set("line_index", data["_lineIndex"]);
-        note.Set("line_layer", data["_lineLayer"]);
-        note.Set("type", data["_type"].AsInt32());
-        note.Set("cut_direction", data["_cutDirection"].AsInt32());
-        return note;
-    }
-
-    private static GodotObject CreateBomb(Variant original, Dictionary data)
-    {
-        var bomb = CreateScriptObject(BombScriptPath);
-        bomb.Set("original_object", original);
-        bomb.Set("beat", data["_time"]);
-        bomb.Set("line_index", data["_lineIndex"]);
-        bomb.Set("line_layer", data["_lineLayer"]);
-        return bomb;
-    }
-
-    private static GodotObject CreateWall(Variant original, Dictionary data)
-    {
-        var wall = CreateScriptObject(WallScriptPath);
-        var wallType = data["_type"].AsInt32();
-        wall.Set("original_object", original);
-        wall.Set("beat", data["_time"]);
-        wall.Set("line_index", data["_lineIndex"]);
-        wall.Set("line_layer", data.ContainsKey("_lineLayer") ? data["_lineLayer"] : 0);
-        wall.Set("type", wallType);
-        wall.Set("duration", data["_duration"]);
-        wall.Set("width", data["_width"]);
-        wall.Set("height", wallType switch
-        {
-            0 => 5.0,
-            1 => 3.0,
-            _ => data.ContainsKey("_height") ? data["_height"] : 0,
-        });
-        return wall;
-    }
-
-    private static GodotObject CreateScriptObject(string path)
-    {
-        var script = GD.Load<Script>(path);
-        return script.Call("new").AsGodotObject();
-    }
-
-    private Array GetObjectArray(GodotObject @object)
-    {
-        var scriptPath = @object.GetScript().As<Script>()?.ResourcePath ?? string.Empty;
-        return scriptPath switch
-        {
-            NoteScriptPath => Notes,
-            BombScriptPath => Bombs,
-            WallScriptPath => Walls,
-            _ => throw new ArgumentException("Unknown beatmap object type", nameof(@object)),
-        };
-    }
-
-    private List<Variant> SaveObjects(Array objects)
+    private static List<Variant> SaveObjects<[MustBeVariant] T>(Array<T> objects) where T : BeatMapObjectBase
     {
         var savedObjects = new List<Variant>(objects.Count);
-        foreach (var objectVariant in objects)
+        foreach (var @object in objects)
         {
-            var @object = objectVariant.AsGodotObject();
-            @object.Call("save_v2_object");
-            savedObjects.Add(@object.Get("original_object"));
+            @object.SaveV2Object();
+            savedObjects.Add(@object.OriginalObject);
         }
 
         return savedObjects;

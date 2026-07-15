@@ -14,6 +14,9 @@ const QUARTER_BEAT_STEP: float = 0.25
 const BEAT_LABEL_OFFSET_X: float = 0.35
 const BEAT_LABEL_HEIGHT: float = 0.04
 const BEAT_LABEL_PIXEL_SIZE: float = 0.005
+const BEATMAP_OBJECT_LINE_SIZE := 0.5
+const GRID_WIDTH := 4
+const LANE_WIDTH := BEATMAP_OBJECT_LINE_SIZE * GRID_WIDTH
 
 var floor_grid_root: Node3D
 var current_beat_marker: MeshInstance3D
@@ -31,8 +34,8 @@ func _ready() -> void:
 	_on_playback_mode_changed()
 	_rebuild_floor_grid()
 	PlaybackManager.mode_changed.connect(_on_playback_mode_changed)
-	BeatMapManager.current_beatmap_changed.connect(_on_current_beatmap_changed)
-	BeatMapManager.current_beatmap_difficulty_info_changed.connect(_on_current_beatmap_difficulty_info_changed)
+	BeatMapManager.CurrentBeatmapChanged.connect(_on_current_beatmap_changed)
+	BeatMapManager.CurrentBeatmapDifficultyInfoChanged.connect(_on_current_beatmap_difficulty_info_changed)
 	_update_floor_grid_position()
 
 func _process(_delta: float) -> void:
@@ -53,7 +56,7 @@ func _initialize_floor_grid() -> void:
 
 	current_beat_marker = _create_line(
 		"CurrentBeatMarker",
-		Vector3(NoteBlockLane.LANE_WIDTH, LINE_HEIGHT, CURRENT_BEAT_LINE_THICKNESS),
+		Vector3(LANE_WIDTH, LINE_HEIGHT, CURRENT_BEAT_LINE_THICKNESS),
 		current_beat_line_material
 	)
 	current_beat_marker.position = Vector3(0.0, FLOOR_MARKER_Y, 0.0)
@@ -87,7 +90,7 @@ func _create_beat_label(beat_number: int, beat_position: float) -> Label3D:
 	label.outline_size = 8
 	label.no_depth_test = true
 	label.billboard = BaseMaterial3D.BILLBOARD_DISABLED
-	label.position = Vector3(NoteBlockLane.LANE_WIDTH / 2.0 + BEAT_LABEL_OFFSET_X, BEAT_LABEL_HEIGHT, -beat_position)
+	label.position = Vector3(LANE_WIDTH / 2.0 + BEAT_LABEL_OFFSET_X, BEAT_LABEL_HEIGHT, -beat_position)
 	label.rotation.x = deg_to_rad(-90)
 	return label
 
@@ -97,8 +100,8 @@ func _rebuild_floor_grid() -> void:
 	_refresh_visible_window_if_needed()
 
 func _refresh_visible_window_if_needed() -> void:
-	var difficulty := BeatMapManager.current_beatmap_difficulty_info
-	if difficulty == null or difficulty.beat_duration == 0.0:
+	var difficulty: BeatMapDifficultyInfo = BeatMapManager.CurrentBeatmapDifficultyInfo
+	if difficulty == null or difficulty.BeatDuration == 0.0:
 		_clear_floor_lines()
 		current_beat_marker.hide()
 		return
@@ -122,7 +125,7 @@ func _refresh_visible_window_if_needed() -> void:
 
 	_clear_floor_lines()
 
-	var beat_length_meters := difficulty.njs * difficulty.beat_duration
+	var beat_length_meters := difficulty.Njs * difficulty.BeatDuration
 
 	_spawn_longitudinal_lines(visible_window.x, visible_window.y, beat_length_meters)
 	_spawn_cross_lines(window_start_quarter, window_end_quarter, beat_length_meters)
@@ -136,8 +139,8 @@ func _spawn_longitudinal_lines(window_start_beat: float, window_end_beat: float,
 	var floor_center_beat := (window_start_beat + window_end_beat) / 2.0
 	var floor_length_meters := (window_end_beat - window_start_beat) * beat_length_meters
 
-	for line_index in NoteBlockLane.GRID_WIDTH + 1:
-		var x_position := -NoteBlockLane.LANE_WIDTH / 2.0 + NoteBlockLane.BEATMAP_OBJECT_LINE_SIZE * line_index
+	for line_index in GRID_WIDTH + 1:
+		var x_position: float = -LANE_WIDTH / 2.0 + BEATMAP_OBJECT_LINE_SIZE * line_index
 		var line := _create_line(
 			"LaneBoundary%s" % line_index,
 			Vector3(LONGITUDINAL_LINE_THICKNESS, LINE_HEIGHT, floor_length_meters),
@@ -154,7 +157,7 @@ func _spawn_cross_lines(window_start_quarter: int, window_end_quarter: int, beat
 		var beat_position := quarter_beat_index * QUARTER_BEAT_STEP
 		var line := _create_line(
 			"BeatMarker%s" % quarter_beat_index,
-			Vector3(NoteBlockLane.LANE_WIDTH, LINE_HEIGHT, line_thickness),
+			Vector3(LANE_WIDTH, LINE_HEIGHT, line_thickness),
 			material
 		)
 
@@ -167,25 +170,25 @@ func _spawn_cross_lines(window_start_quarter: int, window_end_quarter: int, beat
 			floor_grid_root.add_child(label)
 
 func _update_floor_grid_position() -> void:
-	var difficulty := BeatMapManager.current_beatmap_difficulty_info
+	var difficulty: BeatMapDifficultyInfo = BeatMapManager.CurrentBeatmapDifficultyInfo
 	if difficulty == null:
 		return
 
-	floor_grid_root.position = Vector3(0.0, 0.0, PlaybackManager.playback_position * difficulty.njs)
+	floor_grid_root.position = Vector3(0.0, 0.0, PlaybackManager.playback_position * difficulty.Njs)
 
 func _get_total_beats(difficulty: BeatMapDifficultyInfo) -> float:
 	var last_beat := _get_music_total_beats(difficulty)
-	var beatmap := BeatMapManager.current_beatmap
+	var beatmap: BeatMap = BeatMapManager.CurrentBeatmap
 
 	if beatmap != null:
 		for note in beatmap.Notes:
-			last_beat = max(last_beat, note.beat)
+			last_beat = max(last_beat, note.Beat)
 
 		for bomb in beatmap.Bombs:
-			last_beat = max(last_beat, bomb.beat)
+			last_beat = max(last_beat, bomb.Beat)
 
 		for wall in beatmap.Walls:
-			last_beat = max(last_beat, wall.beat + wall.duration)
+			last_beat = max(last_beat, wall.Beat + wall.Duration)
 
 	return ceil(last_beat)
 
@@ -193,7 +196,7 @@ func _get_music_total_beats(difficulty: BeatMapDifficultyInfo) -> float:
 	if PlaybackManager.music == null or PlaybackManager.music.stream == null:
 		return 0.0
 
-	return PlaybackManager.music.stream.get_length() / difficulty.beat_duration
+	return PlaybackManager.music.stream.get_length() / difficulty.BeatDuration
 
 func _get_visible_window(total_beats: float) -> Vector2:
 	var current_beat := PlaybackManager.playback_beat

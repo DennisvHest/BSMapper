@@ -15,10 +15,10 @@ var playback_position: float = 0
 ## The current playback beat of the song
 var playback_beat: float:
 	get:
-		if not beatmap or beatmap.bpm == 0:
+		if not beatmap or beatmap.Bpm == 0:
 			return 0.0
 		
-		return playback_position / (60.0 / beatmap.bpm)
+		return playback_position / (60.0 / beatmap.Bpm)
 
 const PLAYBACK_SCRUB_VELOCITY: float = 0.01
 
@@ -29,7 +29,7 @@ var mode: EditMode = EditMode.PLAYING
 var initialized: bool = false
 
 func _ready() -> void:
-	BeatMapManager.current_beatmap_difficulty_info_changed.connect(_on_current_beatmap_difficulty_info_changed)
+	BeatMapManager.CurrentBeatmapDifficultyInfoChanged.connect(_on_current_beatmap_difficulty_info_changed)
 
 	music = AudioStreamPlayer.new()
 	music.stream = preload("res://test_beatmaps/1feab (Turn It Up - abcbadq)/song.ogg")
@@ -141,16 +141,16 @@ func _on_left_hand_button_pressed(button_name: String) -> void:
 	# Seek backward by one beat
 	if button_name == "grip_click":
 		var playback_pos = get_playback_position()
-		set_playback_position(playback_pos - beatmap.beat_duration)
+		set_playback_position(playback_pos - beatmap.BeatDuration)
 
 func _on_right_hand_button_pressed(button_name: String) -> void:
 	# Seek forward by one beat
 	if button_name == "grip_click":
 		var playback_pos = get_playback_position()
-		set_playback_position(playback_pos + beatmap.beat_duration)
+		set_playback_position(playback_pos + beatmap.BeatDuration)
 
 ## # Snap to nearest beat based on BPM
 func _snap_to_nearest_beat() -> void:
 	var playback_pos = get_playback_position()
-	var snapped_pos = round(playback_pos / beatmap.beat_duration) * beatmap.beat_duration
+	var snapped_pos = round(playback_pos / beatmap.BeatDuration) * beatmap.BeatDuration
 	set_playback_position(snapped_pos)

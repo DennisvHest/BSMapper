@@ -1,5 +1,8 @@
 extends Control
 
+const STANDARD_BEATMAP_MODE := 0
+const EXPERT_DIFFICULTY := 3
+
 @export var start_scene: PackedScene
 
 @export var debug_without_vr: bool = false
@@ -53,7 +56,7 @@ func _configure_install_location(dir: String) -> void:
 	beat_saber_install_location = dir
 
 	var wip_beatmaps_location = _get_wip_beatmaps_location(dir)
-	BeatMapManager.set_wip_beatmap_location(wip_beatmaps_location)
+	BeatMapManager.SetWipBeatmapLocation(wip_beatmaps_location)
 
 	$InstallLocationSelector/InstallLocationLabel.text = wip_beatmaps_location
 	$MapSelector.show()
@@ -84,19 +87,19 @@ func _load_default_map() -> bool:
 	return _load_selected_song(default_song_file)
 
 func _load_selected_song(path: String) -> bool:
-	if BeatMapManager.wip_beatmap_location.is_empty():
+	if BeatMapManager.WipBeatmapLocation.is_empty():
 		push_warning("Cannot create a map before a Beat Saber install location is configured.")
 		return false
 
 	default_song_file = path
 
-	var new_beat_map = BeatMapManager.new_map(path)
-	BeatMapManager.new_difficulty(new_beat_map, BeatMapDifficultySet.BeatmapMode.STANDARD, BeatMapDifficultyInfo.Difficulty.EXPERT, 16.0, -0.15)
+	var new_beat_map = BeatMapManager.NewMap(path)
+	BeatMapManager.NewDifficulty(new_beat_map, STANDARD_BEATMAP_MODE, EXPERT_DIFFICULTY, 16.0, -0.15)
 
-	var beatmap_info = BeatMapManager.load_beatmap_info(new_beat_map.file_path.path_join("info.dat"))
+	var beatmap_info = BeatMapManager.LoadBeatmapInfo(new_beat_map.FilePath.path_join("info.dat"))
 
-	var difficulty: BeatMapDifficultyInfo = beatmap_info.difficulty_beat_map_sets[0].difficulty_beat_maps[0]
-	BeatMapManager.load_difficulty(difficulty)
+	var difficulty: BeatMapDifficultyInfo = beatmap_info.DifficultyBeatMapSets[0].DifficultyBeatMaps[0]
+	BeatMapManager.LoadDifficulty(difficulty)
 
 	return true
 

@@ -1,0 +1,183 @@
+using System;
+using Godot;
+
+public partial class BeatMapManager : Node
+{
+    [Signal]
+    public delegate void CurrentBeatmapInfoChangedEventHandler(BeatMapInfo beatmapInfo);
+
+    [Signal]
+    public delegate void CurrentBeatmapDifficultyInfoChangedEventHandler(BeatMapDifficultyInfo difficulty);
+
+    [Signal]
+    public delegate void CurrentBeatmapChangedEventHandler(BeatMap beatmap);
+
+    [Export]
+    public BeatMapInfo CurrentBeatmapInfo { get; set; }
+
+    [Export]
+    public BeatMapDifficultyInfo CurrentBeatmapDifficultyInfo { get; set; }
+
+    [Export]
+    public string CurrentBeatmapFilePath { get; set; } = string.Empty;
+
+    [Export]
+    public BeatMap CurrentBeatmap { get; set; }
+
+    [Export]
+    public string WipBeatmapLocation { get; set; } = string.Empty;
+
+    public void SetWipBeatmapLocation(string filePath)
+    {
+        WipBeatmapLocation = filePath;
+    }
+
+    public BeatMapInfo NewMap(string songPath)
+    {
+        var testMapFolder = WipBeatmapLocation.PathJoin("TEST_MAP_BS_MAPPER");
+        var directory = DirAccess.Open(WipBeatmapLocation)
+            ?? throw new InvalidOperationException($"Failed to open beatmap directory: {WipBeatmapLocation}");
+
+        if (DirAccess.DirExistsAbsolute(testMapFolder))
+        {
+            ClearDirectory(testMapFolder);
+        }
+
+        var makeDirectoryError = directory.MakeDirRecursive(testMapFolder);
+        if (makeDirectoryError != Error.Ok)
+        {
+            throw new InvalidOperationException($"Failed to create beatmap directory: {testMapFolder}");
+        }
+
+        var songDestinationPath = testMapFolder.PathJoin("song.egg");
+        using var sourceFile = FileAccess.Open(songPath, FileAccess.ModeFlags.Read)
+            ?? throw new InvalidOperationException($"Failed to open source song file: {songPath}");
+        var songData = sourceFile.GetBuffer(checked((long)sourceFile.GetLength()));
+        using var destinationFile = FileAccess.Open(songDestinationPath, FileAccess.ModeFlags.Write)
+            ?? throw new InvalidOperationException($"Failed to open destination song file: {songDestinationPath}");
+        destinationFile.StoreBuffer(songData);
+
+        var beatmapInfo = BeatMapInfo.NewMap(testMapFolder);
+        SaveBeatmapInfo(beatmapInfo);
+        return beatmapInfo;
+    }
+
+    public BeatMapDifficultyInfo NewDifficulty(
+        BeatMapInfo beatmapInfo,
+        BeatMapDifficultySet.BeatmapMode mode,
+        BeatMapDifficultyInfo.Difficulty difficulty,
+        float njs,
+        float noteJumpStartBeatOffset)
+    {
+        var difficultyInfo = BeatMapDifficultyInfo.NewDifficulty(
+            difficulty,
+            mode,
+            njs,
+            noteJumpStartBeatOffset,
+            beatmapInfo.Bpm);
+        var difficultyFilePath = beatmapInfo.FilePath.PathJoin(difficultyInfo.BeatMapFileName);
+        var beatmap = new BeatMap();
+        beatmap.InitializeEmpty();
+
+        using var difficultyFile = FileAccess.Open(difficultyFilePath, FileAccess.ModeFlags.Write)
+            ?? throw new InvalidOperationException($"Failed to open difficulty file for writing: {difficultyFilePath}");
+        difficultyFile.StoreString(Json.Stringify(beatmap.OriginalMap, string.Empty, false));
+
+        beatmapInfo.AddDifficulty(difficultyInfo, mode);
+        SaveBeatmapInfo(beatmapInfo);
+        return difficultyInfo;
+    }
+
+    public BeatMapInfo LoadBeatmapInfo(string filePath)
+    {
+        var original = ParseJsonFile(filePath);
+        CurrentBeatmapInfo = BeatMapInfo.FromFile(original, filePath);
+        EmitSignal(SignalName.CurrentBeatmapInfoChanged, CurrentBeatmapInfo);
+        return CurrentBeatmapInfo;
+    }
+
+    public void LoadDifficulty(BeatMapDifficultyInfo difficulty)
+    {
+        CurrentBeatmapDifficultyInfo = difficulty;
+        EmitSignal(SignalName.CurrentBeatmapDifficultyInfoChanged, difficulty);
+        var difficultyFilePath = CurrentBeatmapInfo.FilePath.GetBaseDir().PathJoin(difficulty.BeatMapFileName);
+        LoadBeatmap(difficultyFilePath);
+    }
+
+    public void ChangeBeatmap(BeatMap beatmap)
+    {
+        CurrentBeatmap = beatmap;
+        EmitSignal(SignalName.CurrentBeatmapChanged, beatmap);
+    }
+
+    public void SaveBeatmap()
+    {
+        CurrentBeatmap.SaveChanges();
+        var extension = CurrentBeatmapFilePath.GetExtension();
+        var basePath = CurrentBeatmapFilePath.GetBaseName();
+        var newFilePath = $"{basePath}_TEST.{extension}";
+        using var beatmapFile = FileAccess.Open(newFilePath, FileAccess.ModeFlags.Write)
+            ?? throw new InvalidOperationException($"Failed to open beatmap file for writing: {newFilePath}");
+        beatmapFile.StoreString(Json.Stringify(CurrentBeatmap.OriginalMap, string.Empty, false));
+    }
+
+    private static void ClearDirectory(string directoryPath)
+    {
+        var directory = DirAccess.Open(directoryPath)
+            ?? throw new InvalidOperationException($"Failed to open directory for clearing: {directoryPath}");
+        directory.ListDirBegin();
+
+        for (var itemName = directory.GetNext(); !string.IsNullOrEmpty(itemName); itemName = directory.GetNext())
+        {
+            if (itemName is "." or "..")
+            {
+                continue;
+            }
+
+            var itemPath = directoryPath.PathJoin(itemName);
+            if (directory.CurrentIsDir())
+            {
+                ClearDirectory(itemPath);
+            }
+
+            var removeError = DirAccess.RemoveAbsolute(itemPath);
+            if (removeError != Error.Ok)
+            {
+                throw new InvalidOperationException($"Failed to remove: {itemPath}");
+            }
+        }
+
+        directory.ListDirEnd();
+    }
+
+    private static void SaveBeatmapInfo(BeatMapInfo beatmapInfo)
+    {
+        var infoPath = beatmapInfo.FilePath.PathJoin("info.dat");
+        using var infoFile = FileAccess.Open(infoPath, FileAccess.ModeFlags.Write)
+            ?? throw new InvalidOperationException($"Failed to open info.dat for writing: {infoPath}");
+        infoFile.StoreString(Json.Stringify(beatmapInfo.OriginalObject, string.Empty, false));
+    }
+
+    private void LoadBeatmap(string filePath)
+    {
+        var original = ParseJsonFile(filePath);
+        CurrentBeatmapFilePath = filePath;
+        var beatmap = new BeatMap();
+        beatmap.LoadFromFile(original);
+        ChangeBeatmap(beatmap);
+    }
+
+    private static Variant ParseJsonFile(string filePath)
+    {
+        var content = FileAccess.GetFileAsString(filePath);
+        var json = new Json();
+        var result = json.Parse(content);
+        if (result != Error.Ok)
+        {
+            throw new InvalidOperationException(
+                $"JSON Parse Error: {json.GetErrorMessage()} in {filePath} at line {json.GetErrorLine()}");
+        }
+
+        return json.Data;
+    }
+}
