@@ -22,10 +22,10 @@ config/icon="res://icon.svg"
 [autoload]
 
 BeatMapManager="*res://beat_saber/maps/BeatMapManager.cs"
-GlobalSettings="*res://global_settings.gd"
-GameEvents="*res://game_events.gd"
+GlobalSettings="*res://GlobalSettings.cs"
+GameEvents="*res://GameEvents.cs"
 DebugMenu="*uid://cggqb75a8w8r"
-PlaybackManager="*res://editor/playback_manager.gd"
+PlaybackManager="*res://editor/PlaybackManager.cs"
 XRToolsUserSettings="*uid://bqgb8i74tm0t"
 XRToolsRumbleManager="*uid://by853dk86g1qw"
 

@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://dujhi4qdtiee8"]
 
-[ext_resource type="Script" uid="uid://kmyet12v7cjt" path="res://main.gd" id="1_ig7tw"]
+[ext_resource type="Script" path="res://Main.cs" id="1_ig7tw"]
 [ext_resource type="PackedScene" uid="uid://cjmnf87pjnu15" path="res://editor/editor.tscn" id="2_0xm2m"]
 
 [node name="Main" type="Control" unique_id=1265216047]
@@ -11,10 +11,10 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_ig7tw")
-start_scene = ExtResource("2_0xm2m")
-debug_start_in_editor = true
-beat_saber_install_location = "C:/BSLegacyLauncher/Installed Versions/Beat Saber 1.29.1"
-default_song_file = "uid://cpehqjc3d3h2h"
+StartScene = ExtResource("2_0xm2m")
+DebugStartInEditor = true
+BeatSaberInstallLocation = "C:/BSLegacyLauncher/Installed Versions/Beat Saber 1.29.1"
+DefaultSongFile = "uid://cpehqjc3d3h2h"
 
 [node name="InstallLocationSelector" type="Control" parent="." unique_id=859601268]
 layout_mode = 1
@@ -93,7 +93,7 @@ alignment = 1
 layout_mode = 2
 text = "Select song for new map"
 
-[connection signal="dir_selected" from="InstallLocationSelector/InstallLocationFolderDialog" to="." method="_on_install_location_folder_dialog_dir_selected"]
-[connection signal="pressed" from="InstallLocationSelector/InstallLocationButton" to="." method="_on_install_location_button_pressed"]
-[connection signal="file_selected" from="MapSelector/SongFileDialog" to="." method="_on_song_file_dialog_file_selected"]
-[connection signal="pressed" from="MapSelector/HBoxContainer/NewMapButton" to="." method="_on_new_map_button_pressed"]
+[connection signal="dir_selected" from="InstallLocationSelector/InstallLocationFolderDialog" to="." method="OnInstallLocationFolderDialogDirSelected"]
+[connection signal="pressed" from="InstallLocationSelector/InstallLocationButton" to="." method="OnInstallLocationButtonPressed"]
+[connection signal="file_selected" from="MapSelector/SongFileDialog" to="." method="OnSongFileDialogFileSelected"]
+[connection signal="pressed" from="MapSelector/HBoxContainer/NewMapButton" to="." method="OnNewMapButtonPressed"]

@@ -125,8 +125,7 @@ public partial class NoteBlockLane : Node3D
         objectPosition += Vector3.Left * LaneWidth / 2.0f;
         objectPosition += Vector3.Right * BeatmapObjectLineSize / 2.0f;
 
-        var playerHeight = (float)GetNode<Node>("/root/GlobalSettings").Get("player_height").AsDouble();
-        objectPosition += Vector3.Up * playerHeight / 3.0f;
+        objectPosition += Vector3.Up * GlobalSettings.PlayerHeight / 3.0f;
         objectPosition += Vector3.Up * BeatmapObjectLineSize / 2.0f;
         return objectPosition;
     }

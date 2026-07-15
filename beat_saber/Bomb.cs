@@ -90,7 +90,7 @@ public partial class Bomb : BeatmapObject
 
     private void OnArea3DAreaEntered(Area3D area)
     {
-        if (!area.IsInGroup("sabers") || PlaybackManager.Get("mode").AsInt32() == 1)
+        if (!area.IsInGroup(Groups.Sabers) || PlaybackManager.Mode == PlaybackManager.EditMode.Editing)
         {
             return;
         }
@@ -100,7 +100,7 @@ public partial class Bomb : BeatmapObject
             throw new InvalidCastException("Expected parent to be Saber");
         }
 
-        GetNode<Node>("/root/GameEvents").EmitSignal("bomb_hit", (int)saber.Type);
+        GetNode<GameEvents>("/root/GameEvents").EmitSignal(GameEvents.SignalName.BombHit, (int)saber.Type);
         Despawn();
     }
 }

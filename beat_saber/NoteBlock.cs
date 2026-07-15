@@ -162,7 +162,7 @@ public partial class NoteBlock : BeatmapObject
 
     private void OnArea3DAreaEntered(Area3D area)
     {
-        if (!area.IsInGroup("sabers") || PlaybackManager.Get("mode").AsInt32() == 1)
+        if (!area.IsInGroup(Groups.Sabers) || PlaybackManager.Mode == PlaybackManager.EditMode.Editing)
         {
             return;
         }
@@ -172,7 +172,7 @@ public partial class NoteBlock : BeatmapObject
             throw new InvalidCastException("Expected parent to be Saber");
         }
 
-        GetNode<Node>("/root/GameEvents").EmitSignal("note_block_hit", (int)saber.Type);
+        GetNode<GameEvents>("/root/GameEvents").EmitSignal(GameEvents.SignalName.NoteBlockHit, (int)saber.Type);
         Despawn();
     }
 }

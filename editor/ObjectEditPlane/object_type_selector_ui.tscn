@@ -1,6 +1,6 @@
 [gd_scene load_steps=6 format=3 uid="uid://dth3ud1u0dqtq"]
 
-[ext_resource type="Script" uid="uid://ogkgpijfg03o" path="res://editor/ObjectEditPlane/object_type_selector_ui.gd" id="1_q6b6o"]
+[ext_resource type="Script" path="res://editor/ObjectEditPlane/ObjectTypeSelectorUI.cs" id="1_q6b6o"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_button_idle"]
 content_margin_left = 12.0
@@ -53,9 +53,9 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_q6b6o")
-idle_button_style = SubResource("StyleBoxFlat_button_idle")
-hover_button_style = SubResource("StyleBoxFlat_button_hover")
-selected_button_style = SubResource("StyleBoxFlat_button_selected")
+IdleButtonStyle = SubResource("StyleBoxFlat_button_idle")
+HoverButtonStyle = SubResource("StyleBoxFlat_button_hover")
+SelectedButtonStyle = SubResource("StyleBoxFlat_button_selected")
 
 [node name="Panel" type="Panel" parent="."]
 layout_mode = 1

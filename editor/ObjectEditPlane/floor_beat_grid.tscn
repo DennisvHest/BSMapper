@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3]
 
-[ext_resource type="Script" path="res://editor/ObjectEditPlane/floor_beat_grid.gd" id="1_7g2lt"]
+[ext_resource type="Script" path="res://editor/ObjectEditPlane/FloorBeatGrid.cs" id="1_7g2lt"]
 
 [node name="FloorBeatGrid" type="Node3D"]
 script = ExtResource("1_7g2lt")

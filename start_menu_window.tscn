@@ -1,11 +1,11 @@
 [gd_scene load_steps=3 format=3 uid="uid://30enicfm1x4h"]
 
-[ext_resource type="Script" uid="uid://bp0o80i4nhaec" path="res://start_menu_window.gd" id="1_nt7ia"]
+[ext_resource type="Script" path="res://StartMenuWindow.cs" id="1_nt7ia"]
 [ext_resource type="PackedScene" uid="uid://cjmnf87pjnu15" path="res://editor/editor.tscn" id="2_kq4rw"]
 
 [node name="CanvasLayer" type="CanvasLayer"]
 script = ExtResource("1_nt7ia")
-editor_scene = ExtResource("2_kq4rw")
+EditorScene = ExtResource("2_kq4rw")
 
 [node name="StartButton" type="Button" parent="."]
 anchors_preset = 8
@@ -22,4 +22,4 @@ grow_vertical = 2
 text = "Start
 "
 
-[connection signal="pressed" from="StartButton" to="." method="_on_start_button_pressed"]
+[connection signal="pressed" from="StartButton" to="." method="OnStartButtonPressed"]

@@ -1,6 +1,6 @@
 [gd_scene load_steps=7 format=3 uid="uid://brfsaa28o48de"]
 
-[ext_resource type="Script" uid="uid://d2xdgfph4dcoa" path="res://editor/ObjectEditPlane/object_type_selector.gd" id="1_2mrtu"]
+[ext_resource type="Script" path="res://editor/ObjectEditPlane/ObjectTypeSelector.cs" id="1_2mrtu"]
 [ext_resource type="PackedScene" uid="uid://clujaf3u776a3" path="res://addons/godot-xr-tools/objects/viewport_2d_in_3d.tscn" id="2_x3lrt"]
 [ext_resource type="PackedScene" uid="uid://dth3ud1u0dqtq" path="res://editor/ObjectEditPlane/object_type_selector_ui.tscn" id="3_1xq2r"]
 
@@ -45,9 +45,9 @@ screen_size = Vector2(0.6, 0.42)
 scene = ExtResource("3_1xq2r")
 viewport_size = Vector2(360, 252)
 unshaded = true
-scene_properties_keys = PackedStringArray("object_type_selector_ui.gd", "idle_button_style", "hover_button_style", "selected_button_style", "idle_text_color", "selected_text_color")
-idle_button_style = SubResource("StyleBoxFlat_button_idle")
-hover_button_style = SubResource("StyleBoxFlat_button_hover")
-selected_button_style = SubResource("StyleBoxFlat_button_selected")
-idle_text_color = Color(0.83, 0.86, 0.9, 1)
-selected_text_color = Color(1, 1, 1, 1)
+scene_properties_keys = PackedStringArray("ObjectTypeSelectorUI.cs", "IdleButtonStyle", "HoverButtonStyle", "SelectedButtonStyle", "IdleTextColor", "SelectedTextColor")
+IdleButtonStyle = SubResource("StyleBoxFlat_button_idle")
+HoverButtonStyle = SubResource("StyleBoxFlat_button_hover")
+SelectedButtonStyle = SubResource("StyleBoxFlat_button_selected")
+IdleTextColor = Color(0.83, 0.86, 0.9, 1)
+SelectedTextColor = Color(1, 1, 1, 1)

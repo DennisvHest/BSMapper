@@ -20,12 +20,12 @@ public partial class BeatmapObject : Node3D
     public bool JumpAnimationEnabled { get; private set; } = true;
     public bool Despawned => ProcessMode == ProcessModeEnum.Disabled;
 
-    protected Node PlaybackManager => GetNode<Node>("/root/PlaybackManager");
+    protected PlaybackManager PlaybackManager => GetNode<PlaybackManager>("/root/PlaybackManager");
 
     public override void _Ready()
     {
         OnPlaybackModeChanged();
-        PlaybackManager.Connect("mode_changed", Callable.From(OnPlaybackModeChanged));
+        PlaybackManager.ModeChanged += OnPlaybackModeChanged;
     }
 
     public virtual void Initialize(
@@ -106,7 +106,7 @@ public partial class BeatmapObject : Node3D
 
     private void OnPlaybackModeChanged()
     {
-        if (PlaybackManager.Get("mode").AsInt32() == 1)
+        if (PlaybackManager.Mode == PlaybackManager.EditMode.Editing)
         {
             Spawn();
             SetJumpAnimationEnabled(false);
@@ -119,7 +119,7 @@ public partial class BeatmapObject : Node3D
 
     private float GetPlaybackPosition()
     {
-        return (float)PlaybackManager.Get("playback_position").AsDouble();
+        return (float)PlaybackManager.PlaybackPosition;
     }
 
     private float ClampVisualY(float distance)

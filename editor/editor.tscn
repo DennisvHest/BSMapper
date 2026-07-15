@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://cjmnf87pjnu15"]
 
-[ext_resource type="Script" uid="uid://cm5ttwxm3vxml" path="res://editor/editor.gd" id="1_yyul4"]
+[ext_resource type="Script" path="res://editor/Editor.cs" id="1_yyul4"]
 [ext_resource type="PackedScene" uid="uid://bjpfk14681dot" path="res://player.tscn" id="2_aws7q"]
 [ext_resource type="PackedScene" uid="uid://dnkai887m2lu1" path="res://environment.tscn" id="3_aws7q"]
 [ext_resource type="PackedScene" uid="uid://bwh2pgll34g30" path="res://beat_saber/note_block_lane.tscn" id="4_dblv8"]
@@ -14,15 +14,15 @@ size = Vector3(3, 2, 1)
 
 [node name="Editor" type="Node3D" unique_id=1388809403]
 script = ExtResource("1_yyul4")
-beatmap_file_path = "res://test_beatmaps/1feab (Turn It Up - abcbadq)/Info.dat"
+BeatmapFilePath = "res://test_beatmaps/1feab (Turn It Up - abcbadq)/Info.dat"
 
 [node name="XROrigin3D" parent="." unique_id=1786229953 instance=ExtResource("2_aws7q")]
 
 [node name="WorldEnvironment" parent="." unique_id=97836544 instance=ExtResource("3_aws7q")]
 
 [node name="NoteBlockLane" parent="." unique_id=2106116253 instance=ExtResource("4_dblv8")]
-bomb_scene = ExtResource("5_wux1q")
-wall_scene = ExtResource("6_anuej")
+BombScene = ExtResource("5_wux1q")
+WallScene = ExtResource("6_anuej")
 
 [node name="HitSound" type="AudioStreamPlayer" parent="." unique_id=672917253]
 stream = ExtResource("7_wj0aq")
