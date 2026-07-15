@@ -1,6 +1,6 @@
-[gd_scene load_steps=4 format=3 uid="uid://dhng0rh22itx5"]
+[gd_scene format=3 uid="uid://dhng0rh22itx5"]
 
-[ext_resource type="Script" path="res://beat_saber/Saber.cs" id="1_hbvue"]
+[ext_resource type="Script" uid="uid://earokm4wpbhe" path="res://beat_saber/Saber.cs" id="1_hbvue"]
 
 [sub_resource type="CylinderMesh" id="CylinderMesh_qnpbl"]
 
@@ -8,15 +8,15 @@
 height = 1.0
 radius = 0.025
 
-[node name="Saber" type="Node3D"]
+[node name="Saber" type="Node3D" unique_id=108735295]
 script = ExtResource("1_hbvue")
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=927395427]
 transform = Transform3D(0.05, 0, 0, 0, 0.5, 0, 0, 0, 0.05, 0, 0.5, 0)
 mesh = SubResource("CylinderMesh_qnpbl")
 
-[node name="Area3D" type="Area3D" parent="." groups=["sabers"]]
+[node name="Area3D" type="Area3D" parent="." unique_id=935289283 groups=["sabers"]]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D" unique_id=644316730]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
 shape = SubResource("CylinderShape3D_qnpbl")
