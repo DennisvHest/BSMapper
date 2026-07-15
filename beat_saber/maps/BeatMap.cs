@@ -44,8 +44,8 @@ public partial class BeatMap : RefCounted
 
     public void LoadFromFile(Variant map)
     {
-        Dictionary mapDictionary = map.AsGodotDictionary();
-        string version = mapDictionary["_version"].AsString();
+        var mapDictionary = map.AsGodotDictionary();
+        var version = mapDictionary["_version"].AsString();
         if (!version.StartsWith('2'))
         {
             throw new ArgumentException("Map version is not supported", nameof(map));
@@ -56,9 +56,9 @@ public partial class BeatMap : RefCounted
         Bombs.Clear();
         Walls.Clear();
 
-        foreach (Variant objectVariant in mapDictionary["_notes"].AsGodotArray())
+        foreach (var objectVariant in mapDictionary["_notes"].AsGodotArray())
         {
-            Dictionary objectDictionary = objectVariant.AsGodotDictionary();
+            var objectDictionary = objectVariant.AsGodotDictionary();
             if (objectDictionary["_type"].AsDouble() == BombType)
             {
                 Bombs.Add(CreateBomb(objectVariant, objectDictionary));
@@ -69,7 +69,7 @@ public partial class BeatMap : RefCounted
             }
         }
 
-        foreach (Variant wallVariant in mapDictionary["_obstacles"].AsGodotArray())
+        foreach (var wallVariant in mapDictionary["_obstacles"].AsGodotArray())
         {
             Walls.Add(CreateWall(wallVariant, wallVariant.AsGodotDictionary()));
         }
@@ -77,15 +77,15 @@ public partial class BeatMap : RefCounted
 
     public void AddObject(GodotObject @object)
     {
-        Array target = GetObjectArray(@object);
+        var target = GetObjectArray(@object);
         target.Add(@object);
         EmitSignal(SignalName.ObjectAdded, @object);
     }
 
     public void RemoveObject(GodotObject @object)
     {
-        Array target = GetObjectArray(@object);
-        int index = target.IndexOf(@object);
+        var target = GetObjectArray(@object);
+        var index = target.IndexOf(@object);
         if (index < 0)
         {
             return;
@@ -97,23 +97,23 @@ public partial class BeatMap : RefCounted
 
     public void SaveChanges()
     {
-        Dictionary map = OriginalMap.AsGodotDictionary();
-        Array originalNotes = map["_notes"].AsGodotArray();
-        Array originalWalls = map["_obstacles"].AsGodotArray();
+        var map = OriginalMap.AsGodotDictionary();
+        var originalNotes = map["_notes"].AsGodotArray();
+        var originalWalls = map["_obstacles"].AsGodotArray();
         originalNotes.Clear();
         originalWalls.Clear();
 
-        List<Variant> allNotes = SaveObjects(Notes);
+        var allNotes = SaveObjects(Notes);
         allNotes.AddRange(SaveObjects(Bombs));
         allNotes.Sort(CompareObjectTimes);
-        foreach (Variant note in allNotes)
+        foreach (var note in allNotes)
         {
             originalNotes.Add(note);
         }
 
-        List<Variant> allWalls = SaveObjects(Walls);
+        var allWalls = SaveObjects(Walls);
         allWalls.Sort(CompareObjectTimes);
-        foreach (Variant wall in allWalls)
+        foreach (var wall in allWalls)
         {
             originalWalls.Add(wall);
         }
@@ -121,7 +121,7 @@ public partial class BeatMap : RefCounted
 
     private static GodotObject CreateNote(Variant original, Dictionary data)
     {
-        GodotObject note = CreateScriptObject(NoteScriptPath);
+        var note = CreateScriptObject(NoteScriptPath);
         note.Set("original_object", original);
         note.Set("beat", data["_time"]);
         note.Set("line_index", data["_lineIndex"]);
@@ -133,7 +133,7 @@ public partial class BeatMap : RefCounted
 
     private static GodotObject CreateBomb(Variant original, Dictionary data)
     {
-        GodotObject bomb = CreateScriptObject(BombScriptPath);
+        var bomb = CreateScriptObject(BombScriptPath);
         bomb.Set("original_object", original);
         bomb.Set("beat", data["_time"]);
         bomb.Set("line_index", data["_lineIndex"]);
@@ -143,8 +143,8 @@ public partial class BeatMap : RefCounted
 
     private static GodotObject CreateWall(Variant original, Dictionary data)
     {
-        GodotObject wall = CreateScriptObject(WallScriptPath);
-        int wallType = data["_type"].AsInt32();
+        var wall = CreateScriptObject(WallScriptPath);
+        var wallType = data["_type"].AsInt32();
         wall.Set("original_object", original);
         wall.Set("beat", data["_time"]);
         wall.Set("line_index", data["_lineIndex"]);
@@ -163,13 +163,13 @@ public partial class BeatMap : RefCounted
 
     private static GodotObject CreateScriptObject(string path)
     {
-        Script script = GD.Load<Script>(path);
+        var script = GD.Load<Script>(path);
         return script.Call("new").AsGodotObject();
     }
 
     private Array GetObjectArray(GodotObject @object)
     {
-        string scriptPath = @object.GetScript().As<Script>()?.ResourcePath ?? string.Empty;
+        var scriptPath = @object.GetScript().As<Script>()?.ResourcePath ?? string.Empty;
         return scriptPath switch
         {
             NoteScriptPath => Notes,
@@ -181,10 +181,10 @@ public partial class BeatMap : RefCounted
 
     private List<Variant> SaveObjects(Array objects)
     {
-        List<Variant> savedObjects = new(objects.Count);
-        foreach (Variant objectVariant in objects)
+        var savedObjects = new List<Variant>(objects.Count);
+        foreach (var objectVariant in objects)
         {
-            GodotObject @object = objectVariant.AsGodotObject();
+            var @object = objectVariant.AsGodotObject();
             @object.Call("save_v2_object");
             savedObjects.Add(@object.Get("original_object"));
         }
@@ -194,8 +194,8 @@ public partial class BeatMap : RefCounted
 
     private static int CompareObjectTimes(Variant left, Variant right)
     {
-        double leftTime = left.AsGodotDictionary()["_time"].AsDouble();
-        double rightTime = right.AsGodotDictionary()["_time"].AsDouble();
+        var leftTime = left.AsGodotDictionary()["_time"].AsDouble();
+        var rightTime = right.AsGodotDictionary()["_time"].AsDouble();
         return leftTime.CompareTo(rightTime);
     }
 }
