@@ -31,14 +31,14 @@ func _on_current_beatmap_difficulty_info_changed(difficulty: BeatMapDifficultyIn
 func _on_current_beatmap_changed(current_beatmap: BeatMap) -> void:
 	clear_objects()
 
-	for note in current_beatmap.notes:
+	for note in current_beatmap.Notes:
 		add_note_block(note)
-	for bomb in current_beatmap.bombs:
+	for bomb in current_beatmap.Bombs:
 		add_bomb(bomb)
-	for wall in current_beatmap.walls:
+	for wall in current_beatmap.Walls:
 		add_wall(wall)
 
-	current_beatmap.object_added.connect(on_object_added)
+	current_beatmap.ObjectAdded.connect(on_object_added)
 
 func _get_beatmap_object_initial_position(beatmap_object: BeatMapObjectBase, map_info: BeatMapDifficultyInfo) -> Vector3:
 	# How far in time (seconds) the object should be positioned initially using the BPM

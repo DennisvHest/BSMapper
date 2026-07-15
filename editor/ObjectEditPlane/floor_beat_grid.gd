@@ -178,13 +178,13 @@ func _get_total_beats(difficulty: BeatMapDifficultyInfo) -> float:
 	var beatmap := BeatMapManager.current_beatmap
 
 	if beatmap != null:
-		for note in beatmap.notes:
+		for note in beatmap.Notes:
 			last_beat = max(last_beat, note.beat)
 
-		for bomb in beatmap.bombs:
+		for bomb in beatmap.Bombs:
 			last_beat = max(last_beat, bomb.beat)
 
-		for wall in beatmap.walls:
+		for wall in beatmap.Walls:
 			last_beat = max(last_beat, wall.beat + wall.duration)
 
 	return ceil(last_beat)

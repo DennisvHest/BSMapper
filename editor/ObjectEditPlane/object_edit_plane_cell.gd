@@ -89,7 +89,7 @@ func _on_edit_area_pointer_event(event: XRToolsPointerEvent) -> void:
                 new_bomb.beat = drag_state.beat
                 new_bomb.line_index = line_index
                 new_bomb.line_layer = line_layer
-                current_beatmap.add_object(new_bomb)
+                current_beatmap.AddObject(new_bomb)
                 return
 
             var new_note: BeatMapNote = BeatMapNote.new()
@@ -98,7 +98,7 @@ func _on_edit_area_pointer_event(event: XRToolsPointerEvent) -> void:
             new_note.line_layer = line_layer
             new_note.type = drag_state.note_type
             new_note.cut_direction = drag_state.cut_direction
-            current_beatmap.add_object(new_note)
+            current_beatmap.AddObject(new_note)
 
 func _on_beatmap_changed(beatmap: BeatMap) -> void:
     current_beatmap = beatmap

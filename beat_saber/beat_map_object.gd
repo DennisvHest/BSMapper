@@ -72,7 +72,7 @@ func _despawn() -> void:
 
 func delete_beatmap_object() -> void:
 	if BeatMapManager.current_beatmap != null:
-		BeatMapManager.current_beatmap.remove_object(beatmap_object)
+		BeatMapManager.current_beatmap.RemoveObject(beatmap_object)
 
 	queue_free()
 

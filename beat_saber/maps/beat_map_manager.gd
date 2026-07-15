@@ -47,8 +47,9 @@ func new_difficulty(beatmap_info: BeatMapInfo, mode: BeatMapDifficultySet.Beatma
 
 	var difficulty_file_path = beatmap_info.file_path.path_join(difficulty_info.beat_map_file_name)
 
-	var beatmap = BeatMap.new_empty()
-	var beatmap_json = JSON.stringify(beatmap.original_map, "", false)
+	var beatmap = BeatMap.new()
+	beatmap.InitializeEmpty()
+	var beatmap_json = JSON.stringify(beatmap.OriginalMap, "", false)
 
 	var difficulty_file = FileAccess.open(difficulty_file_path, FileAccess.WRITE)
 	assert(difficulty_file != null, "Failed to open difficulty file for writing: %s" % difficulty_file_path)
@@ -119,20 +120,22 @@ func _load_beatmap(file_path: String) -> void:
 	assert(result == OK, "JSON Parse Error: %s in %s at line %s" % [json.get_error_message(), file_path, json.get_error_line()])
 
 	current_beatmap_file_path = file_path
-	change_beatmap(BeatMap.from_file(json.data))
+	var beatmap := BeatMap.new()
+	beatmap.LoadFromFile(json.data)
+	change_beatmap(beatmap)
 
 func change_beatmap(beatmap: BeatMap) -> void:
 	current_beatmap = beatmap
 	current_beatmap_changed.emit(current_beatmap)
 
 func save_beatmap() -> void:
-	current_beatmap.save_changes()
+	current_beatmap.SaveChanges()
 
 	var file_ext = current_beatmap_file_path.get_extension()
 	var file_base = current_beatmap_file_path.get_basename()
 	var new_file_path = "%s_TEST.%s" % [file_base, file_ext]
 
-	var beamap_file_json = JSON.stringify(current_beatmap.original_map, "", false)
+	var beamap_file_json = JSON.stringify(current_beatmap.OriginalMap, "", false)
 
 	var beatmap_file = FileAccess.open(new_file_path, FileAccess.WRITE)
 	beatmap_file.store_string(beamap_file_json)
