@@ -28,6 +28,11 @@ public partial class BeatmapObject : Node3D
         PlaybackManager.ModeChanged += OnPlaybackModeChanged;
     }
 
+    public override void _ExitTree()
+    {
+        PlaybackManager.ModeChanged -= OnPlaybackModeChanged;
+    }
+
     public virtual void Initialize(
         Vector3 initialPosition,
         BeatMapDifficultyInfo mapInfo,
@@ -63,7 +68,7 @@ public partial class BeatmapObject : Node3D
     protected void Spawn()
     {
         SetDeferred(Node.PropertyName.ProcessMode, (int)ProcessModeEnum.Inherit);
-        CallDeferred(CanvasItem.MethodName.Show);
+        CallDeferred(Node3D.MethodName.Show);
     }
 
     protected void Despawn()
