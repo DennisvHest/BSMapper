@@ -237,6 +237,17 @@ theme_override_styles/hover_pressed = SubResource("StyleBoxFlat_toggle_active")
 toggle_mode = true
 text = "Custom Maps"
 
+[node name="SearchBar" type="LineEdit" parent="HomeScreen/VBox/FilterBar"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.95, 0.96, 0.98, 1)
+theme_override_colors/font_placeholder_color = Color(0.52, 0.56, 0.64, 1)
+theme_override_font_sizes/font_size = 15
+theme_override_styles/normal = SubResource("StyleBoxFlat_toggle")
+theme_override_styles/focus = SubResource("StyleBoxFlat_toggle_hover")
+placeholder_text = "Search by title or author..."
+clear_button_enabled = true
+
 [node name="MapScroll" type="ScrollContainer" parent="HomeScreen/VBox" unique_id=1982759291]
 layout_mode = 2
 size_flags_vertical = 3
@@ -258,5 +269,6 @@ horizontal_alignment = 1
 [connection signal="dir_selected" from="InstallLocationFolderDialog" to="." method="OnInstallLocationFolderDialogDirSelected"]
 [connection signal="pressed" from="InstallLocationScreen/Panel/VBox/SelectButton" to="." method="OnSelectInstallLocationPressed"]
 [connection signal="pressed" from="HomeScreen/VBox/Header/ChangeLocationButton" to="." method="OnSelectInstallLocationPressed"]
+[connection signal="text_changed" from="HomeScreen/VBox/FilterBar/SearchBar" to="." method="OnSearchTextChanged"]
 [connection signal="toggled" from="HomeScreen/VBox/FilterBar/WipMapsButton" to="." method="OnWipMapsButtonToggled"]
 [connection signal="toggled" from="HomeScreen/VBox/FilterBar/CustomMapsButton" to="." method="OnCustomMapsButtonToggled"]

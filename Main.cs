@@ -18,6 +18,7 @@ public partial class Main : Control
     public string BeatSaberInstallLocation { get; set; } = string.Empty;
 
     private bool _showWipMaps = true;
+    private string _searchText = string.Empty;
     private readonly Queue<(string FolderName, string MapFolder, string InfoPath)> _pendingButtons = new();
     private readonly List<MapListEntry> _pendingHydrations = new();
 
@@ -188,7 +189,7 @@ public partial class Main : Control
                 continue;
             }
 
-            if (!visibleRect.Intersects(entry.Button.GetGlobalRect()))
+            if (!entry.Button.Visible || !visibleRect.Intersects(entry.Button.GetGlobalRect()))
             {
                 continue;
             }
@@ -248,6 +249,8 @@ public partial class Main : Control
             CustomMinimumSize = new Vector2(0, 80),
             SizeFlagsHorizontal = SizeFlags.ExpandFill,
         };
+        button.SetMeta("search_text", $"{songName}\n{songAuthor}".ToLowerInvariant());
+        button.Visible = MatchesSearch(button);
 
         var normalStyle = new StyleBoxFlat { BgColor = new Color(0.11f, 0.125f, 0.176f) };
         normalStyle.SetCornerRadiusAll(8);
@@ -428,5 +431,24 @@ public partial class Main : Control
         GetNode<Button>("HomeScreen/VBox/FilterBar/WipMapsButton").SetPressedNoSignal(showWipMaps);
         GetNode<Button>("HomeScreen/VBox/FilterBar/CustomMapsButton").SetPressedNoSignal(!showWipMaps);
         RefreshMapList();
+    }
+
+    private void OnSearchTextChanged(string newText)
+    {
+        _searchText = newText.Trim().ToLowerInvariant();
+        var mapList = GetNode<VBoxContainer>("HomeScreen/VBox/MapScroll/MapList");
+        foreach (var child in mapList.GetChildren())
+        {
+            if (child is Button button)
+            {
+                button.Visible = MatchesSearch(button);
+            }
+        }
+    }
+
+    private bool MatchesSearch(Button button)
+    {
+        return string.IsNullOrEmpty(_searchText)
+            || button.GetMeta("search_text", string.Empty).AsString().Contains(_searchText);
     }
 }
