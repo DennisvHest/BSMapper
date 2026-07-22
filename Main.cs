@@ -1,11 +1,10 @@
-using System;
 using Godot;
 
 public partial class Main : Control
 {
-    private const string SettingsPath = "user://bsmapper.cfg";
-    private const string SettingsSection = "beat_saber";
-    private const string InstallLocationKey = "install_location";
+    private const string SettingsFilePath = "user://settings.cfg";
+    private const string CustomLevelsFolder = "Beat Saber_Data/CustomLevels";
+    private const string CustomWipLevelsFolder = "Beat Saber_Data/CustomWIPLevels";
 
     [Export]
     public PackedScene StartScene { get; set; }
@@ -13,263 +12,201 @@ public partial class Main : Control
     [Export]
     public bool DebugWithoutVr { get; set; }
 
-    [Export]
-    public bool DebugStartInEditor { get; set; }
-
-    [Export(PropertyHint.GlobalDir)]
     public string BeatSaberInstallLocation { get; set; } = string.Empty;
 
-    private XRInterface _xrInterface;
-    private Control _installScreen;
-    private Control _homeScreen;
-    private FileDialog _installLocationDialog;
-    private Label _installLocationErrorLabel;
-    private VBoxContainer _mapList;
-    private Label _mapListStatus;
-    private Button _wipMapsButton;
-    private Button _customMapsButton;
-    private Button _mapButtonTemplate;
-    private StyleBox _activeSourceStyle;
-    private StyleBox _inactiveSourceStyle;
+    private bool _showWipMaps = true;
 
     public override void _Ready()
     {
-        BindUiNodes();
-
-        var savedInstallLocation = LoadInstallLocation();
-        if (IsValidInstallLocation(savedInstallLocation))
-        {
-            ConfigureInstallLocation(savedInstallLocation);
-            ShowHomeScreen();
-            return;
-        }
-
+        LoadSettings();
         if (IsValidInstallLocation(BeatSaberInstallLocation))
         {
             ConfigureInstallLocation(BeatSaberInstallLocation);
-            ShowHomeScreen();
-            return;
         }
-
-        ShowInstallLocationScreen();
+        else
+        {
+            ShowInstallLocationScreen();
+        }
     }
 
-    private void BindUiNodes()
+    private void Start()
     {
-        _installScreen = GetNode<Control>("InstallScreen");
-        _homeScreen = GetNode<Control>("HomeScreen");
-        _installLocationDialog = GetNode<FileDialog>("InstallLocationDialog");
-        _installLocationErrorLabel = GetNode<Label>("InstallScreen/Center/Panel/Margin/Content/ErrorLabel");
-        _mapList = GetNode<VBoxContainer>("HomeScreen/Margin/Content/ListPanel/Margin/Content/Scroll/MapList");
-        _mapListStatus = GetNode<Label>("HomeScreen/Margin/Content/ListPanel/Margin/Content/StatusLabel");
-        _wipMapsButton = GetNode<Button>("HomeScreen/Margin/Content/Sources/WipMapsButton");
-        _customMapsButton = GetNode<Button>("HomeScreen/Margin/Content/Sources/CustomMapsButton");
-        _mapButtonTemplate = GetNode<Button>("MapButtonTemplate");
-        _activeSourceStyle = _wipMapsButton.GetThemeStylebox("normal");
-        _inactiveSourceStyle = _customMapsButton.GetThemeStylebox("normal");
+        var xrInterface = XRServer.FindInterface("OpenXR");
+        if (!DebugWithoutVr && xrInterface is not null && xrInterface.IsInitialized())
+        {
+            GD.Print("OpenXR initialized successfully");
+            DisplayServer.WindowSetVsyncMode(DisplayServer.VSyncMode.Disabled);
+            GetViewport().UseXR = true;
+        }
+        else
+        {
+            GD.Print("OpenXR not initialized, please check if your headset is connected");
+        }
+
+        GetTree().ChangeSceneToPacked(StartScene);
+    }
+
+    private void LoadSettings()
+    {
+        var config = new ConfigFile();
+        if (config.Load(SettingsFilePath) == Error.Ok)
+        {
+            BeatSaberInstallLocation = config.GetValue("settings", "install_location", string.Empty).AsString();
+        }
+    }
+
+    private void SaveSettings()
+    {
+        var config = new ConfigFile();
+        config.SetValue("settings", "install_location", BeatSaberInstallLocation);
+        config.Save(SettingsFilePath);
+    }
+
+    private static bool IsValidInstallLocation(string installLocation)
+    {
+        return !string.IsNullOrEmpty(installLocation)
+            && DirAccess.DirExistsAbsolute(installLocation.PathJoin(CustomWipLevelsFolder));
     }
 
     private void ConfigureInstallLocation(string directory)
     {
         BeatSaberInstallLocation = directory;
-        GetNode<BeatMapManager>("/root/BeatMapManager").SetWipBeatmapLocation(GetWipBeatmapsLocation(directory));
-        SaveInstallLocation(directory);
-    }
-
-    private static bool IsValidInstallLocation(string directory)
-    {
-        return !string.IsNullOrWhiteSpace(directory) &&
-               DirAccess.DirExistsAbsolute(directory.PathJoin("Beat Saber_Data"));
-    }
-
-    private static string GetWipBeatmapsLocation(string installLocation)
-    {
-        return installLocation.PathJoin("Beat Saber_Data/CustomWIPLevels");
-    }
-
-    private static string GetCustomBeatmapsLocation(string installLocation)
-    {
-        return installLocation.PathJoin("Beat Saber_Data/CustomLevels");
-    }
-
-    private static string LoadInstallLocation()
-    {
-        var settings = new ConfigFile();
-        return settings.Load(SettingsPath) == Error.Ok
-            ? settings.GetValue(SettingsSection, InstallLocationKey, string.Empty).AsString()
-            : string.Empty;
-    }
-
-    private static void SaveInstallLocation(string directory)
-    {
-        var settings = new ConfigFile();
-        settings.Load(SettingsPath);
-        settings.SetValue(SettingsSection, InstallLocationKey, directory);
-        var result = settings.Save(SettingsPath);
-        if (result != Error.Ok)
-        {
-            GD.PushWarning($"Unable to save Beat Saber install location: {result}");
-        }
-    }
-
-    private void SelectInstallLocation()
-    {
-        _installLocationDialog.CurrentDir = BeatSaberInstallLocation;
-        _installLocationDialog.Show();
-    }
-
-    private void OnInstallLocationSelected(string directory)
-    {
-        if (!IsValidInstallLocation(directory))
-        {
-            ShowInstallLocationError("That folder does not contain Beat Saber_Data. Select your Beat Saber installation folder.");
-            return;
-        }
-
-        ConfigureInstallLocation(directory);
+        SaveSettings();
+        GetNode<BeatMapManager>("/root/BeatMapManager")
+            .SetWipBeatmapLocation(directory.PathJoin(CustomWipLevelsFolder));
+        GetNode<FileDialog>("InstallLocationFolderDialog").CurrentDir = directory;
         ShowHomeScreen();
     }
 
     private void ShowInstallLocationScreen()
     {
-        _homeScreen.Hide();
-        _installLocationErrorLabel.Hide();
-        _installScreen.Show();
-    }
-
-    private void ShowInstallLocationError(string message)
-    {
-        _installLocationErrorLabel.Text = message;
-        _installLocationErrorLabel.Show();
+        GetNode<Control>("HomeScreen").Hide();
+        GetNode<Control>("InstallLocationScreen").Show();
     }
 
     private void ShowHomeScreen()
     {
-        _installScreen.Hide();
-        _homeScreen.Show();
-        ShowMapList(true);
+        GetNode<Control>("InstallLocationScreen").Hide();
+        GetNode<Control>("HomeScreen").Show();
+        GetNode<Label>("HomeScreen/VBox/Header/InstallLocationLabel").Text = BeatSaberInstallLocation;
+        RefreshMapList();
     }
 
-    private void ShowWipMaps()
+    private void RefreshMapList()
     {
-        ShowMapList(true);
-    }
-
-    private void ShowCustomMaps()
-    {
-        ShowMapList(false);
-    }
-
-    private void ShowMapList(bool showWipMaps)
-    {
-        var mapDirectory = showWipMaps
-            ? GetWipBeatmapsLocation(BeatSaberInstallLocation)
-            : GetCustomBeatmapsLocation(BeatSaberInstallLocation);
-        _wipMapsButton.AddThemeStyleboxOverride("normal", showWipMaps ? _activeSourceStyle : _inactiveSourceStyle);
-        _customMapsButton.AddThemeStyleboxOverride("normal", showWipMaps ? _inactiveSourceStyle : _activeSourceStyle);
-
-        foreach (var child in _mapList.GetChildren())
+        var mapList = GetNode<VBoxContainer>("HomeScreen/VBox/MapScroll/MapList");
+        foreach (var child in mapList.GetChildren())
         {
             child.QueueFree();
         }
 
-        if (!DirAccess.DirExistsAbsolute(mapDirectory))
+        var mapsLocation = BeatSaberInstallLocation
+            .PathJoin(_showWipMaps ? CustomWipLevelsFolder : CustomLevelsFolder);
+        var mapCount = 0;
+
+        if (DirAccess.DirExistsAbsolute(mapsLocation))
         {
-            _mapListStatus.Text = $"The folder does not exist yet: {mapDirectory}";
+            using var directory = DirAccess.Open(mapsLocation);
+            if (directory is not null)
+            {
+                foreach (var folderName in directory.GetDirectories())
+                {
+                    var infoPath = mapsLocation.PathJoin(folderName).PathJoin("info.dat");
+                    if (!FileAccess.FileExists(infoPath))
+                    {
+                        infoPath = mapsLocation.PathJoin(folderName).PathJoin("Info.dat");
+                        if (!FileAccess.FileExists(infoPath))
+                        {
+                            continue;
+                        }
+                    }
+
+                    mapList.AddChild(CreateMapButton(folderName, infoPath));
+                    mapCount++;
+                }
+            }
+        }
+
+        GetNode<Label>("HomeScreen/VBox/EmptyLabel").Visible = mapCount == 0;
+    }
+
+    private Button CreateMapButton(string mapName, string infoPath)
+    {
+        var button = new Button
+        {
+            Text = mapName,
+            Alignment = HorizontalAlignment.Left,
+            CustomMinimumSize = new Vector2(0, 56),
+            SizeFlagsHorizontal = SizeFlags.ExpandFill,
+        };
+        button.AddThemeFontSizeOverride("font_size", 18);
+
+        var normalStyle = new StyleBoxFlat { BgColor = new Color(0.11f, 0.125f, 0.176f) };
+        normalStyle.SetCornerRadiusAll(8);
+        normalStyle.ContentMarginLeft = 20;
+        var hoverStyle = (StyleBoxFlat)normalStyle.Duplicate();
+        hoverStyle.BgColor = new Color(0.153f, 0.176f, 0.243f);
+        var pressedStyle = (StyleBoxFlat)normalStyle.Duplicate();
+        pressedStyle.BgColor = new Color(0.153f, 0.459f, 0.937f);
+        button.AddThemeStyleboxOverride("normal", normalStyle);
+        button.AddThemeStyleboxOverride("hover", hoverStyle);
+        button.AddThemeStyleboxOverride("pressed", pressedStyle);
+
+        button.Pressed += () => OpenMapInEditor(infoPath);
+        return button;
+    }
+
+    private void OpenMapInEditor(string infoPath)
+    {
+        var manager = GetNode<BeatMapManager>("/root/BeatMapManager");
+        var beatmapInfo = manager.LoadBeatmapInfo(infoPath);
+        if (beatmapInfo.DifficultyBeatMapSets.Count == 0
+            || beatmapInfo.DifficultyBeatMapSets[0].DifficultyBeatMaps.Count == 0)
+        {
+            GD.PushWarning($"Map has no difficulties to edit: {infoPath}");
             return;
         }
 
-        _mapListStatus.Text = showWipMaps ? "Custom WIP Levels" : "Custom Levels";
-        var directory = DirAccess.Open(mapDirectory);
-        directory.ListDirBegin();
-        var mapCount = 0;
-        for (var name = directory.GetNext(); !string.IsNullOrEmpty(name); name = directory.GetNext())
+        manager.LoadDifficulty(beatmapInfo.DifficultyBeatMapSets[0].DifficultyBeatMaps[0]);
+        Start();
+    }
+
+    private void OnSelectInstallLocationPressed()
+    {
+        GetNode<FileDialog>("InstallLocationFolderDialog").Show();
+    }
+
+    private void OnInstallLocationFolderDialogDirSelected(string directory)
+    {
+        if (IsValidInstallLocation(directory))
         {
-            if (!directory.CurrentIsDir() || name is "." or "..")
-            {
-                continue;
-            }
-
-            var infoPath = mapDirectory.PathJoin(name).PathJoin("info.dat");
-            if (!FileAccess.FileExists(infoPath))
-            {
-                continue;
-            }
-
-            try
-            {
-                var mapInfo = GetNode<BeatMapManager>("/root/BeatMapManager").ReadBeatmapInfo(infoPath);
-                var hasDifficulty = false;
-                foreach (var set in mapInfo.DifficultyBeatMapSets)
-                {
-                    hasDifficulty |= set.DifficultyBeatMaps.Count > 0;
-                }
-
-                if (!hasDifficulty)
-                {
-                    continue;
-                }
-
-                var title = string.IsNullOrWhiteSpace(mapInfo.SongSubName)
-                    ? mapInfo.SongName
-                    : $"{mapInfo.SongName} — {mapInfo.SongSubName}";
-                var mapButton = (Button)_mapButtonTemplate.Duplicate();
-                mapButton.Text = $"{title}\n{mapInfo.SongAuthorName}";
-                mapButton.Show();
-                mapButton.Pressed += () => OpenMap(infoPath);
-                _mapList.AddChild(mapButton);
-                mapCount++;
-            }
-            catch (Exception exception)
-            {
-                GD.PushWarning($"Skipping unsupported map {infoPath}: {exception.Message}");
-            }
+            ConfigureInstallLocation(directory);
         }
-
-        directory.ListDirEnd();
-        if (mapCount == 0)
+        else
         {
-            _mapListStatus.Text = "No playable maps found in this folder.";
+            var errorLabel = GetNode<Label>("InstallLocationScreen/Panel/VBox/ErrorLabel");
+            errorLabel.Text =
+                $"The selected folder does not contain \"{CustomWipLevelsFolder}\". Please select the Beat Saber install folder.";
+            errorLabel.Show();
+            ShowInstallLocationScreen();
         }
     }
 
-    private bool OpenMap(string infoFilePath)
+    private void OnWipMapsButtonToggled(bool toggledOn)
     {
-        try
-        {
-            var manager = GetNode<BeatMapManager>("/root/BeatMapManager");
-            var mapInfo = manager.LoadBeatmapInfo(infoFilePath);
-            foreach (var difficultySet in mapInfo.DifficultyBeatMapSets)
-            {
-                if (difficultySet.DifficultyBeatMaps.Count == 0)
-                {
-                    continue;
-                }
-
-                manager.LoadDifficulty(difficultySet.DifficultyBeatMaps[0]);
-                StartEditor();
-                return true;
-            }
-
-            GD.PushWarning($"Map has no playable difficulties: {infoFilePath}");
-        }
-        catch (Exception exception)
-        {
-            GD.PushWarning($"Unable to open map {infoFilePath}: {exception.Message}");
-        }
-
-        return false;
+        SetMapFilter(showWipMaps: toggledOn);
     }
 
-    private void StartEditor()
+    private void OnCustomMapsButtonToggled(bool toggledOn)
     {
-        _xrInterface = XRServer.FindInterface("OpenXR");
-        if (!DebugWithoutVr && _xrInterface is not null && _xrInterface.IsInitialized())
-        {
-            DisplayServer.WindowSetVsyncMode(DisplayServer.VSyncMode.Disabled);
-            GetViewport().UseXR = true;
-        }
+        SetMapFilter(showWipMaps: !toggledOn);
+    }
 
-        GetTree().ChangeSceneToPacked(StartScene);
+    private void SetMapFilter(bool showWipMaps)
+    {
+        _showWipMaps = showWipMaps;
+        GetNode<Button>("HomeScreen/VBox/FilterBar/WipMapsButton").SetPressedNoSignal(showWipMaps);
+        GetNode<Button>("HomeScreen/VBox/FilterBar/CustomMapsButton").SetPressedNoSignal(!showWipMaps);
+        RefreshMapList();
     }
 }

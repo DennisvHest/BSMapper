@@ -3,58 +3,84 @@
 [ext_resource type="Script" uid="uid://cta1tvj0wsg7j" path="res://Main.cs" id="1_ig7tw"]
 [ext_resource type="PackedScene" uid="uid://cjmnf87pjnu15" path="res://editor/editor.tscn" id="2_0xm2m"]
 
-[sub_resource type="StyleBoxFlat" id="StylePanel"]
-bg_color = Color(0.105882, 0.137255, 0.2, 1)
-border_width_left = 1
-border_width_top = 1
-border_width_right = 1
-border_width_bottom = 1
-border_color = Color(0.2, 0.254902, 0.333333, 1)
-corner_radius_top_left = 14
-corner_radius_top_right = 14
-corner_radius_bottom_right = 14
-corner_radius_bottom_left = 14
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
+content_margin_left = 32.0
+content_margin_top = 32.0
+content_margin_right = 32.0
+content_margin_bottom = 32.0
+bg_color = Color(0.086, 0.098, 0.137, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
 
-[sub_resource type="StyleBoxFlat" id="StylePrimary"]
-content_margin_left = 16.0
-content_margin_right = 16.0
-bg_color = Color(0.145098, 0.388235, 0.921569, 1)
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_accent_button"]
+content_margin_left = 24.0
+content_margin_top = 12.0
+content_margin_right = 24.0
+content_margin_bottom = 12.0
+bg_color = Color(0.855, 0.149, 0.278, 1)
 corner_radius_top_left = 8
 corner_radius_top_right = 8
 corner_radius_bottom_right = 8
 corner_radius_bottom_left = 8
 
-[sub_resource type="StyleBoxFlat" id="StylePrimaryHover"]
-bg_color = Color(0.247059, 0.462745, 0.929412, 1)
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_accent_button_pressed"]
+content_margin_left = 24.0
+content_margin_top = 12.0
+content_margin_right = 24.0
+content_margin_bottom = 12.0
+bg_color = Color(0.706, 0.098, 0.212, 1)
 corner_radius_top_left = 8
 corner_radius_top_right = 8
 corner_radius_bottom_right = 8
 corner_radius_bottom_left = 8
 
-[sub_resource type="StyleBoxFlat" id="StyleSecondary"]
-bg_color = Color(0.2, 0.254902, 0.333333, 1)
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_accent_button_hover"]
+content_margin_left = 24.0
+content_margin_top = 12.0
+content_margin_right = 24.0
+content_margin_bottom = 12.0
+bg_color = Color(0.933, 0.243, 0.369, 1)
 corner_radius_top_left = 8
 corner_radius_top_right = 8
 corner_radius_bottom_right = 8
 corner_radius_bottom_left = 8
 
-[sub_resource type="StyleBoxFlat" id="StyleMapHover"]
-bg_color = Color(0.184314, 0.254902, 0.352941, 1)
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_toggle"]
+content_margin_left = 20.0
+content_margin_top = 8.0
+content_margin_right = 20.0
+content_margin_bottom = 8.0
+bg_color = Color(0.145, 0.161, 0.216, 1)
 corner_radius_top_left = 8
 corner_radius_top_right = 8
 corner_radius_bottom_right = 8
 corner_radius_bottom_left = 8
 
-[sub_resource type="StyleBoxFlat" id="StyleMap"]
-content_margin_left = 16.0
-content_margin_right = 16.0
-bg_color = Color(0.14902, 0.203922, 0.286275, 1)
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_toggle_hover"]
+content_margin_left = 20.0
+content_margin_top = 8.0
+content_margin_right = 20.0
+content_margin_bottom = 8.0
+bg_color = Color(0.2, 0.22, 0.29, 1)
 corner_radius_top_left = 8
 corner_radius_top_right = 8
 corner_radius_bottom_right = 8
 corner_radius_bottom_left = 8
 
-[node name="Main" type="Control" unique_id=1265216047]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_toggle_active"]
+content_margin_left = 20.0
+content_margin_top = 8.0
+content_margin_right = 20.0
+content_margin_bottom = 8.0
+bg_color = Color(0.153, 0.459, 0.937, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[node name="Main" type="Control" unique_id=893856598]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -63,19 +89,25 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_ig7tw")
 StartScene = ExtResource("2_0xm2m")
-DebugWithoutVr = true
 
-[node name="Background" type="ColorRect" parent="." unique_id=1496369315]
+[node name="Background" type="ColorRect" parent="." unique_id=247288362]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-mouse_filter = 2
-color = Color(0.0627451, 0.0823529, 0.133333, 1)
+color = Color(0.051, 0.059, 0.09, 1)
 
-[node name="InstallScreen" type="Control" parent="." unique_id=731053116]
+[node name="InstallLocationFolderDialog" type="FileDialog" parent="." unique_id=586236787]
+title = "Open a Directory"
+initial_position = 2
+ok_button_text = "Select Current Folder"
+file_mode = 2
+access = 2
+use_native_dialog = true
+
+[node name="InstallLocationScreen" type="CenterContainer" parent="." unique_id=1403762803]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -83,75 +115,53 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Center" type="CenterContainer" parent="InstallScreen" unique_id=950701507]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="Panel" type="PanelContainer" parent="InstallScreen/Center" unique_id=904925891]
+[node name="Panel" type="PanelContainer" parent="InstallLocationScreen" unique_id=657628828]
 custom_minimum_size = Vector2(560, 0)
 layout_mode = 2
-theme_override_styles/panel = SubResource("StylePanel")
+theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
 
-[node name="Margin" type="MarginContainer" parent="InstallScreen/Center/Panel" unique_id=1059818151]
+[node name="VBox" type="VBoxContainer" parent="InstallLocationScreen/Panel" unique_id=1310310692]
 layout_mode = 2
-theme_override_constants/margin_left = 40
-theme_override_constants/margin_top = 36
-theme_override_constants/margin_right = 40
-theme_override_constants/margin_bottom = 36
+theme_override_constants/separation = 16
 
-[node name="Content" type="VBoxContainer" parent="InstallScreen/Center/Panel/Margin" unique_id=1589273420]
+[node name="Title" type="Label" parent="InstallLocationScreen/Panel/VBox" unique_id=99971549]
 layout_mode = 2
-theme_override_constants/separation = 18
+theme_override_colors/font_color = Color(0.95, 0.96, 0.98, 1)
+theme_override_font_sizes/font_size = 32
+text = "Welcome to BSMapper"
+horizontal_alignment = 1
 
-[node name="Badge" type="Label" parent="InstallScreen/Center/Panel/Margin/Content" unique_id=420535174]
+[node name="Description" type="Label" parent="InstallLocationScreen/Panel/VBox" unique_id=1099557968]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.368627, 0.917647, 0.831373, 1)
-theme_override_font_sizes/font_size = 14
-text = "BSMAPPER"
-
-[node name="Title" type="Label" parent="InstallScreen/Center/Panel/Margin/Content" unique_id=1839614635]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.972549, 0.980392, 0.988235, 1)
-theme_override_font_sizes/font_size = 30
-text = "Find your Beat Saber folder"
-
-[node name="Description" type="Label" parent="InstallScreen/Center/Panel/Margin/Content" unique_id=482563147]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.658824, 0.701961, 0.780392, 1)
+theme_override_colors/font_color = Color(0.62, 0.66, 0.74, 1)
 theme_override_font_sizes/font_size = 16
-text = "Select the folder that contains Beat Saber_Data to start browsing and editing your maps."
-autowrap_mode = 2
+text = "To get started, select the folder where Beat Saber is installed.
+It should contain the \"Beat Saber_Data\" folder."
+horizontal_alignment = 1
+autowrap_mode = 3
 
-[node name="ErrorLabel" type="Label" parent="InstallScreen/Center/Panel/Margin/Content" unique_id=169783515]
+[node name="SelectButton" type="Button" parent="InstallLocationScreen/Panel/VBox" unique_id=1765722352]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
+theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 18
+theme_override_styles/normal = SubResource("StyleBoxFlat_accent_button")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_accent_button_pressed")
+theme_override_styles/hover = SubResource("StyleBoxFlat_accent_button_hover")
+text = "Select install location"
+
+[node name="ErrorLabel" type="Label" parent="InstallLocationScreen/Panel/VBox" unique_id=211189241]
 visible = false
 layout_mode = 2
-theme_override_colors/font_color = Color(0.988235, 0.647059, 0.647059, 1)
+theme_override_colors/font_color = Color(1, 0.42, 0.42, 1)
 theme_override_font_sizes/font_size = 14
-autowrap_mode = 2
+horizontal_alignment = 1
+autowrap_mode = 3
 
-[node name="SelectLocationButton" type="Button" parent="InstallScreen/Center/Panel/Margin/Content" unique_id=1796271767]
-custom_minimum_size = Vector2(0, 48)
-layout_mode = 2
-theme_override_colors/font_color = Color(0.972549, 0.980392, 0.988235, 1)
-theme_override_styles/normal = SubResource("StylePrimary")
-theme_override_styles/pressed = SubResource("StylePrimaryHover")
-theme_override_styles/hover = SubResource("StylePrimaryHover")
-text = "Select Beat Saber installation"
-
-[node name="HomeScreen" type="Control" parent="." unique_id=973950090]
+[node name="HomeScreen" type="MarginContainer" parent="." unique_id=99629438]
 visible = false
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="Margin" type="MarginContainer" parent="HomeScreen" unique_id=311980933]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -159,116 +169,94 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/margin_left = 48
-theme_override_constants/margin_top = 36
+theme_override_constants/margin_top = 32
 theme_override_constants/margin_right = 48
-theme_override_constants/margin_bottom = 36
+theme_override_constants/margin_bottom = 32
 
-[node name="Content" type="VBoxContainer" parent="HomeScreen/Margin" unique_id=1164463696]
+[node name="VBox" type="VBoxContainer" parent="HomeScreen" unique_id=908283523]
 layout_mode = 2
 theme_override_constants/separation = 20
 
-[node name="Header" type="HBoxContainer" parent="HomeScreen/Margin/Content" unique_id=1015088525]
+[node name="Header" type="HBoxContainer" parent="HomeScreen/VBox" unique_id=1008469100]
 layout_mode = 2
+theme_override_constants/separation = 16
 
-[node name="Heading" type="VBoxContainer" parent="HomeScreen/Margin/Content/Header" unique_id=426152603]
+[node name="Title" type="Label" parent="HomeScreen/VBox/Header" unique_id=310084053]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.95, 0.96, 0.98, 1)
+theme_override_font_sizes/font_size = 36
+text = "BSMapper"
+
+[node name="Spacer" type="Control" parent="HomeScreen/VBox/Header" unique_id=1096593328]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="Badge" type="Label" parent="HomeScreen/Margin/Content/Header/Heading" unique_id=1234921146]
+[node name="InstallLocationLabel" type="Label" parent="HomeScreen/VBox/Header" unique_id=1512118692]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.368627, 0.917647, 0.831373, 1)
-theme_override_font_sizes/font_size = 14
-text = "BSMAPPER"
+theme_override_colors/font_color = Color(0.52, 0.56, 0.64, 1)
+theme_override_font_sizes/font_size = 13
 
-[node name="Title" type="Label" parent="HomeScreen/Margin/Content/Header/Heading" unique_id=2144267425]
+[node name="ChangeLocationButton" type="Button" parent="HomeScreen/VBox/Header" unique_id=2135005953]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.972549, 0.980392, 0.988235, 1)
-theme_override_font_sizes/font_size = 30
-text = "Your maps"
+size_flags_vertical = 4
+theme_override_colors/font_color = Color(0.8, 0.83, 0.88, 1)
+theme_override_font_sizes/font_size = 13
+theme_override_styles/normal = SubResource("StyleBoxFlat_toggle")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_toggle")
+theme_override_styles/hover = SubResource("StyleBoxFlat_toggle_hover")
+text = "Change location"
 
-[node name="ChangeInstallationButton" type="Button" parent="HomeScreen/Margin/Content/Header" unique_id=1771756305]
-custom_minimum_size = Vector2(190, 42)
-layout_mode = 2
-theme_override_colors/font_color = Color(0.972549, 0.980392, 0.988235, 1)
-theme_override_styles/normal = SubResource("StyleSecondary")
-theme_override_styles/hover = SubResource("StyleMapHover")
-text = "Change installation"
-
-[node name="Description" type="Label" parent="HomeScreen/Margin/Content" unique_id=826150343]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.658824, 0.701961, 0.780392, 1)
-theme_override_font_sizes/font_size = 16
-text = "Choose a map to open in the editor."
-
-[node name="Sources" type="HBoxContainer" parent="HomeScreen/Margin/Content" unique_id=1612238113]
+[node name="FilterBar" type="HBoxContainer" parent="HomeScreen/VBox" unique_id=1670093074]
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="WipMapsButton" type="Button" parent="HomeScreen/Margin/Content/Sources" unique_id=471700597]
-custom_minimum_size = Vector2(190, 40)
+[node name="WipMapsButton" type="Button" parent="HomeScreen/VBox/FilterBar" unique_id=611893984]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.972549, 0.980392, 0.988235, 1)
-theme_override_styles/normal = SubResource("StylePrimary")
-theme_override_styles/hover = SubResource("StylePrimaryHover")
-text = "Custom WIP Levels"
+theme_override_colors/font_color = Color(0.8, 0.83, 0.88, 1)
+theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
+theme_override_colors/font_hover_pressed_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 15
+theme_override_styles/normal = SubResource("StyleBoxFlat_toggle")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_toggle_active")
+theme_override_styles/hover = SubResource("StyleBoxFlat_toggle_hover")
+theme_override_styles/hover_pressed = SubResource("StyleBoxFlat_toggle_active")
+toggle_mode = true
+button_pressed = true
+text = "WIP Maps"
 
-[node name="CustomMapsButton" type="Button" parent="HomeScreen/Margin/Content/Sources" unique_id=1995857856]
-custom_minimum_size = Vector2(160, 40)
+[node name="CustomMapsButton" type="Button" parent="HomeScreen/VBox/FilterBar" unique_id=777263773]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.972549, 0.980392, 0.988235, 1)
-theme_override_styles/normal = SubResource("StyleSecondary")
-theme_override_styles/hover = SubResource("StyleMapHover")
-text = "Custom Levels"
+theme_override_colors/font_color = Color(0.8, 0.83, 0.88, 1)
+theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
+theme_override_colors/font_hover_pressed_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 15
+theme_override_styles/normal = SubResource("StyleBoxFlat_toggle")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_toggle_active")
+theme_override_styles/hover = SubResource("StyleBoxFlat_toggle_hover")
+theme_override_styles/hover_pressed = SubResource("StyleBoxFlat_toggle_active")
+toggle_mode = true
+text = "Custom Maps"
 
-[node name="ListPanel" type="PanelContainer" parent="HomeScreen/Margin/Content" unique_id=1624676190]
+[node name="MapScroll" type="ScrollContainer" parent="HomeScreen/VBox" unique_id=1982759291]
 layout_mode = 2
 size_flags_vertical = 3
-theme_override_styles/panel = SubResource("StylePanel")
+horizontal_scroll_mode = 0
 
-[node name="Margin" type="MarginContainer" parent="HomeScreen/Margin/Content/ListPanel" unique_id=1057082709]
+[node name="MapList" type="VBoxContainer" parent="HomeScreen/VBox/MapScroll" unique_id=1428375967]
 layout_mode = 2
-theme_override_constants/margin_left = 18
-theme_override_constants/margin_top = 18
-theme_override_constants/margin_right = 18
-theme_override_constants/margin_bottom = 18
-
-[node name="Content" type="VBoxContainer" parent="HomeScreen/Margin/Content/ListPanel/Margin" unique_id=1837752822]
-layout_mode = 2
+size_flags_horizontal = 3
 theme_override_constants/separation = 12
 
-[node name="StatusLabel" type="Label" parent="HomeScreen/Margin/Content/ListPanel/Margin/Content" unique_id=992895166]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.658824, 0.701961, 0.780392, 1)
-theme_override_font_sizes/font_size = 15
-
-[node name="Scroll" type="ScrollContainer" parent="HomeScreen/Margin/Content/ListPanel/Margin/Content" unique_id=1878902741]
-layout_mode = 2
-size_flags_vertical = 3
-
-[node name="MapList" type="VBoxContainer" parent="HomeScreen/Margin/Content/ListPanel/Margin/Content/Scroll" unique_id=1062804479]
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_constants/separation = 8
-
-[node name="MapButtonTemplate" type="Button" parent="." unique_id=941497307]
+[node name="EmptyLabel" type="Label" parent="HomeScreen/VBox" unique_id=418854345]
 visible = false
-custom_minimum_size = Vector2(0, 48)
-layout_mode = 0
-theme_override_colors/font_color = Color(0.972549, 0.980392, 0.988235, 1)
-theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
-theme_override_styles/normal = SubResource("StyleMap")
-theme_override_styles/pressed = SubResource("StyleMapHover")
-theme_override_styles/hover = SubResource("StyleMapHover")
-alignment = 0
+layout_mode = 2
+theme_override_colors/font_color = Color(0.52, 0.56, 0.64, 1)
+theme_override_font_sizes/font_size = 16
+text = "No maps found in this folder."
+horizontal_alignment = 1
 
-[node name="InstallLocationDialog" type="FileDialog" parent="." unique_id=1386904815]
-title = "Open a Directory"
-file_mode = 2
-access = 2
-use_native_dialog = true
-
-[connection signal="pressed" from="InstallScreen/Center/Panel/Margin/Content/SelectLocationButton" to="." method="SelectInstallLocation"]
-[connection signal="pressed" from="HomeScreen/Margin/Content/Header/ChangeInstallationButton" to="." method="SelectInstallLocation"]
-[connection signal="pressed" from="HomeScreen/Margin/Content/Sources/WipMapsButton" to="." method="ShowWipMaps"]
-[connection signal="pressed" from="HomeScreen/Margin/Content/Sources/CustomMapsButton" to="." method="ShowCustomMaps"]
-[connection signal="dir_selected" from="InstallLocationDialog" to="." method="OnInstallLocationSelected"]
+[connection signal="dir_selected" from="InstallLocationFolderDialog" to="." method="OnInstallLocationFolderDialogDirSelected"]
+[connection signal="pressed" from="InstallLocationScreen/Panel/VBox/SelectButton" to="." method="OnSelectInstallLocationPressed"]
+[connection signal="pressed" from="HomeScreen/VBox/Header/ChangeLocationButton" to="." method="OnSelectInstallLocationPressed"]
+[connection signal="toggled" from="HomeScreen/VBox/FilterBar/WipMapsButton" to="." method="OnWipMapsButtonToggled"]
+[connection signal="toggled" from="HomeScreen/VBox/FilterBar/CustomMapsButton" to="." method="OnCustomMapsButtonToggled"]
