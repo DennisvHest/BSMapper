@@ -1,10 +1,13 @@
 using Godot;
+using System.Collections.Generic;
 
 public partial class Main : Control
 {
     private const string SettingsFilePath = "user://settings.cfg";
     private const string CustomLevelsFolder = "Beat Saber_Data/CustomLevels";
     private const string CustomWipLevelsFolder = "Beat Saber_Data/CustomWIPLevels";
+    private const int ButtonsPerFrame = 50;
+    private const int HydrationsPerFrame = 4;
 
     [Export]
     public PackedScene StartScene { get; set; }
@@ -15,6 +18,18 @@ public partial class Main : Control
     public string BeatSaberInstallLocation { get; set; } = string.Empty;
 
     private bool _showWipMaps = true;
+    private readonly Queue<(string FolderName, string MapFolder, string InfoPath)> _pendingButtons = new();
+    private readonly List<MapListEntry> _pendingHydrations = new();
+
+    private sealed class MapListEntry
+    {
+        public Button Button;
+        public TextureRect Cover;
+        public Label DurationLabel;
+        public string MapFolder;
+        public string CoverImageFileName;
+        public string SongFileName;
+    }
 
     public override void _Ready()
     {
@@ -94,6 +109,9 @@ public partial class Main : Control
 
     private void RefreshMapList()
     {
+        _pendingButtons.Clear();
+        _pendingHydrations.Clear();
+
         var mapList = GetNode<VBoxContainer>("HomeScreen/VBox/MapScroll/MapList");
         foreach (var child in mapList.GetChildren())
         {
@@ -102,7 +120,6 @@ public partial class Main : Control
 
         var mapsLocation = BeatSaberInstallLocation
             .PathJoin(_showWipMaps ? CustomWipLevelsFolder : CustomLevelsFolder);
-        var mapCount = 0;
 
         if (DirAccess.DirExistsAbsolute(mapsLocation))
         {
@@ -111,39 +128,129 @@ public partial class Main : Control
             {
                 foreach (var folderName in directory.GetDirectories())
                 {
-                    var infoPath = mapsLocation.PathJoin(folderName).PathJoin("info.dat");
+                    var mapFolder = mapsLocation.PathJoin(folderName);
+                    var infoPath = mapFolder.PathJoin("info.dat");
                     if (!FileAccess.FileExists(infoPath))
                     {
-                        infoPath = mapsLocation.PathJoin(folderName).PathJoin("Info.dat");
+                        infoPath = mapFolder.PathJoin("Info.dat");
                         if (!FileAccess.FileExists(infoPath))
                         {
                             continue;
                         }
                     }
 
-                    mapList.AddChild(CreateMapButton(folderName, infoPath));
-                    mapCount++;
+                    _pendingButtons.Enqueue((folderName, mapFolder, infoPath));
                 }
             }
         }
 
-        GetNode<Label>("HomeScreen/VBox/EmptyLabel").Visible = mapCount == 0;
+        GetNode<Label>("HomeScreen/VBox/EmptyLabel").Visible = _pendingButtons.Count == 0;
     }
 
-    private Button CreateMapButton(string mapName, string infoPath)
+    public override void _Process(double delta)
     {
+        ProcessPendingButtons();
+        ProcessPendingHydrations();
+    }
+
+    private void ProcessPendingButtons()
+    {
+        if (_pendingButtons.Count == 0)
+        {
+            return;
+        }
+
+        var mapList = GetNode<VBoxContainer>("HomeScreen/VBox/MapScroll/MapList");
+        for (var i = 0; i < ButtonsPerFrame && _pendingButtons.Count > 0; i++)
+        {
+            var (folderName, mapFolder, infoPath) = _pendingButtons.Dequeue();
+            mapList.AddChild(CreateMapButton(folderName, mapFolder, infoPath));
+        }
+    }
+
+    private void ProcessPendingHydrations()
+    {
+        if (_pendingHydrations.Count == 0)
+        {
+            return;
+        }
+
+        var scroll = GetNode<ScrollContainer>("HomeScreen/VBox/MapScroll");
+        var visibleRect = scroll.GetGlobalRect();
+        var hydrated = 0;
+
+        for (var i = _pendingHydrations.Count - 1; i >= 0 && hydrated < HydrationsPerFrame; i--)
+        {
+            var entry = _pendingHydrations[i];
+            if (!IsInstanceValid(entry.Button))
+            {
+                _pendingHydrations.RemoveAt(i);
+                continue;
+            }
+
+            if (!visibleRect.Intersects(entry.Button.GetGlobalRect()))
+            {
+                continue;
+            }
+
+            HydrateEntry(entry);
+            _pendingHydrations.RemoveAt(i);
+            hydrated++;
+        }
+    }
+
+    private static void HydrateEntry(MapListEntry entry)
+    {
+        entry.Cover.Texture = LoadCoverImage(entry.MapFolder, entry.CoverImageFileName);
+        entry.DurationLabel.Text = GetSongDurationText(entry.MapFolder, entry.SongFileName);
+    }
+
+    private Button CreateMapButton(string mapName, string mapFolder, string infoPath)
+    {
+        var songName = mapName;
+        var songAuthor = string.Empty;
+        var coverImageFileName = string.Empty;
+        var songFileName = string.Empty;
+
+        var json = new Json();
+        if (json.Parse(FileAccess.GetFileAsString(infoPath)) == Error.Ok)
+        {
+            var data = json.Data.AsGodotDictionary();
+            if (data.TryGetValue("_songName", out var songNameValue) && !string.IsNullOrEmpty(songNameValue.AsString()))
+            {
+                songName = songNameValue.AsString();
+            }
+
+            if (data.TryGetValue("_songAuthorName", out var authorValue))
+            {
+                songAuthor = authorValue.AsString();
+            }
+
+            if (data.TryGetValue("_coverImageFilename", out var coverValue))
+            {
+                coverImageFileName = coverValue.AsString();
+            }
+
+            if (data.TryGetValue("_songFilename", out var songFileValue))
+            {
+                songFileName = songFileValue.AsString();
+            }
+        }
+
+        const int maxTitleLength = 100;
+        var titleText = songName.Length > maxTitleLength
+            ? songName[..maxTitleLength] + "..."
+            : songName;
+
         var button = new Button
         {
-            Text = mapName,
-            Alignment = HorizontalAlignment.Left,
-            CustomMinimumSize = new Vector2(0, 56),
+            TooltipText = songName,
+            CustomMinimumSize = new Vector2(0, 80),
             SizeFlagsHorizontal = SizeFlags.ExpandFill,
         };
-        button.AddThemeFontSizeOverride("font_size", 18);
 
         var normalStyle = new StyleBoxFlat { BgColor = new Color(0.11f, 0.125f, 0.176f) };
         normalStyle.SetCornerRadiusAll(8);
-        normalStyle.ContentMarginLeft = 20;
         var hoverStyle = (StyleBoxFlat)normalStyle.Duplicate();
         hoverStyle.BgColor = new Color(0.153f, 0.176f, 0.243f);
         var pressedStyle = (StyleBoxFlat)normalStyle.Duplicate();
@@ -152,8 +259,121 @@ public partial class Main : Control
         button.AddThemeStyleboxOverride("hover", hoverStyle);
         button.AddThemeStyleboxOverride("pressed", pressedStyle);
 
+        var content = new HBoxContainer
+        {
+            MouseFilter = MouseFilterEnum.Ignore,
+        };
+        content.SetAnchorsPreset(LayoutPreset.FullRect);
+        content.AddThemeConstantOverride("separation", 16);
+        content.OffsetLeft = 12;
+        content.OffsetRight = -12;
+        content.OffsetTop = 8;
+        content.OffsetBottom = -8;
+        button.AddChild(content);
+
+        var cover = new TextureRect
+        {
+            CustomMinimumSize = new Vector2(64, 64),
+            ExpandMode = TextureRect.ExpandModeEnum.IgnoreSize,
+            StretchMode = TextureRect.StretchModeEnum.KeepAspectCentered,
+            SizeFlagsVertical = SizeFlags.ShrinkCenter,
+        };
+        content.AddChild(cover);
+
+        var textColumn = new VBoxContainer
+        {
+            SizeFlagsHorizontal = SizeFlags.ExpandFill,
+            SizeFlagsVertical = SizeFlags.ShrinkCenter,
+        };
+        textColumn.AddThemeConstantOverride("separation", 2);
+        content.AddChild(textColumn);
+
+        var titleLabel = new Label
+        {
+            Text = titleText,
+            ClipText = true,
+            TextOverrunBehavior = TextServer.OverrunBehavior.TrimEllipsis,
+        };
+        titleLabel.AddThemeFontSizeOverride("font_size", 18);
+        titleLabel.AddThemeColorOverride("font_color", new Color(0.95f, 0.96f, 0.98f));
+        textColumn.AddChild(titleLabel);
+
+        var authorLabel = new Label
+        {
+            Text = string.IsNullOrEmpty(songAuthor) ? "Unknown artist" : songAuthor,
+            ClipText = true,
+            TextOverrunBehavior = TextServer.OverrunBehavior.TrimEllipsis,
+        };
+        authorLabel.AddThemeFontSizeOverride("font_size", 14);
+        authorLabel.AddThemeColorOverride("font_color", new Color(0.62f, 0.66f, 0.74f));
+        textColumn.AddChild(authorLabel);
+
+        var durationLabel = new Label
+        {
+            SizeFlagsVertical = SizeFlags.ShrinkCenter,
+        };
+        durationLabel.AddThemeFontSizeOverride("font_size", 14);
+        durationLabel.AddThemeColorOverride("font_color", new Color(0.62f, 0.66f, 0.74f));
+        content.AddChild(durationLabel);
+
         button.Pressed += () => OpenMapInEditor(infoPath);
+
+        _pendingHydrations.Add(new MapListEntry
+        {
+            Button = button,
+            Cover = cover,
+            DurationLabel = durationLabel,
+            MapFolder = mapFolder,
+            CoverImageFileName = coverImageFileName,
+            SongFileName = songFileName,
+        });
+
         return button;
+    }
+
+    private static Texture2D LoadCoverImage(string mapFolder, string coverImageFileName)
+    {
+        if (string.IsNullOrEmpty(coverImageFileName))
+        {
+            return null;
+        }
+
+        var coverPath = mapFolder.PathJoin(coverImageFileName);
+        if (!FileAccess.FileExists(coverPath))
+        {
+            return null;
+        }
+
+        var image = Image.LoadFromFile(coverPath);
+        if (image is null)
+        {
+            return null;
+        }
+
+        return ImageTexture.CreateFromImage(image);
+    }
+
+    private static string GetSongDurationText(string mapFolder, string songFileName)
+    {
+        if (string.IsNullOrEmpty(songFileName))
+        {
+            return string.Empty;
+        }
+
+        var songPath = mapFolder.PathJoin(songFileName);
+        if (!FileAccess.FileExists(songPath))
+        {
+            return string.Empty;
+        }
+
+        var stream = AudioStreamOggVorbis.LoadFromFile(songPath);
+        if (stream is null)
+        {
+            return string.Empty;
+        }
+
+        var totalSeconds = (int)Mathf.Round(stream.GetLength());
+        return $"{totalSeconds / 60}:{totalSeconds % 60:00}";
     }
 
     private void OpenMapInEditor(string infoPath)
