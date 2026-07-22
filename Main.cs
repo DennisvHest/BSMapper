@@ -399,6 +399,30 @@ public partial class Main : Control
         GetNode<FileDialog>("InstallLocationFolderDialog").Show();
     }
 
+    private void OnNewMapButtonPressed()
+    {
+        GetNode<FileDialog>("SongFileDialog").Show();
+    }
+
+    private void OnSongFileDialogFileSelected(string path)
+    {
+        var manager = GetNode<BeatMapManager>("/root/BeatMapManager");
+        if (string.IsNullOrEmpty(manager.WipBeatmapLocation))
+        {
+            GD.PushWarning("Cannot create a map before a Beat Saber install location is configured.");
+            return;
+        }
+
+        var newBeatMap = manager.NewMap(path);
+        manager.NewDifficulty(
+            newBeatMap,
+            BeatMapDifficultySet.BeatmapMode.Standard,
+            BeatMapDifficultyInfo.Difficulty.Expert,
+            16.0f,
+            -0.15f);
+        OpenMapInEditor(newBeatMap.FilePath.PathJoin("info.dat"));
+    }
+
     private void OnInstallLocationFolderDialogDirSelected(string directory)
     {
         if (IsValidInstallLocation(directory))

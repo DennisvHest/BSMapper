@@ -107,6 +107,15 @@ file_mode = 2
 access = 2
 use_native_dialog = true
 
+[node name="SongFileDialog" type="FileDialog" parent="."]
+title = "Select a song for the new map"
+initial_position = 2
+ok_button_text = "Open"
+file_mode = 0
+access = 2
+filters = PackedStringArray("*.ogg,*.egg")
+use_native_dialog = true
+
 [node name="InstallLocationScreen" type="CenterContainer" parent="." unique_id=1403762803]
 layout_mode = 1
 anchors_preset = 15
@@ -191,6 +200,18 @@ text = "BSMapper"
 layout_mode = 2
 size_flags_horizontal = 3
 
+[node name="NewMapButton" type="Button" parent="HomeScreen/VBox/Header"]
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
+theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 15
+theme_override_styles/normal = SubResource("StyleBoxFlat_accent_button")
+theme_override_styles/hover = SubResource("StyleBoxFlat_accent_button_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_accent_button_pressed")
+text = "+ New map"
+
 [node name="InstallLocationLabel" type="Label" parent="HomeScreen/VBox/Header" unique_id=1512118692]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.52, 0.56, 0.64, 1)
@@ -267,6 +288,8 @@ text = "No maps found in this folder."
 horizontal_alignment = 1
 
 [connection signal="dir_selected" from="InstallLocationFolderDialog" to="." method="OnInstallLocationFolderDialogDirSelected"]
+[connection signal="file_selected" from="SongFileDialog" to="." method="OnSongFileDialogFileSelected"]
+[connection signal="pressed" from="HomeScreen/VBox/Header/NewMapButton" to="." method="OnNewMapButtonPressed"]
 [connection signal="pressed" from="InstallLocationScreen/Panel/VBox/SelectButton" to="." method="OnSelectInstallLocationPressed"]
 [connection signal="pressed" from="HomeScreen/VBox/Header/ChangeLocationButton" to="." method="OnSelectInstallLocationPressed"]
 [connection signal="text_changed" from="HomeScreen/VBox/FilterBar/SearchBar" to="." method="OnSearchTextChanged"]
