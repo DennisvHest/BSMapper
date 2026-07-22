@@ -90,10 +90,15 @@ public partial class BeatMapManager : Node
 
     public BeatMapInfo LoadBeatmapInfo(string filePath)
     {
-        var original = ParseJsonFile(filePath);
-        CurrentBeatmapInfo = BeatMapInfo.FromFile(original, filePath);
+        CurrentBeatmapInfo = ReadBeatmapInfo(filePath);
         EmitSignal(SignalName.CurrentBeatmapInfoChanged, CurrentBeatmapInfo);
         return CurrentBeatmapInfo;
+    }
+
+    public BeatMapInfo ReadBeatmapInfo(string filePath)
+    {
+        var original = ParseJsonFile(filePath);
+        return BeatMapInfo.FromFile(original, filePath);
     }
 
     public void LoadDifficulty(BeatMapDifficultyInfo difficulty)
