@@ -1,4 +1,5 @@
 using Godot;
+using System.IO;
 
 public partial class PlaybackManager : Node
 {
@@ -17,23 +18,25 @@ public partial class PlaybackManager : Node
     public XRController3D LeftHand { get; private set; }
     public XRController3D RightHand { get; private set; }
     public AudioStreamPlayer Music { get; private set; }
-    public BeatMapDifficultyInfo Beatmap { get; private set; }
+    public BeatMapDifficultyInfo BeatmapDifficulty { get; private set; }
     public double PlaybackPosition { get; private set; }
-    public double PlaybackBeat => Beatmap is null || Beatmap.Bpm == 0.0f
+    public double PlaybackBeat => BeatmapDifficulty is null || BeatmapDifficulty.Bpm == 0.0f
         ? 0.0
-        : PlaybackPosition / (60.0 / Beatmap.Bpm);
+        : PlaybackPosition / (60.0 / BeatmapDifficulty.Bpm);
     public EditMode Mode { get; private set; } = EditMode.Playing;
     public bool Initialized { get; private set; }
 
+    private BeatMapManager _beatMapManager;
+
     public override void _Ready()
     {
-        var beatMapManager = GetNode<BeatMapManager>("/root/BeatMapManager");
-        beatMapManager.CurrentBeatmapDifficultyInfoChanged += OnCurrentBeatmapDifficultyInfoChanged;
+        _beatMapManager = GetNode<BeatMapManager>("/root/BeatMapManager");
+        _beatMapManager.CurrentBeatmapInfoChanged += OnCurrentBeatMapInfoChanged;
+        _beatMapManager.CurrentBeatmapDifficultyInfoChanged += (beatmapDifficulty) => BeatmapDifficulty = beatmapDifficulty;
 
         Music = new AudioStreamPlayer
         {
-            Stream = GD.Load<AudioStream>("res://test_beatmaps/1feab (Turn It Up - abcbadq)/song.ogg"),
-            VolumeDb = -10.0f,
+            VolumeDb = -10.0f
         };
         GetParent().CallDeferred(Node.MethodName.AddChild, Music);
     }
@@ -51,6 +54,13 @@ public partial class PlaybackManager : Node
         RightHand = GetParent().GetNode<XRController3D>("Editor/XROrigin3D/RightHand");
         RightHand.ButtonPressed += OnRightHandButtonPressed;
         Initialized = true;
+    }
+
+    private void OnCurrentBeatMapInfoChanged(BeatMapInfo beatmap)
+    {
+        Music.Stream = beatmap is null
+            ? null
+            : AudioStreamOggVorbis.LoadFromFile(beatmap.SongFilePath);
     }
 
     public void Play(double fromPosition = 0.0)
@@ -128,11 +138,6 @@ public partial class PlaybackManager : Node
         EmitSignal(SignalName.ModeChanged);
     }
 
-    private void OnCurrentBeatmapDifficultyInfoChanged(BeatMapDifficultyInfo beatmap)
-    {
-        Beatmap = beatmap;
-    }
-
     private void OnMusicProgressBarDragStarted()
     {
         Music.StreamPaused = true;
@@ -172,7 +177,7 @@ public partial class PlaybackManager : Node
 
         if (buttonName == "grip_click")
         {
-            SetPlaybackPosition(GetPlaybackPosition() - Beatmap.BeatDuration);
+            SetPlaybackPosition(GetPlaybackPosition() - BeatmapDifficulty.BeatDuration);
         }
     }
 
@@ -180,14 +185,14 @@ public partial class PlaybackManager : Node
     {
         if (buttonName == "grip_click")
         {
-            SetPlaybackPosition(GetPlaybackPosition() + Beatmap.BeatDuration);
+            SetPlaybackPosition(GetPlaybackPosition() + BeatmapDifficulty.BeatDuration);
         }
     }
 
     private void SnapToNearestBeat()
     {
         var playbackPosition = GetPlaybackPosition();
-        var snappedPosition = Mathf.Round(playbackPosition / Beatmap.BeatDuration) * Beatmap.BeatDuration;
+        var snappedPosition = Mathf.Round(playbackPosition / BeatmapDifficulty.BeatDuration) * BeatmapDifficulty.BeatDuration;
         SetPlaybackPosition(snappedPosition);
     }
 }

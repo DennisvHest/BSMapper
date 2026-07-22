@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using Godot;
 using Godot.Collections;
 using Array = Godot.Collections.Array;
@@ -20,6 +21,8 @@ public partial class BeatMapInfo : RefCounted
 
     [Export]
     public string SongFileName { get; set; } = string.Empty;
+
+    public string SongFilePath => Path.Combine(Path.GetDirectoryName(FilePath), SongFileName);
 
     [Export]
     public float Bpm { get; set; }
