@@ -52,7 +52,6 @@ public partial class PlaybackManager : Node
         LeftHand.ButtonPressed += OnLeftHandButtonPressed;
 
         RightHand = GetParent().GetNode<XRController3D>("Editor/XROrigin3D/RightHand");
-        RightHand.ButtonPressed += OnRightHandButtonPressed;
         Initialized = true;
     }
 
@@ -173,19 +172,6 @@ public partial class PlaybackManager : Node
         if (buttonName == "ax_button")
         {
             ChangeMode(Mode == EditMode.Editing ? EditMode.Playing : EditMode.Editing);
-        }
-
-        if (buttonName == "grip_click")
-        {
-            SetPlaybackPosition(GetPlaybackPosition() - BeatmapDifficulty.BeatDuration);
-        }
-    }
-
-    private void OnRightHandButtonPressed(string buttonName)
-    {
-        if (buttonName == "grip_click")
-        {
-            SetPlaybackPosition(GetPlaybackPosition() + BeatmapDifficulty.BeatDuration);
         }
     }
 

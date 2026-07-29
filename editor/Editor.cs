@@ -20,6 +20,8 @@ public partial class Editor : Node3D
     private Saber _rightSaber;
     private AudioStreamPlayer _hitSound;
     private AudioStreamPlayer _badCutSound;
+    private BeatmapObject _leftDraggedObject;
+    private BeatmapObject _rightDraggedObject;
 
     private PlaybackManager PlaybackManager => GetNode<PlaybackManager>("/root/PlaybackManager");
     private BeatMapManager BeatMapManager => GetNode<BeatMapManager>("/root/BeatMapManager");
@@ -44,11 +46,19 @@ public partial class Editor : Node3D
         gameEvents.NoteBlockHit += OnNoteBlockHit;
         gameEvents.BombHit += OnBombHit;
         _leftHand.ButtonPressed += OnLeftHandButtonPressed;
+        _leftHand.ButtonReleased += OnLeftHandButtonReleased;
         _rightHand.ButtonPressed += OnRightHandButtonPressed;
+        _rightHand.ButtonReleased += OnRightHandButtonReleased;
 
         PlaybackManager.Initialize();
         PlaybackManager.ModeChanged += OnPlaybackModeChanged;
         Callable.From(() => PlaybackManager.Play()).CallDeferred();
+    }
+
+    public override void _Process(double delta)
+    {
+        MoveDraggedObject(_leftPointer, _leftDraggedObject);
+        MoveDraggedObject(_rightPointer, _rightDraggedObject);
     }
 
     private void OnLeftHandButtonPressed(string buttonName)
@@ -56,6 +66,10 @@ public partial class Editor : Node3D
         if (buttonName == AxButton)
         {
             DeleteHoveredObjectForPointer(_leftPointer);
+        }
+        else if (buttonName == "grip_click")
+        {
+            _leftDraggedObject = GetGrippableObject(_leftPointer);
         }
     }
 
@@ -65,6 +79,26 @@ public partial class Editor : Node3D
         if (buttonName == AxButton && !DeleteHoveredObjectForPointer(_rightPointer))
         {
             BeatMapManager.SaveBeatmap();
+        }
+        else if (buttonName == "grip_click")
+        {
+            _rightDraggedObject = GetGrippableObject(_rightPointer);
+        }
+    }
+
+    private void OnLeftHandButtonReleased(string buttonName)
+    {
+        if (buttonName == "grip_click")
+        {
+            _leftDraggedObject = null;
+        }
+    }
+
+    private void OnRightHandButtonReleased(string buttonName)
+    {
+        if (buttonName == "grip_click")
+        {
+            _rightDraggedObject = null;
         }
     }
 
@@ -90,6 +124,31 @@ public partial class Editor : Node3D
         }
 
         return target as BeatmapObject ?? target.GetParent() as BeatmapObject;
+    }
+
+    private BeatmapObject GetGrippableObject(GodotObject pointer)
+    {
+        return PlaybackManager.Mode == PlaybackManager.EditMode.Editing
+            ? GetHoveredBeatmapObject(pointer)
+            : null;
+    }
+
+    private static void MoveDraggedObject(GodotObject pointer, BeatmapObject draggedObject)
+    {
+        if (draggedObject is null)
+        {
+            return;
+        }
+
+        var target = pointer.Get("last_target").AsGodotObject() as Node;
+        for (var current = target; current is not null; current = current.GetParent())
+        {
+            if (current is ObjectEditPlaneCell cell)
+            {
+                draggedObject.MoveToGridCell(cell.LineIndex, cell.LineLayer);
+                return;
+            }
+        }
     }
 
     private void OnPlaybackModeChanged()

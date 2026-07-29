@@ -107,8 +107,8 @@ file_mode = 2
 access = 2
 use_native_dialog = true
 
-[node name="SongFileDialog" type="FileDialog" parent="."]
-title = "Select a song for the new map"
+[node name="SongFileDialog" type="FileDialog" parent="." unique_id=1612747444]
+title = "Open a File"
 initial_position = 2
 ok_button_text = "Open"
 file_mode = 0
@@ -200,16 +200,16 @@ text = "BSMapper"
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="NewMapButton" type="Button" parent="HomeScreen/VBox/Header"]
+[node name="NewMapButton" type="Button" parent="HomeScreen/VBox/Header" unique_id=806157913]
 layout_mode = 2
 size_flags_vertical = 4
 theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
 theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
+theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
 theme_override_font_sizes/font_size = 15
 theme_override_styles/normal = SubResource("StyleBoxFlat_accent_button")
-theme_override_styles/hover = SubResource("StyleBoxFlat_accent_button_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_accent_button_pressed")
+theme_override_styles/hover = SubResource("StyleBoxFlat_accent_button_hover")
 text = "+ New map"
 
 [node name="InstallLocationLabel" type="Label" parent="HomeScreen/VBox/Header" unique_id=1512118692]
@@ -258,7 +258,7 @@ theme_override_styles/hover_pressed = SubResource("StyleBoxFlat_toggle_active")
 toggle_mode = true
 text = "Custom Maps"
 
-[node name="SearchBar" type="LineEdit" parent="HomeScreen/VBox/FilterBar"]
+[node name="SearchBar" type="LineEdit" parent="HomeScreen/VBox/FilterBar" unique_id=1665453019]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0.95, 0.96, 0.98, 1)
@@ -289,9 +289,9 @@ horizontal_alignment = 1
 
 [connection signal="dir_selected" from="InstallLocationFolderDialog" to="." method="OnInstallLocationFolderDialogDirSelected"]
 [connection signal="file_selected" from="SongFileDialog" to="." method="OnSongFileDialogFileSelected"]
-[connection signal="pressed" from="HomeScreen/VBox/Header/NewMapButton" to="." method="OnNewMapButtonPressed"]
 [connection signal="pressed" from="InstallLocationScreen/Panel/VBox/SelectButton" to="." method="OnSelectInstallLocationPressed"]
+[connection signal="pressed" from="HomeScreen/VBox/Header/NewMapButton" to="." method="OnNewMapButtonPressed"]
 [connection signal="pressed" from="HomeScreen/VBox/Header/ChangeLocationButton" to="." method="OnSelectInstallLocationPressed"]
-[connection signal="text_changed" from="HomeScreen/VBox/FilterBar/SearchBar" to="." method="OnSearchTextChanged"]
 [connection signal="toggled" from="HomeScreen/VBox/FilterBar/WipMapsButton" to="." method="OnWipMapsButtonToggled"]
 [connection signal="toggled" from="HomeScreen/VBox/FilterBar/CustomMapsButton" to="." method="OnCustomMapsButtonToggled"]
+[connection signal="text_changed" from="HomeScreen/VBox/FilterBar/SearchBar" to="." method="OnSearchTextChanged"]

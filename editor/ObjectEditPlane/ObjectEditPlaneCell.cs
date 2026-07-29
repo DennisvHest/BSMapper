@@ -23,6 +23,9 @@ public partial class ObjectEditPlaneCell : Node3D
 
     private PlaybackManager PlaybackManager => GetNode<PlaybackManager>("/root/PlaybackManager");
 
+    public int LineIndex => _lineIndex;
+    public int LineLayer => _lineLayer;
+
     public void SetObjectEditPlane(ObjectEditPlane objectEditPlane)
     {
         _objectEditPlane = objectEditPlane;

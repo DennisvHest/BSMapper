@@ -118,11 +118,8 @@ public partial class BeatMapManager : Node
     public void SaveBeatmap()
     {
         CurrentBeatmap.SaveChanges();
-        var extension = CurrentBeatmapFilePath.GetExtension();
-        var basePath = CurrentBeatmapFilePath.GetBaseName();
-        var newFilePath = $"{basePath}_TEST.{extension}";
-        using var beatmapFile = FileAccess.Open(newFilePath, FileAccess.ModeFlags.Write)
-            ?? throw new InvalidOperationException($"Failed to open beatmap file for writing: {newFilePath}");
+        using var beatmapFile = FileAccess.Open(CurrentBeatmapFilePath, FileAccess.ModeFlags.Write)
+            ?? throw new InvalidOperationException($"Failed to open beatmap file for writing: {CurrentBeatmapFilePath}");
         beatmapFile.StoreString(Json.Stringify(CurrentBeatmap.OriginalMap, string.Empty, false));
     }
 

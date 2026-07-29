@@ -1,3 +1,4 @@
+using System;
 using Godot;
 
 [GlobalClass]
@@ -63,6 +64,48 @@ public partial class BeatmapObject : Node3D
         var manager = GetNode<BeatMapManager>("/root/BeatMapManager");
         manager.CurrentBeatmap?.RemoveObject(BeatmapData);
         QueueFree();
+    }
+
+    public void MoveToGridCell(int lineIndex, int lineLayer)
+    {
+        var previousLineIndex = BeatmapData switch
+        {
+            BeatMapNote note => note.LineIndex,
+            BeatMapBomb bomb => bomb.LineIndex,
+            _ => throw new InvalidOperationException("Only notes and bombs can be moved on the object edit plane"),
+        };
+        var previousLineLayer = BeatmapData switch
+        {
+            BeatMapNote note => note.LineLayer,
+            BeatMapBomb bomb => bomb.LineLayer,
+            _ => throw new InvalidOperationException("Only notes and bombs can be moved on the object edit plane"),
+        };
+
+        if (previousLineIndex == lineIndex && previousLineLayer == lineLayer)
+        {
+            return;
+        }
+
+        switch (BeatmapData)
+        {
+            case BeatMapNote note:
+                note.LineIndex = lineIndex;
+                note.LineLayer = lineLayer;
+                break;
+            case BeatMapBomb bomb:
+                bomb.LineIndex = lineIndex;
+                bomb.LineLayer = lineLayer;
+                break;
+            default:
+                throw new InvalidOperationException("Only notes and bombs can be moved on the object edit plane");
+        }
+
+        var offset = new Vector3(
+            (lineIndex - previousLineIndex) * NoteBlockLane.BeatmapObjectLineSize,
+            (lineLayer - previousLineLayer) * NoteBlockLane.BeatmapObjectLineSize,
+            0.0f);
+        InitialPosition += offset;
+        Position += offset;
     }
 
     protected void Spawn()
