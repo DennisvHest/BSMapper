@@ -5,6 +5,7 @@ using Godot;
 public partial class SelectionPanelUI : Control
 {
     public event Action<BeatMapNote.NoteBlockType> NoteTypeSelected;
+    public event Action DeselectAll;
     public event Action DeleteSelected;
 
     private Label _title;
@@ -18,6 +19,7 @@ public partial class SelectionPanelUI : Control
             NoteTypeSelected?.Invoke(BeatMapNote.NoteBlockType.Left);
         GetNode<Button>("%RightColorButton").Pressed += () =>
             NoteTypeSelected?.Invoke(BeatMapNote.NoteBlockType.Right);
+        GetNode<Button>("%DeselectButton").Pressed += () => DeselectAll?.Invoke();
         GetNode<Button>("%DeleteButton").Pressed += () => DeleteSelected?.Invoke();
     }
 

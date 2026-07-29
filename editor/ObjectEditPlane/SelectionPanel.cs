@@ -24,6 +24,7 @@ public partial class SelectionPanel : Node3D
             ?? throw new InvalidOperationException("SelectionPanel viewport scene failed to initialize");
 
         _panelUi.NoteTypeSelected += _editor.SetSelectedNoteBlockType;
+        _panelUi.DeselectAll += _editor.DeselectAllObjects;
         _panelUi.DeleteSelected += _editor.DeleteSelectedObjects;
         _editor.SelectionChanged += OnSelectionChanged;
         OnSelectionChanged(0, false);

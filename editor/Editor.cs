@@ -144,6 +144,18 @@ public partial class Editor : Node3D
         EmitSelectionChanged();
     }
 
+    public void DeselectAllObjects()
+    {
+        var selectedObjects = new List<BeatmapObject>(_selectedObjects);
+        _selectedObjects.Clear();
+        foreach (var selectedObject in selectedObjects)
+        {
+            selectedObject.SetSelected(false);
+        }
+
+        EmitSelectionChanged();
+    }
+
     private bool DeleteHoveredObjectForPointer(GodotObject pointer)
     {
         var hoveredObject = GetHoveredBeatmapObject(pointer);
