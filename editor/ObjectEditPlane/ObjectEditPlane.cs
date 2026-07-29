@@ -21,6 +21,8 @@ public partial class ObjectEditPlane : Node3D
     [Export]
     public PlaceableObjectType SelectedObjectType { get; private set; }
 
+    private bool _selectionModeEnabled;
+
     private PlaybackManager PlaybackManager => GetNode<PlaybackManager>("/root/PlaybackManager");
 
     public override void _Ready()
@@ -40,6 +42,17 @@ public partial class ObjectEditPlane : Node3D
 
         SelectedObjectType = selectedObjectType;
         EmitSignal(SignalName.SelectedObjectTypeChanged, (int)selectedObjectType);
+    }
+
+    public void SetSelectionModeEnabled(bool enabled)
+    {
+        if (_selectionModeEnabled == enabled)
+        {
+            return;
+        }
+
+        _selectionModeEnabled = enabled;
+        UpdateVisibilityAndInteraction();
     }
 
     private void PositionObjectTypeSelector()
@@ -66,12 +79,31 @@ public partial class ObjectEditPlane : Node3D
                 cell.Position += Vector3.Up * GlobalSettings.PlayerHeight / 3.0f;
                 cell.Position += Vector3.Up * NoteBlockLane.BeatmapObjectLineSize / 2.0f;
                 AddChild(cell);
+                cell.SetInteractionEnabled(IsEditPlaneEnabled());
             }
         }
     }
 
     private void OnPlaybackModeChanged()
     {
-        Visible = PlaybackManager.Mode == PlaybackManager.EditMode.Editing;
+        UpdateVisibilityAndInteraction();
+    }
+
+    private void UpdateVisibilityAndInteraction()
+    {
+        var enabled = IsEditPlaneEnabled();
+        Visible = enabled;
+        foreach (var child in GetChildren())
+        {
+            if (child is ObjectEditPlaneCell cell)
+            {
+                cell.SetInteractionEnabled(enabled);
+            }
+        }
+    }
+
+    private bool IsEditPlaneEnabled()
+    {
+        return PlaybackManager.Mode == PlaybackManager.EditMode.Editing && !_selectionModeEnabled;
     }
 }

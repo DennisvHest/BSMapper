@@ -37,6 +37,18 @@ public partial class ObjectEditPlaneCell : Node3D
         _lineLayer = lineLayer;
     }
 
+    public void SetInteractionEnabled(bool enabled)
+    {
+        GetNode<CollisionShape3D>("EditArea/CollisionShape3D").Disabled = !enabled;
+        if (enabled)
+        {
+            return;
+        }
+
+        _activePointerDrags.Clear();
+        _preview?.Hide();
+    }
+
     public override void _Ready()
     {
         _notePreviewMesh = GetNode<MeshInstance3D>("Preview/NotePreview");

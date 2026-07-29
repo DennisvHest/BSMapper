@@ -1,0 +1,132 @@
+[gd_scene format=3 uid="uid://cddcnm27acs5"]
+
+[ext_resource type="Script" uid="uid://cpxd4aqyi3mpe" path="res://editor/ObjectEditPlane/SelectionPanelUI.cs" id="1_ui"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
+bg_color = Color(0.05, 0.06, 0.08, 0.92)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+shadow_color = Color(0, 0, 0, 0.28)
+shadow_size = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_button"]
+content_margin_left = 12.0
+content_margin_top = 14.0
+content_margin_right = 12.0
+content_margin_bottom = 14.0
+bg_color = Color(0.17, 0.19, 0.24, 1)
+corner_radius_top_left = 14
+corner_radius_top_right = 14
+corner_radius_bottom_right = 14
+corner_radius_bottom_left = 14
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_button_hover"]
+content_margin_left = 12.0
+content_margin_top = 14.0
+content_margin_right = 12.0
+content_margin_bottom = 14.0
+bg_color = Color(0.14902, 0.533333, 1, 1)
+corner_radius_top_left = 14
+corner_radius_top_right = 14
+corner_radius_bottom_right = 14
+corner_radius_bottom_left = 14
+
+[node name="SelectionPanelUI" type="Control" unique_id=1379940873]
+custom_minimum_size = Vector2(432, 372)
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_ui")
+
+[node name="Panel" type="Panel" parent="." unique_id=1595802492]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
+
+[node name="MarginContainer" type="MarginContainer" parent="Panel" unique_id=1884516309]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 24.0
+offset_top = 20.0
+offset_right = -24.0
+offset_bottom = -20.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Panel/MarginContainer" unique_id=503237510]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="Title" type="Label" parent="Panel/MarginContainer/VBoxContainer" unique_id=173584234]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.98, 0.98, 0.99, 1)
+theme_override_font_sizes/font_size = 28
+text = "Selected: 0"
+horizontal_alignment = 1
+
+[node name="ColorSection" type="VBoxContainer" parent="Panel/MarginContainer/VBoxContainer" unique_id=1308698701]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="ColorLabel" type="Label" parent="Panel/MarginContainer/VBoxContainer/ColorSection" unique_id=1885267435]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.83, 0.86, 0.9, 1)
+theme_override_font_sizes/font_size = 22
+text = "Note color"
+
+[node name="ColorButtons" type="HBoxContainer" parent="Panel/MarginContainer/VBoxContainer/ColorSection" unique_id=2058891985]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="LeftColorButton" type="Button" parent="Panel/MarginContainer/VBoxContainer/ColorSection/ColorButtons" unique_id=2123987281]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 72)
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+theme_override_font_sizes/font_size = 24
+theme_override_styles/normal = SubResource("StyleBoxFlat_button")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_button_hover")
+theme_override_styles/hover = SubResource("StyleBoxFlat_button_hover")
+text = "Left"
+
+[node name="RightColorButton" type="Button" parent="Panel/MarginContainer/VBoxContainer/ColorSection/ColorButtons" unique_id=32369271]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 72)
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+theme_override_font_sizes/font_size = 24
+theme_override_styles/normal = SubResource("StyleBoxFlat_button")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_button_hover")
+theme_override_styles/hover = SubResource("StyleBoxFlat_button_hover")
+text = "Right"
+
+[node name="Spacer" type="Control" parent="Panel/MarginContainer/VBoxContainer" unique_id=1998953504]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="DeleteButton" type="Button" parent="Panel/MarginContainer/VBoxContainer" unique_id=573208136]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 76)
+layout_mode = 2
+focus_mode = 0
+theme_override_colors/font_color = Color(1, 0.82, 0.82, 1)
+theme_override_font_sizes/font_size = 24
+theme_override_styles/normal = SubResource("StyleBoxFlat_button")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_button_hover")
+theme_override_styles/hover = SubResource("StyleBoxFlat_button_hover")
+text = "Delete selected"

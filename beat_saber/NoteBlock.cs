@@ -87,6 +87,17 @@ public partial class NoteBlock : BeatmapObject
         GetNode<Node3D>("Visual/AnyCutDirectionCircle").Visible = cutDirection == BeatMapNote.CutDirection.Any;
     }
 
+    public void SetNoteBlockType(BeatMapNote.NoteBlockType type)
+    {
+        if (BeatmapData is not BeatMapNote note)
+        {
+            return;
+        }
+
+        note.Type = type;
+        SetNoteBlockColor(note);
+    }
+
     private void SetNoteBlockColor(BeatMapNote note)
     {
         var mesh = GetNode<MeshInstance3D>("Visual/MeshInstance3D");
@@ -123,8 +134,9 @@ public partial class NoteBlock : BeatmapObject
         if (!Visible)
         {
             _hoveringPointers.Clear();
-            SetHighlightVisible(false);
         }
+
+        UpdateHighlightVisible();
 
         CallDeferred(MethodName.ChangeCollisionOnVisibilityChanged);
     }
@@ -150,7 +162,17 @@ public partial class NoteBlock : BeatmapObject
                 return;
         }
 
-        SetHighlightVisible(_hoveringPointers.Count > 0);
+        UpdateHighlightVisible();
+    }
+
+    protected override void OnSelectionChanged()
+    {
+        UpdateHighlightVisible();
+    }
+
+    private void UpdateHighlightVisible()
+    {
+        SetHighlightVisible(IsSelected || _hoveringPointers.Count > 0);
     }
 
     private void SetHighlightVisible(bool visible)

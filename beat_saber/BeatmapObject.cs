@@ -20,6 +20,7 @@ public partial class BeatmapObject : Node3D
     public float ObjectTime { get; private set; }
     public bool JumpAnimationEnabled { get; private set; } = true;
     public bool Despawned => ProcessMode == ProcessModeEnum.Disabled;
+    public bool IsSelected { get; private set; }
 
     protected PlaybackManager PlaybackManager => GetNode<PlaybackManager>("/root/PlaybackManager");
 
@@ -57,6 +58,17 @@ public partial class BeatmapObject : Node3D
     public void SetJumpAnimationEnabled(bool enabled)
     {
         JumpAnimationEnabled = enabled;
+    }
+
+    public void SetSelected(bool selected)
+    {
+        if (IsSelected == selected)
+        {
+            return;
+        }
+
+        IsSelected = selected;
+        OnSelectionChanged();
     }
 
     public void DeleteBeatmapObject()
@@ -150,6 +162,10 @@ public partial class BeatmapObject : Node3D
         }
 
         return ObjectTime > jumpTime ? 0.0f : ClampVisualY(distance);
+    }
+
+    protected virtual void OnSelectionChanged()
+    {
     }
 
     private void OnPlaybackModeChanged()

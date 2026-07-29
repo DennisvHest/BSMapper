@@ -1,0 +1,15 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://editor/ObjectEditPlane/SelectionPanel.cs" id="1_panel"]
+[ext_resource type="PackedScene" uid="uid://clujaf3u776a3" path="res://addons/godot-xr-tools/objects/viewport_2d_in_3d.tscn" id="2_viewport"]
+[ext_resource type="PackedScene" path="res://editor/ObjectEditPlane/selection_panel_ui.tscn" id="3_ui"]
+
+[node name="SelectionPanel" type="Node3D"]
+visible = false
+script = ExtResource("1_panel")
+
+[node name="ViewportPanel" parent="." instance=ExtResource("2_viewport")]
+screen_size = Vector2(0.72, 0.62)
+scene = ExtResource("3_ui")
+viewport_size = Vector2(432, 372)
+unshaded = true

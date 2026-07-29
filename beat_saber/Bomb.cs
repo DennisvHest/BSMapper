@@ -53,8 +53,9 @@ public partial class Bomb : BeatmapObject
         if (!Visible)
         {
             _hoveringPointers.Clear();
-            SetHighlightVisible(false);
         }
+
+        UpdateHighlightVisible();
 
         CallDeferred(MethodName.ChangeCollisionOnVisibilityChanged);
     }
@@ -80,7 +81,17 @@ public partial class Bomb : BeatmapObject
                 return;
         }
 
-        SetHighlightVisible(_hoveringPointers.Count > 0);
+        UpdateHighlightVisible();
+    }
+
+    protected override void OnSelectionChanged()
+    {
+        UpdateHighlightVisible();
+    }
+
+    private void UpdateHighlightVisible()
+    {
+        SetHighlightVisible(IsSelected || _hoveringPointers.Count > 0);
     }
 
     private void SetHighlightVisible(bool visible)

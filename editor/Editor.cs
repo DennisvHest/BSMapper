@@ -1,15 +1,21 @@
+using System;
+using System.Collections.Generic;
 using Godot;
 
 [GlobalClass]
 public partial class Editor : Node3D
 {
     private static readonly StringName AxButton = "ax_button";
+    private static readonly StringName GripButton = "grip_click";
+    private static readonly StringName TriggerButton = "trigger_click";
     private static readonly StringName HapticAction = "haptic";
     private const int LaserShow = 1;
     private const int LaserHide = 2;
 
     [Export(PropertyHint.File, "*.dat")]
     public string BeatmapFilePath { get; set; } = string.Empty;
+
+    public event Action<int, bool> SelectionChanged;
 
     private XROrigin3D _xrOrigin;
     private XRController3D _leftHand;
@@ -20,8 +26,10 @@ public partial class Editor : Node3D
     private Saber _rightSaber;
     private AudioStreamPlayer _hitSound;
     private AudioStreamPlayer _badCutSound;
-    private DragState _leftDrag;
+    private ObjectEditPlane _objectEditPlane;
     private DragState _rightDrag;
+    private readonly HashSet<BeatmapObject> _selectedObjects = new();
+    private bool _leftSelectionMode;
 
     private PlaybackManager PlaybackManager => GetNode<PlaybackManager>("/root/PlaybackManager");
     private BeatMapManager BeatMapManager => GetNode<BeatMapManager>("/root/BeatMapManager");
@@ -37,6 +45,7 @@ public partial class Editor : Node3D
         _rightSaber = GetNode<Saber>("XROrigin3D/RightHand/Saber");
         _hitSound = GetNode<AudioStreamPlayer>("HitSound");
         _badCutSound = GetNode<AudioStreamPlayer>("BadCutSound");
+        _objectEditPlane = GetNode<ObjectEditPlane>("NoteBlockLane/ObjectEditPlane");
 
         var cameraPosition = GetNode<XRCamera3D>("XROrigin3D/XRCamera3D").Position;
         cameraPosition.Y = GlobalSettings.PlayerHeight;
@@ -57,30 +66,38 @@ public partial class Editor : Node3D
 
     public override void _Process(double delta)
     {
-        MoveDraggedObject(_leftPointer, _leftHand, _leftDrag);
         MoveDraggedObject(_rightPointer, _rightHand, _rightDrag);
     }
 
     private void OnLeftHandButtonPressed(string buttonName)
     {
-        if (buttonName == AxButton)
+        if (buttonName == TriggerButton && _leftSelectionMode)
+        {
+            ToggleHoveredObjectSelection(_leftPointer);
+        }
+        else if (buttonName == AxButton)
         {
             DeleteHoveredObjectForPointer(_leftPointer);
         }
-        else if (buttonName == "grip_click")
+        else if (buttonName == GripButton && PlaybackManager.Mode == PlaybackManager.EditMode.Editing)
         {
-            _leftDrag = CreateDragState(_leftPointer, _leftHand);
+            _leftSelectionMode = true;
+            _objectEditPlane.SetSelectionModeEnabled(true);
         }
     }
 
     private void OnRightHandButtonPressed(string buttonName)
     {
         GD.Print($"Right hand button pressed {buttonName}");
-        if (buttonName == AxButton && !DeleteHoveredObjectForPointer(_rightPointer))
+        if (buttonName == TriggerButton && _leftSelectionMode)
+        {
+            ToggleHoveredObjectSelection(_rightPointer);
+        }
+        else if (buttonName == AxButton && !DeleteHoveredObjectForPointer(_rightPointer))
         {
             BeatMapManager.SaveBeatmap();
         }
-        else if (buttonName == "grip_click")
+        else if (buttonName == GripButton)
         {
             _rightDrag = CreateDragState(_rightPointer, _rightHand);
         }
@@ -88,21 +105,46 @@ public partial class Editor : Node3D
 
     private void OnLeftHandButtonReleased(string buttonName)
     {
-        if (buttonName == "grip_click")
+        if (buttonName == GripButton)
         {
-            _leftDrag = null;
+            _leftSelectionMode = false;
+            _objectEditPlane.SetSelectionModeEnabled(false);
         }
     }
 
     private void OnRightHandButtonReleased(string buttonName)
     {
-        if (buttonName == "grip_click")
+        if (buttonName == GripButton)
         {
             _rightDrag = null;
         }
     }
 
-    private static bool DeleteHoveredObjectForPointer(GodotObject pointer)
+    public void SetSelectedNoteBlockType(BeatMapNote.NoteBlockType type)
+    {
+        foreach (var selectedObject in _selectedObjects)
+        {
+            if (selectedObject is NoteBlock noteBlock)
+            {
+                noteBlock.SetNoteBlockType(type);
+            }
+        }
+    }
+
+    public void DeleteSelectedObjects()
+    {
+        var objectsToDelete = new List<BeatmapObject>(_selectedObjects);
+        _selectedObjects.Clear();
+        foreach (var selectedObject in objectsToDelete)
+        {
+            selectedObject.SetSelected(false);
+            selectedObject.DeleteBeatmapObject();
+        }
+
+        EmitSelectionChanged();
+    }
+
+    private bool DeleteHoveredObjectForPointer(GodotObject pointer)
     {
         var hoveredObject = GetHoveredBeatmapObject(pointer);
         if (hoveredObject is null)
@@ -110,8 +152,57 @@ public partial class Editor : Node3D
             return false;
         }
 
+        RemoveSelectedObject(hoveredObject);
         hoveredObject.DeleteBeatmapObject();
         return true;
+    }
+
+    private void ToggleHoveredObjectSelection(GodotObject pointer)
+    {
+        var hoveredObject = GetHoveredBeatmapObject(pointer);
+        if (hoveredObject is null)
+        {
+            return;
+        }
+
+        if (_selectedObjects.Remove(hoveredObject))
+        {
+            hoveredObject.SetSelected(false);
+        }
+        else
+        {
+            _selectedObjects.Add(hoveredObject);
+            hoveredObject.SetSelected(true);
+            hoveredObject.TreeExiting += () => RemoveSelectedObject(hoveredObject);
+        }
+
+        EmitSelectionChanged();
+    }
+
+    private void RemoveSelectedObject(BeatmapObject beatmapObject)
+    {
+        if (!_selectedObjects.Remove(beatmapObject))
+        {
+            return;
+        }
+
+        beatmapObject.SetSelected(false);
+        EmitSelectionChanged();
+    }
+
+    private void EmitSelectionChanged()
+    {
+        var containsNotes = false;
+        foreach (var selectedObject in _selectedObjects)
+        {
+            if (selectedObject is NoteBlock)
+            {
+                containsNotes = true;
+                break;
+            }
+        }
+
+        SelectionChanged?.Invoke(_selectedObjects.Count, containsNotes);
     }
 
     private static BeatmapObject GetHoveredBeatmapObject(GodotObject pointer)
@@ -221,6 +312,12 @@ public partial class Editor : Node3D
     private void OnPlaybackModeChanged()
     {
         var editing = PlaybackManager.Mode == PlaybackManager.EditMode.Editing;
+        if (!editing)
+        {
+            _leftSelectionMode = false;
+            _rightDrag = null;
+            _objectEditPlane.SetSelectionModeEnabled(false);
+        }
         var originPosition = _xrOrigin.Position;
         originPosition.Z = editing ? 2.0f : 0.0f;
         _xrOrigin.Position = originPosition;

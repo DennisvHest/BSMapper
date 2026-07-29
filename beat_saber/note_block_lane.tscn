@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://bwh2pgll34g30"]
+[gd_scene load_steps=8 format=3 uid="uid://bwh2pgll34g30"]
 
 [ext_resource type="Script" path="res://beat_saber/NoteBlockLane.cs" id="1_p2bkp"]
 [ext_resource type="PackedScene" uid="uid://bfhf8qgxqfrw6" path="res://beat_saber/note_block.tscn" id="2_il36q"]
@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" path="res://editor/ObjectEditPlane/floor_beat_grid.tscn" id="4_qtils"]
 [ext_resource type="PackedScene" uid="uid://cj4lx8kmvad2b" path="res://beat_saber/bomb.tscn" id="5_bomb"]
 [ext_resource type="PackedScene" uid="uid://djk61jv0t7qmi" path="res://beat_saber/wall.tscn" id="6_wall"]
+[ext_resource type="PackedScene" path="res://editor/ObjectEditPlane/selection_panel.tscn" id="7_selection"]
 
 [node name="NoteBlockLane" type="Node3D"]
 script = ExtResource("1_p2bkp")
@@ -17,3 +18,5 @@ WallScene = ExtResource("6_wall")
 
 [node name="ObjectEditPlane" parent="." instance=ExtResource("3_3sbvc")]
 visible = false
+
+[node name="SelectionPanel" parent="." instance=ExtResource("7_selection")]
