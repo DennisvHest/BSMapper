@@ -20,8 +20,8 @@ public partial class Editor : Node3D
     private Saber _rightSaber;
     private AudioStreamPlayer _hitSound;
     private AudioStreamPlayer _badCutSound;
-    private BeatmapObject _leftDraggedObject;
-    private BeatmapObject _rightDraggedObject;
+    private DragState _leftDrag;
+    private DragState _rightDrag;
 
     private PlaybackManager PlaybackManager => GetNode<PlaybackManager>("/root/PlaybackManager");
     private BeatMapManager BeatMapManager => GetNode<BeatMapManager>("/root/BeatMapManager");
@@ -57,8 +57,8 @@ public partial class Editor : Node3D
 
     public override void _Process(double delta)
     {
-        MoveDraggedObject(_leftPointer, _leftDraggedObject);
-        MoveDraggedObject(_rightPointer, _rightDraggedObject);
+        MoveDraggedObject(_leftPointer, _leftHand, _leftDrag);
+        MoveDraggedObject(_rightPointer, _rightHand, _rightDrag);
     }
 
     private void OnLeftHandButtonPressed(string buttonName)
@@ -69,7 +69,7 @@ public partial class Editor : Node3D
         }
         else if (buttonName == "grip_click")
         {
-            _leftDraggedObject = GetGrippableObject(_leftPointer);
+            _leftDrag = CreateDragState(_leftPointer, _leftHand);
         }
     }
 
@@ -82,7 +82,7 @@ public partial class Editor : Node3D
         }
         else if (buttonName == "grip_click")
         {
-            _rightDraggedObject = GetGrippableObject(_rightPointer);
+            _rightDrag = CreateDragState(_rightPointer, _rightHand);
         }
     }
 
@@ -90,7 +90,7 @@ public partial class Editor : Node3D
     {
         if (buttonName == "grip_click")
         {
-            _leftDraggedObject = null;
+            _leftDrag = null;
         }
     }
 
@@ -98,7 +98,7 @@ public partial class Editor : Node3D
     {
         if (buttonName == "grip_click")
         {
-            _rightDraggedObject = null;
+            _rightDrag = null;
         }
     }
 
@@ -133,9 +133,20 @@ public partial class Editor : Node3D
             : null;
     }
 
-    private static void MoveDraggedObject(GodotObject pointer, BeatmapObject draggedObject)
+    private DragState CreateDragState(GodotObject pointer, XRController3D controller)
     {
-        if (draggedObject is null)
+        var draggedObject = GetGrippableObject(pointer);
+        return draggedObject is null
+            ? null
+            : new DragState(
+                draggedObject,
+                controller.GlobalRotation.Z,
+                draggedObject.BeatmapData is BeatMapNote note ? GetCutDirectionRotation(note.Cut) : 0.0f);
+    }
+
+    private static void MoveDraggedObject(GodotObject pointer, XRController3D controller, DragState drag)
+    {
+        if (drag is null)
         {
             return;
         }
@@ -145,10 +156,66 @@ public partial class Editor : Node3D
         {
             if (current is ObjectEditPlaneCell cell)
             {
-                draggedObject.MoveToGridCell(cell.LineIndex, cell.LineLayer);
-                return;
+                drag.Object.MoveToGridCell(cell.LineIndex, cell.LineLayer);
+                break;
             }
         }
+
+        if (drag.Object is NoteBlock noteBlock)
+        {
+            var rotation = Mathf.PosMod(
+                controller.GlobalRotation.Z - drag.StartingControllerRoll + Mathf.Pi,
+                Mathf.Tau) - Mathf.Pi + drag.StartingCutDirectionRotation;
+            noteBlock.SetCutDirection(GetCutDirectionFromRotation(rotation));
+        }
+    }
+
+    private static BeatMapNote.CutDirection GetCutDirectionFromRotation(float rotation)
+    {
+        var directionIndex = Mathf.PosMod(Mathf.RoundToInt(rotation / (Mathf.Pi / 4.0f)), 8);
+        return directionIndex switch
+        {
+            1 => BeatMapNote.CutDirection.DownRight,
+            2 => BeatMapNote.CutDirection.Right,
+            3 => BeatMapNote.CutDirection.UpRight,
+            4 => BeatMapNote.CutDirection.Up,
+            5 => BeatMapNote.CutDirection.UpLeft,
+            6 => BeatMapNote.CutDirection.Left,
+            7 => BeatMapNote.CutDirection.DownLeft,
+            _ => BeatMapNote.CutDirection.Down,
+        };
+    }
+
+    private static float GetCutDirectionRotation(BeatMapNote.CutDirection cutDirection)
+    {
+        return cutDirection switch
+        {
+            BeatMapNote.CutDirection.DownRight => Mathf.Pi / 4.0f,
+            BeatMapNote.CutDirection.Right => Mathf.Pi / 2.0f,
+            BeatMapNote.CutDirection.UpRight => Mathf.Pi * 3.0f / 4.0f,
+            BeatMapNote.CutDirection.Up => Mathf.Pi,
+            BeatMapNote.CutDirection.UpLeft => -Mathf.Pi * 3.0f / 4.0f,
+            BeatMapNote.CutDirection.Left => -Mathf.Pi / 2.0f,
+            BeatMapNote.CutDirection.DownLeft => -Mathf.Pi / 4.0f,
+            _ => 0.0f,
+        };
+    }
+
+    private sealed class DragState
+    {
+        public DragState(
+            BeatmapObject @object,
+            float startingControllerRoll,
+            float startingCutDirectionRotation)
+        {
+            Object = @object;
+            StartingControllerRoll = startingControllerRoll;
+            StartingCutDirectionRotation = startingCutDirectionRotation;
+        }
+
+        public BeatmapObject Object { get; }
+        public float StartingControllerRoll { get; }
+        public float StartingCutDirectionRotation { get; }
     }
 
     private void OnPlaybackModeChanged()

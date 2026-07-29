@@ -29,7 +29,7 @@ public partial class NoteBlock : BeatmapObject
         EnsureNodeReferences();
         Initialize(initialPosition, mapInfo, note);
         SetNoteBlockColor(note);
-        SetCutDirection(note);
+        SetCutDirection(note.Cut);
     }
 
     public override void _Process(double delta)
@@ -61,9 +61,14 @@ public partial class NoteBlock : BeatmapObject
         DeleteBeatmapObject();
     }
 
-    private void SetCutDirection(BeatMapNote note)
+    public void SetCutDirection(BeatMapNote.CutDirection cutDirection)
     {
-        _blockRotation = note.Cut switch
+        if (BeatmapData is BeatMapNote note)
+        {
+            note.Cut = cutDirection;
+        }
+
+        _blockRotation = cutDirection switch
         {
             BeatMapNote.CutDirection.Up => 180.0f,
             BeatMapNote.CutDirection.Left => -90.0f,
@@ -78,8 +83,8 @@ public partial class NoteBlock : BeatmapObject
         var rotation = Rotation;
         rotation.Z = Mathf.DegToRad(_blockRotation);
         Rotation = rotation;
-        GetNode<Node3D>("Visual/CutDirectionTriangle").Visible = note.Cut != BeatMapNote.CutDirection.Any;
-        GetNode<Node3D>("Visual/AnyCutDirectionCircle").Visible = note.Cut == BeatMapNote.CutDirection.Any;
+        GetNode<Node3D>("Visual/CutDirectionTriangle").Visible = cutDirection != BeatMapNote.CutDirection.Any;
+        GetNode<Node3D>("Visual/AnyCutDirectionCircle").Visible = cutDirection == BeatMapNote.CutDirection.Any;
     }
 
     private void SetNoteBlockColor(BeatMapNote note)
