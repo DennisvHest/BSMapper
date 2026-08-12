@@ -22,7 +22,10 @@ public partial class BeatMapInfo : RefCounted
     [Export]
     public string SongFileName { get; set; } = string.Empty;
 
-    public string SongFilePath => Path.Combine(Path.GetDirectoryName(FilePath), SongFileName);
+    /// <summary>Folder containing the map's info.dat, song and difficulty files.</summary>
+    public string MapFolder => Path.GetDirectoryName(FilePath);
+
+    public string SongFilePath => Path.Combine(MapFolder, SongFileName);
 
     [Export]
     public float Bpm { get; set; }
@@ -34,7 +37,7 @@ public partial class BeatMapInfo : RefCounted
     public Array<BeatMapDifficultySet> DifficultyBeatMapSets { get; set; } = new();
 
     public static BeatMapInfo NewMap(
-        string filePath,
+        string mapFolder,
         string songName,
         string songSubName,
         string songAuthorName,
@@ -51,7 +54,7 @@ public partial class BeatMapInfo : RefCounted
             ["_beatsPerMinute"] = bpm,
             ["_difficultyBeatmapSets"] = new Array(),
         };
-        return FromFile(data, filePath);
+        return FromFile(data, mapFolder.PathJoin("info.dat"));
     }
 
     public static BeatMapInfo FromFile(Variant original, string filePath)
@@ -82,6 +85,59 @@ public partial class BeatMapInfo : RefCounted
         return info;
     }
 
+    public void UpdateSongInfo(string songName, string songSubName, string songAuthorName, float bpm)
+    {
+        SongName = songName;
+        SongSubName = songSubName;
+        SongAuthorName = songAuthorName;
+
+        var bpmChanged = !Mathf.IsEqualApprox(Bpm, bpm);
+        Bpm = bpm;
+
+        var data = OriginalObject.AsGodotDictionary();
+        data["_songName"] = songName;
+        data["_songSubName"] = songSubName;
+        data["_songAuthorName"] = songAuthorName;
+        data["_beatsPerMinute"] = bpm;
+
+        if (!bpmChanged)
+        {
+            return;
+        }
+
+        foreach (var set in DifficultyBeatMapSets)
+        {
+            foreach (var difficulty in set.DifficultyBeatMaps)
+            {
+                difficulty.Bpm = bpm;
+                difficulty.Initialize();
+            }
+        }
+    }
+
+    public BeatMapDifficultyInfo FindDifficulty(
+        BeatMapDifficultyInfo.Difficulty difficulty,
+        BeatMapDifficultySet.BeatmapMode mode)
+    {
+        foreach (var set in DifficultyBeatMapSets)
+        {
+            if (set.Mode != mode)
+            {
+                continue;
+            }
+
+            foreach (var existing in set.DifficultyBeatMaps)
+            {
+                if (existing.DifficultyLevel == difficulty)
+                {
+                    return existing;
+                }
+            }
+        }
+
+        return null;
+    }
+
     public void AddDifficulty(BeatMapDifficultyInfo difficulty, BeatMapDifficultySet.BeatmapMode mode)
     {
         BeatMapDifficultySet targetSet = null;
@@ -101,7 +157,32 @@ public partial class BeatMapInfo : RefCounted
         }
 
         targetSet.DifficultyBeatMaps.Add(difficulty);
+        SyncDifficultySets();
+    }
 
+    public void RemoveDifficulty(BeatMapDifficultyInfo difficulty, BeatMapDifficultySet.BeatmapMode mode)
+    {
+        for (var i = DifficultyBeatMapSets.Count - 1; i >= 0; i--)
+        {
+            var set = DifficultyBeatMapSets[i];
+            if (set.Mode != mode)
+            {
+                continue;
+            }
+
+            set.DifficultyBeatMaps.Remove(difficulty);
+            if (set.DifficultyBeatMaps.Count == 0)
+            {
+                DifficultyBeatMapSets.RemoveAt(i);
+            }
+        }
+
+        SyncDifficultySets();
+    }
+
+    /// <summary>Rewrites the raw difficulty set data so it matches the parsed model.</summary>
+    public void SyncDifficultySets()
+    {
         var sets = new Array();
         foreach (var set in DifficultyBeatMapSets)
         {

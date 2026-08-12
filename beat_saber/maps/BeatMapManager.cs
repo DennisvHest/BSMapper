@@ -1,8 +1,15 @@
 using System;
+using System.Collections.Generic;
 using Godot;
 
 public partial class BeatMapManager : Node
 {
+    /// <summary>Note jump settings for a single difficulty, as entered by the user.</summary>
+    public readonly record struct DifficultySettings(
+        BeatMapDifficultyInfo.Difficulty Difficulty,
+        float Njs,
+        float NoteJumpStartBeatOffset);
+
     [Signal]
     public delegate void CurrentBeatmapInfoChangedEventHandler(BeatMapInfo beatmapInfo);
 
@@ -55,17 +62,21 @@ public partial class BeatMapManager : Node
         }
 
         const string songFileName = "song.egg";
-        var songDestinationPath = mapFolder.PathJoin(songFileName);
+        CopySongFile(songPath, mapFolder.PathJoin(songFileName));
+
+        var beatmapInfo = BeatMapInfo.NewMap(mapFolder, songName, songSubName, songAuthorName, songFileName, bpm);
+        SaveBeatmapInfo(beatmapInfo);
+        return beatmapInfo;
+    }
+
+    private static void CopySongFile(string songPath, string songDestinationPath)
+    {
         using var sourceFile = FileAccess.Open(songPath, FileAccess.ModeFlags.Read)
             ?? throw new InvalidOperationException($"Failed to open source song file: {songPath}");
         var songData = sourceFile.GetBuffer(checked((long)sourceFile.GetLength()));
         using var destinationFile = FileAccess.Open(songDestinationPath, FileAccess.ModeFlags.Write)
             ?? throw new InvalidOperationException($"Failed to open destination song file: {songDestinationPath}");
         destinationFile.StoreBuffer(songData);
-
-        var beatmapInfo = BeatMapInfo.NewMap(mapFolder, songName, songSubName, songAuthorName, songFileName, bpm);
-        SaveBeatmapInfo(beatmapInfo);
-        return beatmapInfo;
     }
 
     private static string GetMapFolderName(string songName, string songAuthorName)
@@ -97,7 +108,7 @@ public partial class BeatMapManager : Node
             njs,
             noteJumpStartBeatOffset,
             beatmapInfo.Bpm);
-        var difficultyFilePath = beatmapInfo.FilePath.PathJoin(difficultyInfo.BeatMapFileName);
+        var difficultyFilePath = beatmapInfo.MapFolder.PathJoin(difficultyInfo.BeatMapFileName);
         var beatmap = new BeatMap();
         beatmap.InitializeEmpty();
 
@@ -108,6 +119,73 @@ public partial class BeatMapManager : Node
         beatmapInfo.AddDifficulty(difficultyInfo, mode);
         SaveBeatmapInfo(beatmapInfo);
         return difficultyInfo;
+    }
+
+    /// <summary>
+    /// Updates the song metadata of an existing map and replaces its audio file when a new one is
+    /// given. Difficulties that are no longer selected are removed, new ones are created and
+    /// existing ones get their note jump values updated.
+    /// </summary>
+    public void UpdateMap(
+        BeatMapInfo beatmapInfo,
+        string songName,
+        string songSubName,
+        string songAuthorName,
+        float bpm,
+        string songPath,
+        IReadOnlyList<DifficultySettings> difficulties)
+    {
+        beatmapInfo.UpdateSongInfo(songName, songSubName, songAuthorName, bpm);
+
+        if (!string.IsNullOrEmpty(songPath))
+        {
+            CopySongFile(songPath, beatmapInfo.MapFolder.PathJoin(beatmapInfo.SongFileName));
+        }
+
+        const BeatMapDifficultySet.BeatmapMode mode = BeatMapDifficultySet.BeatmapMode.Standard;
+        var selected = new HashSet<BeatMapDifficultyInfo.Difficulty>();
+
+        foreach (var settings in difficulties)
+        {
+            selected.Add(settings.Difficulty);
+
+            var existing = beatmapInfo.FindDifficulty(settings.Difficulty, mode);
+            if (existing is null)
+            {
+                NewDifficulty(beatmapInfo, mode, settings.Difficulty, settings.Njs, settings.NoteJumpStartBeatOffset);
+                continue;
+            }
+
+            existing.Njs = settings.Njs;
+            existing.NoteJumpStartBeatOffset = settings.NoteJumpStartBeatOffset;
+            existing.Bpm = bpm;
+            existing.Initialize();
+        }
+
+        foreach (var difficulty in Enum.GetValues<BeatMapDifficultyInfo.Difficulty>())
+        {
+            if (selected.Contains(difficulty))
+            {
+                continue;
+            }
+
+            var existing = beatmapInfo.FindDifficulty(difficulty, mode);
+            if (existing is null)
+            {
+                continue;
+            }
+
+            var difficultyFilePath = beatmapInfo.MapFolder.PathJoin(existing.BeatMapFileName);
+            if (FileAccess.FileExists(difficultyFilePath))
+            {
+                DirAccess.RemoveAbsolute(difficultyFilePath);
+            }
+
+            beatmapInfo.RemoveDifficulty(existing, mode);
+        }
+
+        beatmapInfo.SyncDifficultySets();
+        SaveBeatmapInfo(beatmapInfo);
     }
 
     public BeatMapInfo LoadBeatmapInfo(string filePath)
@@ -127,7 +205,7 @@ public partial class BeatMapManager : Node
     {
         CurrentBeatmapDifficultyInfo = difficulty;
         EmitSignal(SignalName.CurrentBeatmapDifficultyInfoChanged, difficulty);
-        var difficultyFilePath = CurrentBeatmapInfo.FilePath.GetBaseDir().PathJoin(difficulty.BeatMapFileName);
+        var difficultyFilePath = CurrentBeatmapInfo.MapFolder.PathJoin(difficulty.BeatMapFileName);
         LoadBeatmap(difficultyFilePath);
     }
 
@@ -176,7 +254,7 @@ public partial class BeatMapManager : Node
 
     private static void SaveBeatmapInfo(BeatMapInfo beatmapInfo)
     {
-        var infoPath = beatmapInfo.FilePath.PathJoin("info.dat");
+        var infoPath = beatmapInfo.FilePath;
         using var infoFile = FileAccess.Open(infoPath, FileAccess.ModeFlags.Write)
             ?? throw new InvalidOperationException($"Failed to open info.dat for writing: {infoPath}");
         infoFile.StoreString(Json.Stringify(beatmapInfo.OriginalObject, string.Empty, false));
