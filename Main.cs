@@ -18,7 +18,6 @@ public partial class Main : Control
         ("Expert", BeatMapDifficultyInfo.Difficulty.Expert),
         ("ExpertPlus", BeatMapDifficultyInfo.Difficulty.ExpertPlus),
     };
-
     [Export]
     public PackedScene StartScene { get; set; }
 
@@ -45,6 +44,7 @@ public partial class Main : Control
 
     public override void _Ready()
     {
+        SetUpDifficultyToggles();
         LoadSettings();
         if (IsValidInstallLocation(BeatSaberInstallLocation))
         {
@@ -53,6 +53,26 @@ public partial class Main : Control
         else
         {
             ShowInstallLocationScreen();
+        }
+    }
+
+    private void SetUpDifficultyToggles()
+    {
+        var difficultyContainer = GetNode<GridContainer>(NewMapDialogPath + "/Margin/VBox/Difficulties");
+        foreach (var (nodeName, _) in DifficultyCheckBoxes)
+        {
+            var checkBox = difficultyContainer.GetNode<CheckBox>(nodeName);
+            var njs = difficultyContainer.GetNode<SpinBox>(nodeName + "Njs");
+            var offset = difficultyContainer.GetNode<SpinBox>(nodeName + "Offset");
+
+            void UpdateEnabled(bool enabled)
+            {
+                njs.Editable = enabled;
+                offset.Editable = enabled;
+            }
+
+            checkBox.Toggled += UpdateEnabled;
+            UpdateEnabled(checkBox.ButtonPressed);
         }
     }
 
@@ -488,14 +508,19 @@ public partial class Main : Control
         var songAuthor = GetNode<LineEdit>(NewMapDialogPath + "/Margin/VBox/Grid/SongAuthorEdit").Text.Trim();
         var bpm = (float)GetNode<SpinBox>(NewMapDialogPath + "/Margin/VBox/Grid/BpmEdit").Value;
 
-        var difficulties = new List<BeatMapDifficultyInfo.Difficulty>();
-        var difficultyContainer = GetNode<VBoxContainer>(NewMapDialogPath + "/Margin/VBox/Difficulties");
+        var difficulties = new List<(BeatMapDifficultyInfo.Difficulty Difficulty, float Njs, float Offset)>();
+        var difficultyContainer = GetNode<GridContainer>(NewMapDialogPath + "/Margin/VBox/Difficulties");
         foreach (var (nodeName, difficulty) in DifficultyCheckBoxes)
         {
-            if (difficultyContainer.GetNode<CheckBox>(nodeName).ButtonPressed)
+            if (!difficultyContainer.GetNode<CheckBox>(nodeName).ButtonPressed)
             {
-                difficulties.Add(difficulty);
+                continue;
             }
+
+            difficulties.Add((
+                difficulty,
+                (float)difficultyContainer.GetNode<SpinBox>(nodeName + "Njs").Value,
+                (float)difficultyContainer.GetNode<SpinBox>(nodeName + "Offset").Value));
         }
 
         string error = null;
@@ -522,14 +547,14 @@ public partial class Main : Control
         }
 
         var newBeatMap = manager.NewMap(_newMapSongPath, songName, songSubName, songAuthor, bpm);
-        foreach (var difficulty in difficulties)
+        foreach (var (difficulty, njs, offset) in difficulties)
         {
             manager.NewDifficulty(
                 newBeatMap,
                 BeatMapDifficultySet.BeatmapMode.Standard,
                 difficulty,
-                16.0f,
-                -0.15f);
+                njs,
+                offset);
         }
 
         RefreshMapList();

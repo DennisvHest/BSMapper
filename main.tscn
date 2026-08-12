@@ -211,29 +211,122 @@ text = "Select..."
 layout_mode = 2
 text = "Difficulties"
 
-[node name="Difficulties" type="VBoxContainer" parent="NewMapDialog/Margin/VBox" unique_id=1612747462]
+[node name="Difficulties" type="GridContainer" parent="NewMapDialog/Margin/VBox" unique_id=1612747462]
 layout_mode = 2
+theme_override_constants/h_separation = 12
+theme_override_constants/v_separation = 4
+columns = 3
+
+[node name="HeaderSpacer" type="Control" parent="NewMapDialog/Margin/VBox/Difficulties" unique_id=1612747472]
+layout_mode = 2
+
+[node name="NjsHeader" type="Label" parent="NewMapDialog/Margin/VBox/Difficulties" unique_id=1612747473]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.62, 0.66, 0.74, 1)
+theme_override_font_sizes/font_size = 13
+text = "NJS"
+
+[node name="OffsetHeader" type="Label" parent="NewMapDialog/Margin/VBox/Difficulties" unique_id=1612747474]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.62, 0.66, 0.74, 1)
+theme_override_font_sizes/font_size = 13
+text = "Start beat offset"
 
 [node name="Easy" type="CheckBox" parent="NewMapDialog/Margin/VBox/Difficulties" unique_id=1612747463]
 layout_mode = 2
 text = "Easy"
 
+[node name="EasyNjs" type="SpinBox" parent="NewMapDialog/Margin/VBox/Difficulties" unique_id=1612747475]
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = 1.0
+max_value = 50.0
+step = 0.1
+value = 10.0
+
+[node name="EasyOffset" type="SpinBox" parent="NewMapDialog/Margin/VBox/Difficulties" unique_id=1612747476]
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = -4.0
+max_value = 4.0
+step = 0.01
+
 [node name="Normal" type="CheckBox" parent="NewMapDialog/Margin/VBox/Difficulties" unique_id=1612747464]
 layout_mode = 2
 text = "Normal"
 
+[node name="NormalNjs" type="SpinBox" parent="NewMapDialog/Margin/VBox/Difficulties" unique_id=1612747477]
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = 1.0
+max_value = 50.0
+step = 0.1
+value = 10.0
+
+[node name="NormalOffset" type="SpinBox" parent="NewMapDialog/Margin/VBox/Difficulties" unique_id=1612747478]
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = -4.0
+max_value = 4.0
+step = 0.01
+
 [node name="Hard" type="CheckBox" parent="NewMapDialog/Margin/VBox/Difficulties" unique_id=1612747465]
 layout_mode = 2
 text = "Hard"
+
+[node name="HardNjs" type="SpinBox" parent="NewMapDialog/Margin/VBox/Difficulties" unique_id=1612747479]
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = 1.0
+max_value = 50.0
+step = 0.1
+value = 12.0
+
+[node name="HardOffset" type="SpinBox" parent="NewMapDialog/Margin/VBox/Difficulties" unique_id=1612747480]
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = -4.0
+max_value = 4.0
+step = 0.01
 
 [node name="Expert" type="CheckBox" parent="NewMapDialog/Margin/VBox/Difficulties" unique_id=1612747466]
 layout_mode = 2
 button_pressed = true
 text = "Expert"
 
+[node name="ExpertNjs" type="SpinBox" parent="NewMapDialog/Margin/VBox/Difficulties" unique_id=1612747481]
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = 1.0
+max_value = 50.0
+step = 0.1
+value = 16.0
+
+[node name="ExpertOffset" type="SpinBox" parent="NewMapDialog/Margin/VBox/Difficulties" unique_id=1612747482]
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = -4.0
+max_value = 4.0
+step = 0.01
+
 [node name="ExpertPlus" type="CheckBox" parent="NewMapDialog/Margin/VBox/Difficulties" unique_id=1612747467]
 layout_mode = 2
 text = "Expert+"
+
+[node name="ExpertPlusNjs" type="SpinBox" parent="NewMapDialog/Margin/VBox/Difficulties" unique_id=1612747483]
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = 1.0
+max_value = 50.0
+step = 0.1
+value = 18.0
+
+[node name="ExpertPlusOffset" type="SpinBox" parent="NewMapDialog/Margin/VBox/Difficulties" unique_id=1612747484]
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = -4.0
+max_value = 4.0
+step = 0.01
 
 [node name="ErrorLabel" type="Label" parent="NewMapDialog/Margin/VBox" unique_id=1612747468]
 visible = false
