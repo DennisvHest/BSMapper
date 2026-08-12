@@ -89,9 +89,17 @@ public partial class Bomb : BeatmapObject
         UpdateHighlightVisible();
     }
 
+    protected override void OnPlaybackModeChanged()
+    {
+        base.OnPlaybackModeChanged();
+        UpdateHighlightVisible();
+    }
+
     private void UpdateHighlightVisible()
     {
-        SetHighlightVisible(IsSelected || _hoveringPointers.Count > 0);
+        SetHighlightVisible(
+            PlaybackManager.Mode == PlaybackManager.EditMode.Editing &&
+            (IsSelected || _hoveringPointers.Count > 0));
     }
 
     private void SetHighlightVisible(bool visible)

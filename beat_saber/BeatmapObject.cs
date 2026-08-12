@@ -168,7 +168,7 @@ public partial class BeatmapObject : Node3D
     {
     }
 
-    private void OnPlaybackModeChanged()
+    protected virtual void OnPlaybackModeChanged()
     {
         if (PlaybackManager.Mode == PlaybackManager.EditMode.Editing)
         {
