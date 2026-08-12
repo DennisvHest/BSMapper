@@ -8,6 +8,16 @@ public partial class Main : Control
     private const string CustomWipLevelsFolder = "Beat Saber_Data/CustomWIPLevels";
     private const int ButtonsPerFrame = 50;
     private const int HydrationsPerFrame = 4;
+    private const string NewMapDialogPath = "NewMapDialog";
+
+    private static readonly (string NodeName, BeatMapDifficultyInfo.Difficulty Difficulty)[] DifficultyCheckBoxes =
+    {
+        ("Easy", BeatMapDifficultyInfo.Difficulty.Easy),
+        ("Normal", BeatMapDifficultyInfo.Difficulty.Normal),
+        ("Hard", BeatMapDifficultyInfo.Difficulty.Hard),
+        ("Expert", BeatMapDifficultyInfo.Difficulty.Expert),
+        ("ExpertPlus", BeatMapDifficultyInfo.Difficulty.ExpertPlus),
+    };
 
     [Export]
     public PackedScene StartScene { get; set; }
@@ -19,6 +29,7 @@ public partial class Main : Control
 
     private bool _showWipMaps = true;
     private string _searchText = string.Empty;
+    private string _newMapSongPath = string.Empty;
     private readonly Queue<(string FolderName, string MapFolder, string InfoPath)> _pendingButtons = new();
     private readonly List<MapListEntry> _pendingHydrations = new();
 
@@ -383,15 +394,59 @@ public partial class Main : Control
     {
         var manager = GetNode<BeatMapManager>("/root/BeatMapManager");
         var beatmapInfo = manager.LoadBeatmapInfo(infoPath);
-        if (beatmapInfo.DifficultyBeatMapSets.Count == 0
-            || beatmapInfo.DifficultyBeatMapSets[0].DifficultyBeatMaps.Count == 0)
+
+        var difficulties = new List<BeatMapDifficultyInfo>();
+        foreach (var set in beatmapInfo.DifficultyBeatMapSets)
+        {
+            foreach (var difficulty in set.DifficultyBeatMaps)
+            {
+                difficulties.Add(difficulty);
+            }
+        }
+
+        if (difficulties.Count == 0)
         {
             GD.PushWarning($"Map has no difficulties to edit: {infoPath}");
             return;
         }
 
-        manager.LoadDifficulty(beatmapInfo.DifficultyBeatMapSets[0].DifficultyBeatMaps[0]);
-        Start();
+        if (difficulties.Count == 1)
+        {
+            manager.LoadDifficulty(difficulties[0]);
+            Start();
+            return;
+        }
+
+        ShowDifficultySelectDialog(manager, difficulties);
+    }
+
+    private void ShowDifficultySelectDialog(BeatMapManager manager, List<BeatMapDifficultyInfo> difficulties)
+    {
+        var dialog = GetNode<AcceptDialog>("DifficultySelectDialog");
+        var list = GetNode<VBoxContainer>("DifficultySelectDialog/Margin/DifficultyList");
+        foreach (var child in list.GetChildren())
+        {
+            list.RemoveChild(child);
+            child.QueueFree();
+        }
+
+        foreach (var difficulty in difficulties)
+        {
+            var selected = difficulty;
+            var button = new Button
+            {
+                Text = BeatMapDifficultyInfo.GetDifficultyName(selected.DifficultyLevel),
+            };
+            button.Pressed += () =>
+            {
+                dialog.Hide();
+                manager.LoadDifficulty(selected);
+                Start();
+            };
+            list.AddChild(button);
+        }
+
+        dialog.PopupCentered();
     }
 
     private void OnSelectInstallLocationPressed()
@@ -401,11 +456,6 @@ public partial class Main : Control
 
     private void OnNewMapButtonPressed()
     {
-        GetNode<FileDialog>("SongFileDialog").Show();
-    }
-
-    private void OnSongFileDialogFileSelected(string path)
-    {
         var manager = GetNode<BeatMapManager>("/root/BeatMapManager");
         if (string.IsNullOrEmpty(manager.WipBeatmapLocation))
         {
@@ -413,13 +463,76 @@ public partial class Main : Control
             return;
         }
 
-        var newBeatMap = manager.NewMap(path);
-        manager.NewDifficulty(
-            newBeatMap,
-            BeatMapDifficultySet.BeatmapMode.Standard,
-            BeatMapDifficultyInfo.Difficulty.Expert,
-            16.0f,
-            -0.15f);
+        _newMapSongPath = string.Empty;
+        GetNode<Label>(NewMapDialogPath + "/Margin/VBox/Grid/AudioFileBox/AudioFilePathLabel").Text = "No file selected";
+        GetNode<Label>(NewMapDialogPath + "/Margin/VBox/ErrorLabel").Hide();
+        GetNode<ConfirmationDialog>(NewMapDialogPath).PopupCentered();
+    }
+
+    private void OnSelectAudioFilePressed()
+    {
+        GetNode<FileDialog>("SongFileDialog").Show();
+    }
+
+    private void OnSongFileDialogFileSelected(string path)
+    {
+        _newMapSongPath = path;
+        GetNode<Label>(NewMapDialogPath + "/Margin/VBox/Grid/AudioFileBox/AudioFilePathLabel").Text = path.GetFile();
+    }
+
+    private void OnNewMapDialogConfirmed()
+    {
+        var manager = GetNode<BeatMapManager>("/root/BeatMapManager");
+        var songName = GetNode<LineEdit>(NewMapDialogPath + "/Margin/VBox/Grid/SongNameEdit").Text.Trim();
+        var songSubName = GetNode<LineEdit>(NewMapDialogPath + "/Margin/VBox/Grid/SongSubNameEdit").Text.Trim();
+        var songAuthor = GetNode<LineEdit>(NewMapDialogPath + "/Margin/VBox/Grid/SongAuthorEdit").Text.Trim();
+        var bpm = (float)GetNode<SpinBox>(NewMapDialogPath + "/Margin/VBox/Grid/BpmEdit").Value;
+
+        var difficulties = new List<BeatMapDifficultyInfo.Difficulty>();
+        var difficultyContainer = GetNode<VBoxContainer>(NewMapDialogPath + "/Margin/VBox/Difficulties");
+        foreach (var (nodeName, difficulty) in DifficultyCheckBoxes)
+        {
+            if (difficultyContainer.GetNode<CheckBox>(nodeName).ButtonPressed)
+            {
+                difficulties.Add(difficulty);
+            }
+        }
+
+        string error = null;
+        if (string.IsNullOrEmpty(songName))
+        {
+            error = "Please enter a song name.";
+        }
+        else if (string.IsNullOrEmpty(_newMapSongPath))
+        {
+            error = "Please select an audio file.";
+        }
+        else if (difficulties.Count == 0)
+        {
+            error = "Please select at least one difficulty.";
+        }
+
+        if (error is not null)
+        {
+            var errorLabel = GetNode<Label>(NewMapDialogPath + "/Margin/VBox/ErrorLabel");
+            errorLabel.Text = error;
+            errorLabel.Show();
+            GetNode<ConfirmationDialog>(NewMapDialogPath).PopupCentered();
+            return;
+        }
+
+        var newBeatMap = manager.NewMap(_newMapSongPath, songName, songSubName, songAuthor, bpm);
+        foreach (var difficulty in difficulties)
+        {
+            manager.NewDifficulty(
+                newBeatMap,
+                BeatMapDifficultySet.BeatmapMode.Standard,
+                difficulty,
+                16.0f,
+                -0.15f);
+        }
+
+        RefreshMapList();
         OpenMapInEditor(newBeatMap.FilePath.PathJoin("info.dat"));
     }
 

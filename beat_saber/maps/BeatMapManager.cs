@@ -32,24 +32,30 @@ public partial class BeatMapManager : Node
         WipBeatmapLocation = filePath;
     }
 
-    public BeatMapInfo NewMap(string songPath)
+    public BeatMapInfo NewMap(
+        string songPath,
+        string songName,
+        string songSubName,
+        string songAuthorName,
+        float bpm)
     {
-        var testMapFolder = WipBeatmapLocation.PathJoin("TEST_MAP_BS_MAPPER");
+        var mapFolder = WipBeatmapLocation.PathJoin(GetMapFolderName(songName, songAuthorName));
         var directory = DirAccess.Open(WipBeatmapLocation)
             ?? throw new InvalidOperationException($"Failed to open beatmap directory: {WipBeatmapLocation}");
 
-        if (DirAccess.DirExistsAbsolute(testMapFolder))
+        if (DirAccess.DirExistsAbsolute(mapFolder))
         {
-            ClearDirectory(testMapFolder);
+            ClearDirectory(mapFolder);
         }
 
-        var makeDirectoryError = directory.MakeDirRecursive(testMapFolder);
+        var makeDirectoryError = directory.MakeDirRecursive(mapFolder);
         if (makeDirectoryError != Error.Ok)
         {
-            throw new InvalidOperationException($"Failed to create beatmap directory: {testMapFolder}");
+            throw new InvalidOperationException($"Failed to create beatmap directory: {mapFolder}");
         }
 
-        var songDestinationPath = testMapFolder.PathJoin("song.egg");
+        const string songFileName = "song.egg";
+        var songDestinationPath = mapFolder.PathJoin(songFileName);
         using var sourceFile = FileAccess.Open(songPath, FileAccess.ModeFlags.Read)
             ?? throw new InvalidOperationException($"Failed to open source song file: {songPath}");
         var songData = sourceFile.GetBuffer(checked((long)sourceFile.GetLength()));
@@ -57,9 +63,25 @@ public partial class BeatMapManager : Node
             ?? throw new InvalidOperationException($"Failed to open destination song file: {songDestinationPath}");
         destinationFile.StoreBuffer(songData);
 
-        var beatmapInfo = BeatMapInfo.NewMap(testMapFolder);
+        var beatmapInfo = BeatMapInfo.NewMap(mapFolder, songName, songSubName, songAuthorName, songFileName, bpm);
         SaveBeatmapInfo(beatmapInfo);
         return beatmapInfo;
+    }
+
+    private static string GetMapFolderName(string songName, string songAuthorName)
+    {
+        var name = string.IsNullOrWhiteSpace(songAuthorName)
+            ? songName
+            : $"{songName} - {songAuthorName}";
+
+        var builder = new System.Text.StringBuilder();
+        foreach (var character in name.Trim())
+        {
+            builder.Append(char.IsLetterOrDigit(character) || character is ' ' or '-' or '_' ? character : '_');
+        }
+
+        var folderName = builder.ToString().Trim();
+        return string.IsNullOrEmpty(folderName) ? "New map" : folderName;
     }
 
     public BeatMapDifficultyInfo NewDifficulty(

@@ -33,16 +33,22 @@ public partial class BeatMapInfo : RefCounted
     [Export]
     public Array<BeatMapDifficultySet> DifficultyBeatMapSets { get; set; } = new();
 
-    public static BeatMapInfo NewMap(string filePath)
+    public static BeatMapInfo NewMap(
+        string filePath,
+        string songName,
+        string songSubName,
+        string songAuthorName,
+        string songFileName,
+        float bpm)
     {
         var data = new Dictionary
         {
             ["_version"] = "2.0.0",
-            ["_songName"] = "TEST_MAP_BS_MAPPER",
-            ["_songSubName"] = string.Empty,
-            ["_songAuthorName"] = "BSMapper",
-            ["_songFilename"] = "song.egg",
-            ["_beatsPerMinute"] = 175,
+            ["_songName"] = songName,
+            ["_songSubName"] = songSubName,
+            ["_songAuthorName"] = songAuthorName,
+            ["_songFilename"] = songFileName,
+            ["_beatsPerMinute"] = bpm,
             ["_difficultyBeatmapSets"] = new Array(),
         };
         return FromFile(data, filePath);
@@ -95,10 +101,13 @@ public partial class BeatMapInfo : RefCounted
         }
 
         targetSet.DifficultyBeatMaps.Add(difficulty);
-        var data = OriginalObject.AsGodotDictionary();
-        if (data.ContainsKey("_difficultyBeatmapSets"))
+
+        var sets = new Array();
+        foreach (var set in DifficultyBeatMapSets)
         {
-            data["_difficultyBeatmapSets"].AsGodotArray().Add(targetSet.ToV2Object());
+            sets.Add(set.ToV2Object());
         }
+
+        OriginalObject.AsGodotDictionary()["_difficultyBeatmapSets"] = sets;
     }
 }

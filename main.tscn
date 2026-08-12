@@ -89,6 +89,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_ig7tw")
 StartScene = ExtResource("2_0xm2m")
+DebugWithoutVr = true
 
 [node name="Background" type="ColorRect" parent="." unique_id=247288362]
 layout_mode = 1
@@ -100,6 +101,7 @@ grow_vertical = 2
 color = Color(0.051, 0.059, 0.09, 1)
 
 [node name="InstallLocationFolderDialog" type="FileDialog" parent="." unique_id=586236787]
+oversampling_override = 1.0
 title = "Open a Directory"
 initial_position = 2
 ok_button_text = "Select Current Folder"
@@ -108,13 +110,162 @@ access = 2
 use_native_dialog = true
 
 [node name="SongFileDialog" type="FileDialog" parent="." unique_id=1612747444]
+oversampling_override = 1.0
 title = "Open a File"
 initial_position = 2
 ok_button_text = "Open"
 file_mode = 0
 access = 2
-filters = PackedStringArray("*.ogg,*.egg")
 use_native_dialog = true
+
+[node name="NewMapDialog" type="ConfirmationDialog" parent="." unique_id=1612747445]
+oversampling_override = 1.0
+title = "New map"
+initial_position = 2
+size = Vector2i(520, 480)
+ok_button_text = "Create map"
+
+[node name="Margin" type="MarginContainer" parent="NewMapDialog" unique_id=1612747446]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = -49.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 8
+
+[node name="VBox" type="VBoxContainer" parent="NewMapDialog/Margin" unique_id=1612747447]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Grid" type="GridContainer" parent="NewMapDialog/Margin/VBox" unique_id=1612747448]
+layout_mode = 2
+theme_override_constants/h_separation = 12
+theme_override_constants/v_separation = 8
+columns = 2
+
+[node name="SongNameLabel" type="Label" parent="NewMapDialog/Margin/VBox/Grid" unique_id=1612747449]
+layout_mode = 2
+text = "Song name"
+
+[node name="SongNameEdit" type="LineEdit" parent="NewMapDialog/Margin/VBox/Grid" unique_id=1612747450]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="SongSubNameLabel" type="Label" parent="NewMapDialog/Margin/VBox/Grid" unique_id=1612747451]
+layout_mode = 2
+text = "Song sub name"
+
+[node name="SongSubNameEdit" type="LineEdit" parent="NewMapDialog/Margin/VBox/Grid" unique_id=1612747452]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="SongAuthorLabel" type="Label" parent="NewMapDialog/Margin/VBox/Grid" unique_id=1612747453]
+layout_mode = 2
+text = "Song author"
+
+[node name="SongAuthorEdit" type="LineEdit" parent="NewMapDialog/Margin/VBox/Grid" unique_id=1612747454]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="BpmLabel" type="Label" parent="NewMapDialog/Margin/VBox/Grid" unique_id=1612747455]
+layout_mode = 2
+text = "Beats per minute"
+
+[node name="BpmEdit" type="SpinBox" parent="NewMapDialog/Margin/VBox/Grid" unique_id=1612747456]
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = 1.0
+max_value = 1000.0
+step = 0.001
+value = 120.0
+
+[node name="AudioFileLabel" type="Label" parent="NewMapDialog/Margin/VBox/Grid" unique_id=1612747457]
+layout_mode = 2
+text = "Audio file"
+
+[node name="AudioFileBox" type="HBoxContainer" parent="NewMapDialog/Margin/VBox/Grid" unique_id=1612747458]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 8
+
+[node name="AudioFilePathLabel" type="Label" parent="NewMapDialog/Margin/VBox/Grid/AudioFileBox" unique_id=1612747459]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.62, 0.66, 0.74, 1)
+text = "No file selected"
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="SelectAudioFileButton" type="Button" parent="NewMapDialog/Margin/VBox/Grid/AudioFileBox" unique_id=1612747460]
+layout_mode = 2
+text = "Select..."
+
+[node name="DifficultiesLabel" type="Label" parent="NewMapDialog/Margin/VBox" unique_id=1612747461]
+layout_mode = 2
+text = "Difficulties"
+
+[node name="Difficulties" type="VBoxContainer" parent="NewMapDialog/Margin/VBox" unique_id=1612747462]
+layout_mode = 2
+
+[node name="Easy" type="CheckBox" parent="NewMapDialog/Margin/VBox/Difficulties" unique_id=1612747463]
+layout_mode = 2
+text = "Easy"
+
+[node name="Normal" type="CheckBox" parent="NewMapDialog/Margin/VBox/Difficulties" unique_id=1612747464]
+layout_mode = 2
+text = "Normal"
+
+[node name="Hard" type="CheckBox" parent="NewMapDialog/Margin/VBox/Difficulties" unique_id=1612747465]
+layout_mode = 2
+text = "Hard"
+
+[node name="Expert" type="CheckBox" parent="NewMapDialog/Margin/VBox/Difficulties" unique_id=1612747466]
+layout_mode = 2
+button_pressed = true
+text = "Expert"
+
+[node name="ExpertPlus" type="CheckBox" parent="NewMapDialog/Margin/VBox/Difficulties" unique_id=1612747467]
+layout_mode = 2
+text = "Expert+"
+
+[node name="ErrorLabel" type="Label" parent="NewMapDialog/Margin/VBox" unique_id=1612747468]
+visible = false
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.42, 0.42, 1)
+autowrap_mode = 3
+
+[node name="DifficultySelectDialog" type="AcceptDialog" parent="." unique_id=1612747469]
+oversampling_override = 1.0
+title = "Select difficulty"
+initial_position = 2
+size = Vector2i(320, 260)
+ok_button_text = "Cancel"
+
+[node name="Margin" type="MarginContainer" parent="DifficultySelectDialog" unique_id=1612747470]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = -49.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 8
+
+[node name="DifficultyList" type="VBoxContainer" parent="DifficultySelectDialog/Margin" unique_id=1612747471]
+layout_mode = 2
+theme_override_constants/separation = 8
 
 [node name="InstallLocationScreen" type="CenterContainer" parent="." unique_id=1403762803]
 layout_mode = 1
@@ -289,6 +440,8 @@ horizontal_alignment = 1
 
 [connection signal="dir_selected" from="InstallLocationFolderDialog" to="." method="OnInstallLocationFolderDialogDirSelected"]
 [connection signal="file_selected" from="SongFileDialog" to="." method="OnSongFileDialogFileSelected"]
+[connection signal="confirmed" from="NewMapDialog" to="." method="OnNewMapDialogConfirmed"]
+[connection signal="pressed" from="NewMapDialog/Margin/VBox/Grid/AudioFileBox/SelectAudioFileButton" to="." method="OnSelectAudioFilePressed"]
 [connection signal="pressed" from="InstallLocationScreen/Panel/VBox/SelectButton" to="." method="OnSelectInstallLocationPressed"]
 [connection signal="pressed" from="HomeScreen/VBox/Header/NewMapButton" to="." method="OnNewMapButtonPressed"]
 [connection signal="pressed" from="HomeScreen/VBox/Header/ChangeLocationButton" to="." method="OnSelectInstallLocationPressed"]
