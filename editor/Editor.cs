@@ -79,7 +79,6 @@ public partial class Editor : Node3D
 
     private void OnRightHandButtonPressed(string buttonName)
     {
-        GD.Print($"Right hand button pressed {buttonName}");
         if (buttonName == InputActions.SelectObject && _leftSelectionMode)
         {
             ToggleHoveredObjectSelection(InputManager.RightHandPointer);
