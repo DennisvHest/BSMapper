@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using BSMapper;
 using Godot;
 
 public partial class BeatMapManager : Node
@@ -31,13 +32,6 @@ public partial class BeatMapManager : Node
     [Export]
     public BeatMap CurrentBeatmap { get; set; }
 
-    [Export]
-    public string WipBeatmapLocation { get; set; } = string.Empty;
-
-    public void SetWipBeatmapLocation(string filePath)
-    {
-        WipBeatmapLocation = filePath;
-    }
 
     public BeatMapInfo NewMap(
         string songPath,
@@ -46,9 +40,9 @@ public partial class BeatMapManager : Node
         string songAuthorName,
         float bpm)
     {
-        var mapFolder = WipBeatmapLocation.PathJoin(GetMapFolderName(songName, songAuthorName));
-        var directory = DirAccess.Open(WipBeatmapLocation)
-            ?? throw new InvalidOperationException($"Failed to open beatmap directory: {WipBeatmapLocation}");
+        var mapFolder = Settings.WipBeatmapLocation.PathJoin(GetMapFolderName(songName, songAuthorName));
+        var directory = DirAccess.Open(Settings.WipBeatmapLocation)
+            ?? throw new InvalidOperationException($"Failed to open beatmap directory: {Settings.WipBeatmapLocation}");
 
         if (DirAccess.DirExistsAbsolute(mapFolder))
         {

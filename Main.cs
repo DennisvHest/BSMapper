@@ -4,8 +4,6 @@ using System.Collections.Generic;
 
 public partial class Main : Control
 {
-    private const string CustomLevelsFolder = "Beat Saber_Data/CustomLevels";
-    private const string CustomWipLevelsFolder = "Beat Saber_Data/CustomWIPLevels";
     private const int ButtonsPerFrame = 50;
     private const int HydrationsPerFrame = 4;
     private const string NewMapDialogPath = "NewMapDialog";
@@ -90,28 +88,26 @@ public partial class Main : Control
     private void LoadSettings()
     {
         var settings = Settings.LoadSettings();
-        BeatSaberInstallLocation = settings.GetValue("settings", "install_location", string.Empty).AsString();
+        BeatSaberInstallLocation = settings.GetValue(SettingSections.Settings, SettingsKeys.BeatSaberInstallLocation, string.Empty).AsString();
     }
 
     private void SaveSettings()
     {
         var settings = Settings.GetSettings();
-        settings.SetValue("settings", "install_location", BeatSaberInstallLocation);
+        settings.SetValue(SettingSections.Settings, SettingsKeys.BeatSaberInstallLocation, BeatSaberInstallLocation);
         Settings.SaveSettings();
     }
 
     private static bool IsValidInstallLocation(string installLocation)
     {
         return !string.IsNullOrEmpty(installLocation)
-            && DirAccess.DirExistsAbsolute(installLocation.PathJoin(CustomWipLevelsFolder));
+            && DirAccess.DirExistsAbsolute(installLocation.PathJoin(Settings.CustomWipLevelsFolder));
     }
 
     private void ConfigureInstallLocation(string directory)
     {
         BeatSaberInstallLocation = directory;
         SaveSettings();
-        GetNode<BeatMapManager>("/root/BeatMapManager")
-            .SetWipBeatmapLocation(directory.PathJoin(CustomWipLevelsFolder));
         GetNode<FileDialog>("InstallLocationFolderDialog").CurrentDir = directory;
         ShowHomeScreen();
     }
@@ -142,7 +138,7 @@ public partial class Main : Control
         }
 
         var mapsLocation = BeatSaberInstallLocation
-            .PathJoin(_showWipMaps ? CustomWipLevelsFolder : CustomLevelsFolder);
+            .PathJoin(_showWipMaps ? Settings.CustomWipLevelsFolder : Settings.CustomLevelsFolder);
 
         if (DirAccess.DirExistsAbsolute(mapsLocation))
         {
@@ -479,7 +475,7 @@ public partial class Main : Control
     private void OnNewMapButtonPressed()
     {
         var manager = GetNode<BeatMapManager>("/root/BeatMapManager");
-        if (string.IsNullOrEmpty(manager.WipBeatmapLocation))
+        if (string.IsNullOrEmpty(Settings.WipBeatmapLocation))
         {
             GD.PushWarning("Cannot create a map before a Beat Saber install location is configured.");
             return;
@@ -645,7 +641,7 @@ public partial class Main : Control
         {
             var errorLabel = GetNode<Label>("InstallLocationScreen/Panel/VBox/ErrorLabel");
             errorLabel.Text =
-                $"The selected folder does not contain \"{CustomWipLevelsFolder}\". Please select the Beat Saber install folder.";
+                $"The selected folder does not contain \"{Settings.CustomWipLevelsFolder}\". Please select the Beat Saber install folder.";
             errorLabel.Show();
             ShowInstallLocationScreen();
         }
