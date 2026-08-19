@@ -1,5 +1,6 @@
 using Godot;
 using Godot.Collections;
+using System.Collections.Generic;
 
 [GlobalClass]
 public partial class BeatMapDifficultyInfo : RefCounted
@@ -12,6 +13,15 @@ public partial class BeatMapDifficultyInfo : RefCounted
         Expert,
         ExpertPlus,
     }
+
+    public static readonly IEnumerable<Difficulty> AllDifficulties = new List<Difficulty>
+    {
+        Difficulty.Easy,
+        Difficulty.Normal,
+        Difficulty.Hard,
+        Difficulty.Expert,
+        Difficulty.ExpertPlus,
+    };
 
     /// <summary>The default half jump distance is 4 beats away from the player.</summary>
     public const float DefaultHalfJumpDistance = 4.0f;

@@ -10,14 +10,6 @@ public partial class Main : Control
     private const int HydrationsPerFrame = 4;
     private const string NewMapDialogPath = "NewMapDialog";
 
-    private static readonly (string NodeName, BeatMapDifficultyInfo.Difficulty Difficulty)[] DifficultyCheckBoxes =
-    {
-        ("Easy", BeatMapDifficultyInfo.Difficulty.Easy),
-        ("Normal", BeatMapDifficultyInfo.Difficulty.Normal),
-        ("Hard", BeatMapDifficultyInfo.Difficulty.Hard),
-        ("Expert", BeatMapDifficultyInfo.Difficulty.Expert),
-        ("ExpertPlus", BeatMapDifficultyInfo.Difficulty.ExpertPlus),
-    };
     [Export]
     public PackedScene StartScene { get; set; }
 
@@ -60,8 +52,9 @@ public partial class Main : Control
     private void SetUpDifficultyToggles()
     {
         var difficultyContainer = GetNode<GridContainer>(NewMapDialogPath + "/Margin/VBox/Difficulties");
-        foreach (var (nodeName, _) in DifficultyCheckBoxes)
+        foreach (var difficulty in BeatMapDifficultyInfo.AllDifficulties)
         {
+            var nodeName = BeatMapDifficultyInfo.GetDifficultyName(difficulty);
             var checkBox = difficultyContainer.GetNode<CheckBox>(nodeName);
             var njs = difficultyContainer.GetNode<SpinBox>(nodeName + "Njs");
             var offset = difficultyContainer.GetNode<SpinBox>(nodeName + "Offset");
@@ -502,10 +495,10 @@ public partial class Main : Control
         GetNode<Label>(NewMapDialogPath + "/Margin/VBox/Grid/AudioFileBox/AudioFilePathLabel").Text = "No file selected";
 
         var difficultyContainer = GetNode<GridContainer>(NewMapDialogPath + "/Margin/VBox/Difficulties");
-        foreach (var (nodeName, difficulty) in DifficultyCheckBoxes)
+        foreach (var difficulty in BeatMapDifficultyInfo.AllDifficulties)
         {
-            difficultyContainer.GetNode<CheckBox>(nodeName).ButtonPressed =
-                difficulty == BeatMapDifficultyInfo.Difficulty.Expert;
+            var nodeName = BeatMapDifficultyInfo.GetDifficultyName(difficulty);
+            difficultyContainer.GetNode<CheckBox>(nodeName).ButtonPressed = difficulty == BeatMapDifficultyInfo.Difficulty.Expert;
         }
 
         ShowMapDialog("New map", "Create map");
@@ -525,8 +518,9 @@ public partial class Main : Control
             _editingBeatmapInfo.SongFileName;
 
         var difficultyContainer = GetNode<GridContainer>(NewMapDialogPath + "/Margin/VBox/Difficulties");
-        foreach (var (nodeName, difficulty) in DifficultyCheckBoxes)
+        foreach (var difficulty in BeatMapDifficultyInfo.AllDifficulties)
         {
+            var nodeName = BeatMapDifficultyInfo.GetDifficultyName(difficulty);
             var existing = _editingBeatmapInfo.FindDifficulty(difficulty, BeatMapDifficultySet.BeatmapMode.Standard);
             difficultyContainer.GetNode<CheckBox>(nodeName).ButtonPressed = existing is not null;
             if (existing is not null)
@@ -574,8 +568,9 @@ public partial class Main : Control
 
         var difficulties = new List<BeatMapManager.DifficultySettings>();
         var difficultyContainer = GetNode<GridContainer>(NewMapDialogPath + "/Margin/VBox/Difficulties");
-        foreach (var (nodeName, difficulty) in DifficultyCheckBoxes)
+        foreach (var difficulty in BeatMapDifficultyInfo.AllDifficulties)
         {
+            var nodeName = BeatMapDifficultyInfo.GetDifficultyName(difficulty);
             if (!difficultyContainer.GetNode<CheckBox>(nodeName).ButtonPressed)
             {
                 continue;
