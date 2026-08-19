@@ -14,10 +14,6 @@ public partial class Editor : Node3D
     public event Action<int, bool> SelectionChanged;
 
     private XROrigin3D _xrOrigin;
-    private XRController3D _leftHand;
-    private XRController3D _rightHand;
-    private GodotObject _leftPointer;
-    private GodotObject _rightPointer;
     private Saber _leftSaber;
     private Saber _rightSaber;
     private AudioStreamPlayer _hitSound;
@@ -29,14 +25,11 @@ public partial class Editor : Node3D
 
     private PlaybackManager PlaybackManager => GetNode<PlaybackManager>("/root/PlaybackManager");
     private BeatMapManager BeatMapManager => GetNode<BeatMapManager>("/root/BeatMapManager");
+    private InputManager InputManager => GetNode<InputManager>("/root/InputManager");
 
     public override void _Ready()
     {
         _xrOrigin = GetNode<XROrigin3D>("XROrigin3D");
-        _leftHand = GetNode<XRController3D>("XROrigin3D/LeftHand");
-        _rightHand = GetNode<XRController3D>("XROrigin3D/RightHand");
-        _leftPointer = GetNode("XROrigin3D/LeftHand/FunctionPointer");
-        _rightPointer = GetNode("XROrigin3D/RightHand/FunctionPointer");
         _leftSaber = GetNode<Saber>("XROrigin3D/LeftHand/Saber");
         _rightSaber = GetNode<Saber>("XROrigin3D/RightHand/Saber");
         _hitSound = GetNode<AudioStreamPlayer>("HitSound");
@@ -50,10 +43,12 @@ public partial class Editor : Node3D
         var gameEvents = GetNode<GameEvents>("/root/GameEvents");
         gameEvents.NoteBlockHit += OnNoteBlockHit;
         gameEvents.BombHit += OnBombHit;
-        _leftHand.ButtonPressed += OnLeftHandButtonPressed;
-        _leftHand.ButtonReleased += OnLeftHandButtonReleased;
-        _rightHand.ButtonPressed += OnRightHandButtonPressed;
-        _rightHand.ButtonReleased += OnRightHandButtonReleased;
+
+        InputManager.Initialize();
+        InputManager.LeftHand.ButtonPressed += OnLeftHandButtonPressed;
+        InputManager.LeftHand.ButtonReleased += OnLeftHandButtonReleased;
+        InputManager.RightHand.ButtonPressed += OnRightHandButtonPressed;
+        InputManager.RightHand.ButtonReleased += OnRightHandButtonReleased;
 
         PlaybackManager.Initialize();
         PlaybackManager.ModeChanged += OnPlaybackModeChanged;
@@ -62,18 +57,18 @@ public partial class Editor : Node3D
 
     public override void _Process(double delta)
     {
-        MoveDraggedObject(_rightPointer, _rightHand, _rightDrag);
+        MoveDraggedObject(InputManager.RightHandPointer, InputManager.RightHand, _rightDrag);
     }
 
     private void OnLeftHandButtonPressed(string buttonName)
     {
         if (buttonName == InputActions.SelectObject && _leftSelectionMode)
         {
-            ToggleHoveredObjectSelection(_leftPointer);
+            ToggleHoveredObjectSelection(InputManager.LeftHandPointer);
         }
         else if (buttonName == InputActions.DeleteObject)
         {
-            DeleteHoveredObjectForPointer(_leftPointer);
+            DeleteHoveredObjectForPointer(InputManager.LeftHandPointer);
         }
         else if (buttonName == InputActions.ToggleSelectionMode && PlaybackManager.Mode == PlaybackManager.EditMode.Editing)
         {
@@ -87,15 +82,15 @@ public partial class Editor : Node3D
         GD.Print($"Right hand button pressed {buttonName}");
         if (buttonName == InputActions.SelectObject && _leftSelectionMode)
         {
-            ToggleHoveredObjectSelection(_rightPointer);
+            ToggleHoveredObjectSelection(InputManager.RightHandPointer);
         }
-        else if (buttonName == InputActions.SaveMap && !DeleteHoveredObjectForPointer(_rightPointer))
+        else if (buttonName == InputActions.SaveMap && !DeleteHoveredObjectForPointer(InputManager.RightHandPointer))
         {
             BeatMapManager.SaveBeatmap();
         }
         else if (buttonName == InputActions.MoveObject)
         {
-            _rightDrag = CreateDragState(_rightPointer, _rightHand);
+            _rightDrag = CreateDragState(InputManager.RightHandPointer, InputManager.RightHand);
         }
     }
 
@@ -330,8 +325,8 @@ public partial class Editor : Node3D
         originPosition.Z = editing ? 2.0f : 0.0f;
         _xrOrigin.Position = originPosition;
 
-        SetPointerEditingEnabled(_leftPointer, editing);
-        SetPointerEditingEnabled(_rightPointer, editing);
+        SetPointerEditingEnabled(InputManager.LeftHandPointer, editing);
+        SetPointerEditingEnabled(InputManager.RightHandPointer, editing);
         _leftSaber.Visible = !editing;
         _rightSaber.Visible = !editing;
     }
@@ -357,7 +352,7 @@ public partial class Editor : Node3D
 
     private void TriggerSaberHapticPulse(Saber.SaberType saberType)
     {
-        var hand = saberType == Saber.SaberType.Left ? _leftHand : _rightHand;
+        var hand = saberType == Saber.SaberType.Left ? InputManager.LeftHand : InputManager.RightHand;
         hand.TriggerHapticPulse(Inputs.Haptic, 0.0f, 1.0f, 0.15f, 0.0f);
     }
 }

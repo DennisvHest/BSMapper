@@ -9,14 +9,10 @@ public partial class PlaybackManager : Node
         Editing,
     }
 
-    private const float PlaybackScrubVelocity = 0.01f;
-
     [Signal]
     public delegate void ModeChangedEventHandler();
 
     public HSlider ProgressBar { get; private set; }
-    public XRController3D LeftHand { get; private set; }
-    public XRController3D RightHand { get; private set; }
     public AudioStreamPlayer Music { get; private set; }
     public BeatMapDifficultyInfo BeatmapDifficulty { get; private set; }
     public double PlaybackPosition { get; private set; }
@@ -25,6 +21,8 @@ public partial class PlaybackManager : Node
         : PlaybackPosition / (60.0 / BeatmapDifficulty.Bpm);
     public EditMode Mode { get; private set; } = EditMode.Playing;
     public bool Initialized { get; private set; }
+
+    private float PlaybackScrubVelocity = 0.0f;
 
     private BeatMapManager _beatMapManager;
 
@@ -47,11 +45,6 @@ public partial class PlaybackManager : Node
         ProgressBar.DragStarted += OnMusicProgressBarDragStarted;
         ProgressBar.DragEnded += OnMusicProgressBarDragEnded;
 
-        LeftHand = GetParent().GetNode<XRController3D>("Editor/XROrigin3D/LeftHand");
-        LeftHand.InputVector2Changed += OnLeftHandInputVector2Changed;
-        LeftHand.ButtonPressed += OnLeftHandButtonPressed;
-
-        RightHand = GetParent().GetNode<XRController3D>("Editor/XROrigin3D/RightHand");
         Initialized = true;
     }
 
@@ -83,10 +76,9 @@ public partial class PlaybackManager : Node
             return;
         }
 
-        var leftJoystickPosition = LeftHand.GetVector2("primary");
-        if (leftJoystickPosition.X != 0.0f)
+        if (PlaybackScrubVelocity != 0.0f)
         {
-            ProgressBar.Value += leftJoystickPosition.X * PlaybackScrubVelocity * delta;
+            ProgressBar.Value += PlaybackScrubVelocity * delta;
         }
     }
 
@@ -112,6 +104,11 @@ public partial class PlaybackManager : Node
     {
         ProgressBar.Value = position / Music.Stream.GetLength();
         Play(position);
+    }
+
+    public void ToggleMode()
+    {
+        ChangeMode(Mode == EditMode.Editing ? EditMode.Playing : EditMode.Editing);
     }
 
     public void ChangeMode(EditMode newMode)
@@ -150,35 +147,15 @@ public partial class PlaybackManager : Node
         }
     }
 
-    private void OnLeftHandInputVector2Changed(string name, Vector2 value)
-    {
-        if (name != "primary")
-        {
-            return;
-        }
-
-        if (value.X != 0.0f)
-        {
-            Pause();
-        }
-        else
-        {
-            SnapToNearestBeat();
-        }
-    }
-
-    private void OnLeftHandButtonPressed(string buttonName)
-    {
-        if (buttonName == "ax_button")
-        {
-            ChangeMode(Mode == EditMode.Editing ? EditMode.Playing : EditMode.Editing);
-        }
-    }
-
-    private void SnapToNearestBeat()
+    public void SnapToNearestBeat()
     {
         var playbackPosition = GetPlaybackPosition();
         var snappedPosition = Mathf.Round(playbackPosition / BeatmapDifficulty.BeatDuration) * BeatmapDifficulty.BeatDuration;
         SetPlaybackPosition(snappedPosition);
+    }
+
+    public void SetPlaybackScrubVelocity(float velocity)
+    {
+        PlaybackScrubVelocity = velocity;
     }
 }
