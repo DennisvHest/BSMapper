@@ -1,7 +1,6 @@
 [gd_scene format=3 uid="uid://dujhi4qdtiee8"]
 
 [ext_resource type="Script" uid="uid://cta1tvj0wsg7j" path="res://Main.cs" id="1_ig7tw"]
-[ext_resource type="PackedScene" uid="uid://cjmnf87pjnu15" path="res://editor/editor.tscn" id="2_0xm2m"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
 content_margin_left = 32.0
@@ -88,7 +87,6 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_ig7tw")
-StartScene = ExtResource("2_0xm2m")
 
 [node name="Background" type="ColorRect" parent="." unique_id=247288362]
 layout_mode = 1

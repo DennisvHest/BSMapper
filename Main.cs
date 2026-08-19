@@ -9,9 +9,6 @@ public partial class Main : Control
     private const string NewMapDialogPath = "NewMapDialog";
 
     [Export]
-    public PackedScene StartScene { get; set; }
-
-    [Export]
     public bool DebugWithoutVr { get; set; }
 
     public string BeatSaberInstallLocation { get; set; } = string.Empty;
@@ -82,7 +79,7 @@ public partial class Main : Control
             GD.Print("OpenXR not initialized, please check if your headset is connected");
         }
 
-        GetTree().ChangeSceneToPacked(StartScene);
+        GetTree().ChangeSceneToFile("res://editor/editor.tscn");
     }
 
     private void LoadSettings()

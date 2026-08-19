@@ -13,6 +13,9 @@ public partial class BeatMap : RefCounted
     [Signal]
     public delegate void ObjectRemovedEventHandler(BeatMapObjectBase @object);
 
+    /// <summary>
+    /// The original map data loaded from the file. This is used to save changes back to the file.
+    /// </summary>
     [Export]
     public Variant OriginalMap { get; set; }
 
