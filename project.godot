@@ -28,6 +28,7 @@ DebugMenu="*uid://cggqb75a8w8r"
 PlaybackManager="*res://editor/PlaybackManager.cs"
 XRToolsUserSettings="*uid://bqgb8i74tm0t"
 XRToolsRumbleManager="*uid://by853dk86g1qw"
+InputManager="*uid://ditpbfsmrt3j2"
 
 [display]
 

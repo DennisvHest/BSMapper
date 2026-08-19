@@ -5,10 +5,6 @@ using Godot;
 [GlobalClass]
 public partial class Editor : Node3D
 {
-    private static readonly StringName AxButton = "ax_button";
-    private static readonly StringName GripButton = "grip_click";
-    private static readonly StringName TriggerButton = "trigger_click";
-    private static readonly StringName HapticAction = "haptic";
     private const int LaserShow = 1;
     private const int LaserHide = 2;
 
@@ -71,15 +67,15 @@ public partial class Editor : Node3D
 
     private void OnLeftHandButtonPressed(string buttonName)
     {
-        if (buttonName == TriggerButton && _leftSelectionMode)
+        if (buttonName == InputActions.SelectObject && _leftSelectionMode)
         {
             ToggleHoveredObjectSelection(_leftPointer);
         }
-        else if (buttonName == AxButton)
+        else if (buttonName == InputActions.DeleteObject)
         {
             DeleteHoveredObjectForPointer(_leftPointer);
         }
-        else if (buttonName == GripButton && PlaybackManager.Mode == PlaybackManager.EditMode.Editing)
+        else if (buttonName == InputActions.ToggleSelectionMode && PlaybackManager.Mode == PlaybackManager.EditMode.Editing)
         {
             _leftSelectionMode = true;
             _objectEditPlane.SetSelectionModeEnabled(true);
@@ -89,15 +85,15 @@ public partial class Editor : Node3D
     private void OnRightHandButtonPressed(string buttonName)
     {
         GD.Print($"Right hand button pressed {buttonName}");
-        if (buttonName == TriggerButton && _leftSelectionMode)
+        if (buttonName == InputActions.SelectObject && _leftSelectionMode)
         {
             ToggleHoveredObjectSelection(_rightPointer);
         }
-        else if (buttonName == AxButton && !DeleteHoveredObjectForPointer(_rightPointer))
+        else if (buttonName == InputActions.SaveMap && !DeleteHoveredObjectForPointer(_rightPointer))
         {
             BeatMapManager.SaveBeatmap();
         }
-        else if (buttonName == GripButton)
+        else if (buttonName == InputActions.MoveObject)
         {
             _rightDrag = CreateDragState(_rightPointer, _rightHand);
         }
@@ -105,7 +101,7 @@ public partial class Editor : Node3D
 
     private void OnLeftHandButtonReleased(string buttonName)
     {
-        if (buttonName == GripButton)
+        if (buttonName == InputActions.ToggleSelectionMode)
         {
             _leftSelectionMode = false;
             _objectEditPlane.SetSelectionModeEnabled(false);
@@ -114,7 +110,7 @@ public partial class Editor : Node3D
 
     private void OnRightHandButtonReleased(string buttonName)
     {
-        if (buttonName == GripButton)
+        if (buttonName == InputActions.MoveObject)
         {
             _rightDrag = null;
         }
@@ -362,6 +358,6 @@ public partial class Editor : Node3D
     private void TriggerSaberHapticPulse(Saber.SaberType saberType)
     {
         var hand = saberType == Saber.SaberType.Left ? _leftHand : _rightHand;
-        hand.TriggerHapticPulse(HapticAction, 0.0f, 1.0f, 0.15f, 0.0f);
+        hand.TriggerHapticPulse(Inputs.Haptic, 0.0f, 1.0f, 0.15f, 0.0f);
     }
 }
