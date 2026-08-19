@@ -1,9 +1,9 @@
+using BSMapper;
 using Godot;
 using System.Collections.Generic;
 
 public partial class Main : Control
 {
-    private const string SettingsFilePath = "user://settings.cfg";
     private const string CustomLevelsFolder = "Beat Saber_Data/CustomLevels";
     private const string CustomWipLevelsFolder = "Beat Saber_Data/CustomWIPLevels";
     private const int ButtonsPerFrame = 50;
@@ -96,18 +96,15 @@ public partial class Main : Control
 
     private void LoadSettings()
     {
-        var config = new ConfigFile();
-        if (config.Load(SettingsFilePath) == Error.Ok)
-        {
-            BeatSaberInstallLocation = config.GetValue("settings", "install_location", string.Empty).AsString();
-        }
+        var settings = Settings.LoadSettings();
+        BeatSaberInstallLocation = settings.GetValue("settings", "install_location", string.Empty).AsString();
     }
 
     private void SaveSettings()
     {
-        var config = new ConfigFile();
-        config.SetValue("settings", "install_location", BeatSaberInstallLocation);
-        config.Save(SettingsFilePath);
+        var settings = Settings.GetSettings();
+        settings.SetValue("settings", "install_location", BeatSaberInstallLocation);
+        Settings.SaveSettings();
     }
 
     private static bool IsValidInstallLocation(string installLocation)
