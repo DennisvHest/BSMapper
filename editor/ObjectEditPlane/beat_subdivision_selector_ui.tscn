@@ -1,0 +1,153 @@
+[gd_scene load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://editor/ObjectEditPlane/BeatSubdivisionSelectorUI.cs" id="1_ui"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
+bg_color = Color(0.05, 0.06, 0.08, 0.92)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+shadow_color = Color(0, 0, 0, 0.28)
+shadow_size = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_button_idle"]
+content_margin_left = 10.0
+content_margin_top = 14.0
+content_margin_right = 10.0
+content_margin_bottom = 14.0
+bg_color = Color(0.17, 0.19, 0.24, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_button_hover"]
+content_margin_left = 10.0
+content_margin_top = 14.0
+content_margin_right = 10.0
+content_margin_bottom = 14.0
+bg_color = Color(0.23, 0.26, 0.32, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_button_selected"]
+content_margin_left = 10.0
+content_margin_top = 14.0
+content_margin_right = 10.0
+content_margin_bottom = 14.0
+bg_color = Color(0.14902, 0.533333, 1, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+
+[sub_resource type="ButtonGroup" id="ButtonGroup_subdivision"]
+
+[node name="BeatSubdivisionSelectorUI" type="Control"]
+custom_minimum_size = Vector2(420, 180)
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_ui")
+IdleButtonStyle = SubResource("StyleBoxFlat_button_idle")
+HoverButtonStyle = SubResource("StyleBoxFlat_button_hover")
+SelectedButtonStyle = SubResource("StyleBoxFlat_button_selected")
+
+[node name="Panel" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
+
+[node name="MarginContainer" type="MarginContainer" parent="Panel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 18.0
+offset_top = 16.0
+offset_right = -18.0
+offset_bottom = -16.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Panel/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Title" type="Label" parent="Panel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.98, 0.98, 0.99, 1)
+theme_override_font_sizes/font_size = 26
+text = "Beat snap"
+horizontal_alignment = 1
+
+[node name="Buttons" type="HBoxContainer" parent="Panel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 8
+
+[node name="BeatSubdivision1Button" type="Button" parent="Panel/MarginContainer/VBoxContainer/Buttons"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+focus_mode = 0
+theme_override_font_sizes/font_size = 21
+toggle_mode = true
+button_pressed = true
+button_group = SubResource("ButtonGroup_subdivision")
+text = "1/1"
+
+[node name="BeatSubdivision2Button" type="Button" parent="Panel/MarginContainer/VBoxContainer/Buttons"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+focus_mode = 0
+theme_override_font_sizes/font_size = 21
+toggle_mode = true
+button_group = SubResource("ButtonGroup_subdivision")
+text = "1/2"
+
+[node name="BeatSubdivision4Button" type="Button" parent="Panel/MarginContainer/VBoxContainer/Buttons"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+focus_mode = 0
+theme_override_font_sizes/font_size = 21
+toggle_mode = true
+button_group = SubResource("ButtonGroup_subdivision")
+text = "1/4"
+
+[node name="BeatSubdivision8Button" type="Button" parent="Panel/MarginContainer/VBoxContainer/Buttons"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+focus_mode = 0
+theme_override_font_sizes/font_size = 21
+toggle_mode = true
+button_group = SubResource("ButtonGroup_subdivision")
+text = "1/8"
+
+[node name="BeatSubdivision16Button" type="Button" parent="Panel/MarginContainer/VBoxContainer/Buttons"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+focus_mode = 0
+theme_override_font_sizes/font_size = 21
+toggle_mode = true
+button_group = SubResource("ButtonGroup_subdivision")
+text = "1/16"

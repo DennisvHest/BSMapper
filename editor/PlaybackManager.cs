@@ -1,4 +1,5 @@
 using Godot;
+using System;
 using System.IO;
 
 public partial class PlaybackManager : Node
@@ -12,6 +13,8 @@ public partial class PlaybackManager : Node
     [Signal]
     public delegate void ModeChangedEventHandler();
 
+    public event Action<int> BeatSubdivisionChanged;
+
     public HSlider ProgressBar { get; private set; }
     public AudioStreamPlayer Music { get; private set; }
     public BeatMapDifficultyInfo BeatmapDifficulty { get; private set; }
@@ -19,6 +22,7 @@ public partial class PlaybackManager : Node
     public double PlaybackBeat => BeatmapDifficulty is null || BeatmapDifficulty.Bpm == 0.0f
         ? 0.0
         : PlaybackPosition / (60.0 / BeatmapDifficulty.Bpm);
+    public int BeatSubdivision { get; private set; } = 1;
     public EditMode Mode { get; private set; } = EditMode.Playing;
     public bool Initialized { get; private set; }
 
@@ -46,6 +50,21 @@ public partial class PlaybackManager : Node
         ProgressBar.DragEnded += OnMusicProgressBarDragEnded;
 
         Initialized = true;
+    }
+
+    public void SetBeatSubdivision(int subdivision)
+    {
+        if (BeatSubdivision == subdivision)
+        {
+            return;
+        }
+
+        BeatSubdivision = subdivision;
+        BeatSubdivisionChanged?.Invoke(subdivision);
+        if (Mode == EditMode.Editing)
+        {
+            SnapToNearestBeat();
+        }
     }
 
     private void OnCurrentBeatMapInfoChanged(BeatMapInfo beatmap)
@@ -150,7 +169,8 @@ public partial class PlaybackManager : Node
     public void SnapToNearestBeat()
     {
         var playbackPosition = GetPlaybackPosition();
-        var snappedPosition = Mathf.Round(playbackPosition / BeatmapDifficulty.BeatDuration) * BeatmapDifficulty.BeatDuration;
+        var subdivisionDuration = BeatmapDifficulty.BeatDuration / BeatSubdivision;
+        var snappedPosition = Mathf.Round(playbackPosition / subdivisionDuration) * subdivisionDuration;
         SetPlaybackPosition(snappedPosition);
     }
 
