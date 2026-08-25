@@ -27,6 +27,7 @@ public partial class PlaybackManager : Node
     public bool Initialized { get; private set; }
 
     private float PlaybackScrubVelocity = 0.0f;
+    private double _beatSnapOffset;
 
     private BeatMapManager _beatMapManager;
 
@@ -60,11 +61,8 @@ public partial class PlaybackManager : Node
         }
 
         BeatSubdivision = subdivision;
+        _beatSnapOffset = GetPlaybackPosition();
         BeatSubdivisionChanged?.Invoke(subdivision);
-        if (Mode == EditMode.Editing)
-        {
-            SnapToNearestBeat();
-        }
     }
 
     private void OnCurrentBeatMapInfoChanged(BeatMapInfo beatmap)
@@ -170,7 +168,9 @@ public partial class PlaybackManager : Node
     {
         var playbackPosition = GetPlaybackPosition();
         var subdivisionDuration = BeatmapDifficulty.BeatDuration / BeatSubdivision;
-        var snappedPosition = Mathf.Round(playbackPosition / subdivisionDuration) * subdivisionDuration;
+        var snappedPosition = Mathf.Round((playbackPosition - _beatSnapOffset) / subdivisionDuration)
+            * subdivisionDuration
+            + _beatSnapOffset;
         SetPlaybackPosition(snappedPosition);
     }
 
