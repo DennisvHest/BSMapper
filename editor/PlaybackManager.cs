@@ -174,6 +174,13 @@ public partial class PlaybackManager : Node
         SetPlaybackPosition(snappedPosition);
     }
 
+    public void StepBeatSubdivision(int direction)
+    {
+        var subdivisionDuration = BeatmapDifficulty.BeatDuration / BeatSubdivision;
+        var playbackPosition = GetPlaybackPosition() + direction * subdivisionDuration;
+        SetPlaybackPosition(Mathf.Clamp(playbackPosition, 0.0, Music.Stream.GetLength()));
+    }
+
     public void SetPlaybackScrubVelocity(float velocity)
     {
         PlaybackScrubVelocity = velocity;

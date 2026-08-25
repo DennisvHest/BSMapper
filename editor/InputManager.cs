@@ -28,6 +28,7 @@ public partial class InputManager : Node
         LeftHand.InputVector2Changed += OnLeftHandInputVector2Changed;
 
         RightHand = GetParent().GetNode<XRController3D>("Editor/XROrigin3D/RightHand");
+        RightHand.ButtonPressed += OnRightHandButtonPressed;
 
         LeftHandPointer = LeftHand.GetNode("FunctionPointer");
         RightHandPointer = RightHand.GetNode("FunctionPointer");
@@ -49,6 +50,18 @@ public partial class InputManager : Node
         if (actionName == InputActions.ToggleEditMode)
         {
             _playbackManager.ToggleMode();
+        }
+        else if (actionName == InputActions.StepPlaybackSubdivision)
+        {
+            _playbackManager.StepBeatSubdivision(-1);
+        }
+    }
+
+    private void OnRightHandButtonPressed(string actionName)
+    {
+        if (actionName == InputActions.StepPlaybackSubdivision)
+        {
+            _playbackManager.StepBeatSubdivision(1);
         }
     }
 
@@ -74,6 +87,7 @@ public static class Inputs
     public static readonly StringName AxButton = "ax_button";
     public static readonly StringName GripButton = "grip_click";
     public static readonly StringName TriggerButton = "trigger_click";
+    public static readonly StringName PrimaryClick = "primary_click";
     public static readonly StringName Haptic = "haptic";
     public static readonly StringName Primary = "primary"; // The primary joystick on the controller
 }
@@ -87,4 +101,5 @@ public static class InputActions
     public static readonly StringName SaveMap = Inputs.AxButton;
     public static readonly StringName MoveObject = Inputs.GripButton;
     public static readonly StringName ScrubPlayback = Inputs.Primary;
+    public static readonly StringName StepPlaybackSubdivision = Inputs.PrimaryClick;
 }
