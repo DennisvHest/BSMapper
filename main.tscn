@@ -1,7 +1,6 @@
 [gd_scene format=3 uid="uid://dujhi4qdtiee8"]
 
 [ext_resource type="Script" uid="uid://cta1tvj0wsg7j" path="res://Main.cs" id="1_ig7tw"]
-[ext_resource type="Theme" uid="uid://cvqsuit8l2ssl" path="res://bs_mapper_theme.tres" id="2_0xm2m"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
 content_margin_left = 32.0
@@ -121,7 +120,6 @@ oversampling_override = 1.0
 title = "New map"
 initial_position = 2
 size = Vector2i(520, 506)
-theme = ExtResource("2_0xm2m")
 ok_button_text = "Create map"
 
 [node name="Margin" type="MarginContainer" parent="NewMapDialog" unique_id=1612747446]

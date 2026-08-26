@@ -47,6 +47,10 @@ enabled=PackedStringArray("res://addons/debug_menu/plugin.cfg", "res://addons/go
 
 import/blender/enabled=false
 
+[gui]
+
+theme/custom="uid://cvqsuit8l2ssl"
+
 [physics]
 
 common/physics_ticks_per_second=120
