@@ -106,7 +106,7 @@ public partial class Main : Control
         BeatSaberInstallLocation = directory;
         SaveSettings();
         GetNode<FileDialog>("InstallLocationFolderDialog").CurrentDir = directory;
-        ShowHomeScreen();
+        //ShowHomeScreen();
     }
 
     private void ShowInstallLocationScreen()

@@ -1,6 +1,8 @@
 [gd_scene format=3 uid="uid://dujhi4qdtiee8"]
 
 [ext_resource type="Script" uid="uid://cta1tvj0wsg7j" path="res://Main.cs" id="1_ig7tw"]
+[ext_resource type="Texture2D" uid="uid://cl2jc27vovueq" path="res://icon.svg" id="2_0xm2m"]
+[ext_resource type="Texture2D" uid="uid://bwmjplmxtsak0" path="res://test_beatmaps/TEST_MAP/cover.png" id="3_h2yge"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
 content_margin_left = 32.0
@@ -95,7 +97,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.051, 0.059, 0.09, 1)
+color = Color(0.05882353, 0.05882353, 0.05882353, 1)
 
 [node name="InstallLocationFolderDialog" type="FileDialog" parent="." unique_id=586236787]
 oversampling_override = 1.0
@@ -358,6 +360,7 @@ layout_mode = 2
 theme_override_constants/separation = 8
 
 [node name="InstallLocationScreen" type="CenterContainer" parent="." unique_id=1403762803]
+visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -527,6 +530,212 @@ theme_override_colors/font_color = Color(0.52, 0.56, 0.64, 1)
 theme_override_font_sizes/font_size = 16
 text = "No maps found in this folder."
 horizontal_alignment = 1
+
+[node name="HomeScreen2" type="MarginContainer" parent="." unique_id=787820621]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBox" type="VBoxContainer" parent="HomeScreen2" unique_id=746069528]
+visible = false
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="Header" type="HBoxContainer" parent="HomeScreen2/VBox" unique_id=243455181]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="Title" type="Label" parent="HomeScreen2/VBox/Header" unique_id=1110181364]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.95, 0.96, 0.98, 1)
+theme_override_font_sizes/font_size = 36
+text = "BSMapper"
+
+[node name="Spacer" type="Control" parent="HomeScreen2/VBox/Header" unique_id=1526608626]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="NewMapButton" type="Button" parent="HomeScreen2/VBox/Header" unique_id=1644301771]
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_font_sizes/font_size = 15
+text = "+ New map"
+
+[node name="InstallLocationLabel" type="Label" parent="HomeScreen2/VBox/Header" unique_id=1848266520]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.52, 0.56, 0.64, 1)
+theme_override_font_sizes/font_size = 13
+
+[node name="ChangeLocationButton" type="Button" parent="HomeScreen2/VBox/Header" unique_id=951458608]
+layout_mode = 2
+size_flags_vertical = 4
+text = "Change location"
+
+[node name="FilterBar" type="HBoxContainer" parent="HomeScreen2/VBox" unique_id=2080595665]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="WipMapsButton" type="Button" parent="HomeScreen2/VBox/FilterBar" unique_id=1026014682]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.8, 0.83, 0.88, 1)
+theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
+theme_override_colors/font_hover_pressed_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 15
+theme_override_styles/normal = SubResource("StyleBoxFlat_toggle")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_toggle_active")
+theme_override_styles/hover = SubResource("StyleBoxFlat_toggle_hover")
+theme_override_styles/hover_pressed = SubResource("StyleBoxFlat_toggle_active")
+toggle_mode = true
+button_pressed = true
+text = "WIP Maps"
+
+[node name="CustomMapsButton" type="Button" parent="HomeScreen2/VBox/FilterBar" unique_id=2008511518]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.8, 0.83, 0.88, 1)
+theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
+theme_override_colors/font_hover_pressed_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 15
+theme_override_styles/normal = SubResource("StyleBoxFlat_toggle")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_toggle_active")
+theme_override_styles/hover = SubResource("StyleBoxFlat_toggle_hover")
+theme_override_styles/hover_pressed = SubResource("StyleBoxFlat_toggle_active")
+toggle_mode = true
+text = "Custom Maps"
+
+[node name="SearchBar" type="LineEdit" parent="HomeScreen2/VBox/FilterBar" unique_id=90071968]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.95, 0.96, 0.98, 1)
+theme_override_colors/font_placeholder_color = Color(0.52, 0.56, 0.64, 1)
+theme_override_font_sizes/font_size = 15
+theme_override_styles/normal = SubResource("StyleBoxFlat_toggle")
+theme_override_styles/focus = SubResource("StyleBoxFlat_toggle_hover")
+placeholder_text = "Search by title or author..."
+clear_button_enabled = true
+
+[node name="MapScroll" type="ScrollContainer" parent="HomeScreen2/VBox" unique_id=1579949699]
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="MapList" type="VBoxContainer" parent="HomeScreen2/VBox/MapScroll" unique_id=1714942805]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 12
+
+[node name="EmptyLabel" type="Label" parent="HomeScreen2/VBox" unique_id=1377014870]
+visible = false
+layout_mode = 2
+theme_override_colors/font_color = Color(0.52, 0.56, 0.64, 1)
+theme_override_font_sizes/font_size = 16
+text = "No maps found in this folder."
+horizontal_alignment = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="HomeScreen2" unique_id=522489321]
+layout_mode = 2
+
+[node name="Sidebar" type="VBoxContainer" parent="HomeScreen2/HBoxContainer" unique_id=1285776419]
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+
+[node name="Header" type="HBoxContainer" parent="HomeScreen2/HBoxContainer/Sidebar" unique_id=105285895]
+layout_mode = 2
+alignment = 1
+
+[node name="Title" type="Label" parent="HomeScreen2/HBoxContainer/Sidebar/Header" unique_id=1875205243]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.95, 0.96, 0.98, 1)
+theme_override_font_sizes/font_size = 36
+text = "BSMapper"
+
+[node name="ItemList" type="ItemList" parent="HomeScreen2/HBoxContainer/Sidebar" unique_id=967761982]
+layout_mode = 2
+size_flags_vertical = 3
+item_count = 1
+fixed_icon_size = Vector2i(50, 50)
+item_0/text = "test123"
+item_0/icon = ExtResource("2_0xm2m")
+
+[node name="MapDetails" type="VBoxContainer" parent="HomeScreen2/HBoxContainer" unique_id=1871114016]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Header" type="HBoxContainer" parent="HomeScreen2/HBoxContainer/MapDetails" unique_id=1064505888]
+custom_minimum_size = Vector2(0, 150)
+layout_mode = 2
+
+[node name="CoverContainer" type="MarginContainer" parent="HomeScreen2/HBoxContainer/MapDetails/Header" unique_id=1662390510]
+custom_minimum_size = Vector2(150, 0)
+custom_maximum_size = Vector2(150, -1)
+layout_mode = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+
+[node name="Cover" type="TextureRect" parent="HomeScreen2/HBoxContainer/MapDetails/Header/CoverContainer" unique_id=2019563026]
+layout_mode = 2
+size_flags_vertical = 4
+texture = ExtResource("3_h2yge")
+expand_mode = 4
+
+[node name="BasicInfoContainer" type="MarginContainer" parent="HomeScreen2/HBoxContainer/MapDetails/Header" unique_id=151565454]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/margin_top = 20
+
+[node name="GridContainer" type="GridContainer" parent="HomeScreen2/HBoxContainer/MapDetails/Header/BasicInfoContainer" unique_id=1173660672]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/h_separation = 20
+columns = 2
+
+[node name="SongNameContainer" type="VBoxContainer" parent="HomeScreen2/HBoxContainer/MapDetails/Header/BasicInfoContainer/GridContainer" unique_id=1339562470]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="SongNameLabel" type="Label" parent="HomeScreen2/HBoxContainer/MapDetails/Header/BasicInfoContainer/GridContainer/SongNameContainer" unique_id=133659360]
+layout_mode = 2
+text = "Song Name"
+
+[node name="SongNameEdit" type="LineEdit" parent="HomeScreen2/HBoxContainer/MapDetails/Header/BasicInfoContainer/GridContainer/SongNameContainer" unique_id=484994902]
+layout_mode = 2
+
+[node name="SubNameContainer" type="VBoxContainer" parent="HomeScreen2/HBoxContainer/MapDetails/Header/BasicInfoContainer/GridContainer" unique_id=985889921]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="SubNameLabel" type="Label" parent="HomeScreen2/HBoxContainer/MapDetails/Header/BasicInfoContainer/GridContainer/SubNameContainer" unique_id=1056709270]
+layout_mode = 2
+text = "Sub Name"
+
+[node name="SubNameEdit" type="LineEdit" parent="HomeScreen2/HBoxContainer/MapDetails/Header/BasicInfoContainer/GridContainer/SubNameContainer" unique_id=1569642188]
+layout_mode = 2
+
+[node name="SongAuthorContainer" type="VBoxContainer" parent="HomeScreen2/HBoxContainer/MapDetails/Header/BasicInfoContainer/GridContainer" unique_id=1188825841]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="SongAuthorLabel" type="Label" parent="HomeScreen2/HBoxContainer/MapDetails/Header/BasicInfoContainer/GridContainer/SongAuthorContainer" unique_id=1143738931]
+layout_mode = 2
+text = "Song Author"
+
+[node name="SongAuthorEdit" type="LineEdit" parent="HomeScreen2/HBoxContainer/MapDetails/Header/BasicInfoContainer/GridContainer/SongAuthorContainer" unique_id=588495554]
+layout_mode = 2
+
+[node name="CreatorContainer" type="VBoxContainer" parent="HomeScreen2/HBoxContainer/MapDetails/Header/BasicInfoContainer/GridContainer" unique_id=351018412]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="CreatorLabel" type="Label" parent="HomeScreen2/HBoxContainer/MapDetails/Header/BasicInfoContainer/GridContainer/CreatorContainer" unique_id=1228870533]
+layout_mode = 2
+text = "Creator"
+
+[node name="CreatorEdit" type="LineEdit" parent="HomeScreen2/HBoxContainer/MapDetails/Header/BasicInfoContainer/GridContainer/CreatorContainer" unique_id=1926265558]
+layout_mode = 2
 
 [connection signal="dir_selected" from="InstallLocationFolderDialog" to="." method="OnInstallLocationFolderDialogDirSelected"]
 [connection signal="file_selected" from="SongFileDialog" to="." method="OnSongFileDialogFileSelected"]
