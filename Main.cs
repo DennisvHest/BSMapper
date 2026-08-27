@@ -17,8 +17,11 @@ public partial class Main : Control
     private string _searchText = string.Empty;
     private string _newMapSongPath = string.Empty;
     private BeatMapInfo _editingBeatmapInfo;
-    private readonly Queue<(string FolderName, string MapFolder, string InfoPath)> _pendingButtons = new();
+    private readonly Queue<(string FolderName, string MapFolder, string InfoPath)> _mapListItems = new();
     private readonly List<MapListEntry> _pendingHydrations = new();
+
+    private ItemList _mapList;
+    private Container _mapDetails;
 
     private sealed class MapListEntry
     {
@@ -32,6 +35,11 @@ public partial class Main : Control
 
     public override void _Ready()
     {
+        _mapList = GetNode<ItemList>("%MapList");
+        _mapDetails = GetNode<Container>("%MapDetails");
+
+        _mapList.ItemSelected += MapSelected;
+
         SetUpDifficultyToggles();
         LoadSettings();
         if (IsValidInstallLocation(BeatSaberInstallLocation))
@@ -106,7 +114,7 @@ public partial class Main : Control
         BeatSaberInstallLocation = directory;
         SaveSettings();
         GetNode<FileDialog>("InstallLocationFolderDialog").CurrentDir = directory;
-        //ShowHomeScreen();
+        ShowHomeScreen();
     }
 
     private void ShowInstallLocationScreen()
@@ -119,17 +127,16 @@ public partial class Main : Control
     {
         GetNode<Control>("InstallLocationScreen").Hide();
         GetNode<Control>("HomeScreen").Show();
-        GetNode<Label>("HomeScreen/VBox/Header/InstallLocationLabel").Text = BeatSaberInstallLocation;
         RefreshMapList();
     }
 
     private void RefreshMapList()
     {
-        _pendingButtons.Clear();
+        _mapListItems.Clear();
         _pendingHydrations.Clear();
 
-        var mapList = GetNode<VBoxContainer>("HomeScreen/VBox/MapScroll/MapList");
-        foreach (var child in mapList.GetChildren())
+        _mapList.Clear();
+        foreach (var child in _mapList.GetChildren())
         {
             child.QueueFree();
         }
@@ -155,33 +162,105 @@ public partial class Main : Control
                         }
                     }
 
-                    _pendingButtons.Enqueue((folderName, mapFolder, infoPath));
+                    _mapListItems.Enqueue((folderName, mapFolder, infoPath));
                 }
             }
         }
 
-        GetNode<Label>("HomeScreen/VBox/EmptyLabel").Visible = _pendingButtons.Count == 0;
+        // GetNode<Label>("HomeScreen/VBox/EmptyLabel").Visible = _pendingButtons.Count == 0; TODO
     }
 
     public override void _Process(double delta)
     {
-        ProcessPendingButtons();
+        ProcessPendingMapListItems();
         ProcessPendingHydrations();
     }
 
-    private void ProcessPendingButtons()
+    private void ProcessPendingMapListItems()
     {
-        if (_pendingButtons.Count == 0)
+        if (_mapListItems.Count == 0)
         {
             return;
         }
 
-        var mapList = GetNode<VBoxContainer>("HomeScreen/VBox/MapScroll/MapList");
-        for (var i = 0; i < ButtonsPerFrame && _pendingButtons.Count > 0; i++)
+        for (var i = 0; i < ButtonsPerFrame && _mapListItems.Count > 0; i++)
         {
-            var (folderName, mapFolder, infoPath) = _pendingButtons.Dequeue();
-            mapList.AddChild(CreateMapButton(folderName, mapFolder, infoPath));
+            var (folderName, mapFolder, infoPath) = _mapListItems.Dequeue();
+
+            var songName = folderName;
+            var songAuthor = string.Empty;
+            var coverImageFileName = string.Empty;
+            var songFileName = string.Empty;
+
+            var json = new Json();
+            if (json.Parse(FileAccess.GetFileAsString(infoPath)) == Error.Ok)
+            {
+                var data = json.Data.AsGodotDictionary();
+                if (data.TryGetValue("_songName", out var songNameValue) && !string.IsNullOrEmpty(songNameValue.AsString()))
+                {
+                    songName = songNameValue.AsString();
+                }
+
+                if (data.TryGetValue("_songAuthorName", out var authorValue))
+                {
+                    songAuthor = authorValue.AsString();
+                }
+
+                if (data.TryGetValue("_coverImageFilename", out var coverValue))
+                {
+                    coverImageFileName = coverValue.AsString();
+                }
+
+                if (data.TryGetValue("_songFilename", out var songFileValue))
+                {
+                    songFileName = songFileValue.AsString();
+                }
+            }
+
+            const int maxTitleLength = 100;
+            var titleText = songName.Length > maxTitleLength
+                ? songName[..maxTitleLength] + "..."
+                : songName;
+
+            Texture2D coverTexture = null;
+
+            var coverImagePath = !string.IsNullOrWhiteSpace(coverImageFileName)
+                ? mapFolder.PathJoin(coverImageFileName)
+                : "res://icon.svg";
+
+            var coverImage = new Image();
+
+            var result = coverImage.Load(coverImagePath);
+
+            if (result == Error.Ok)
+            {
+                coverTexture = ImageTexture.CreateFromImage(coverImage);
+            }
+            else
+            {
+                if (coverImage.Load("res://icon.svg") == Error.Ok)
+                {
+                    coverTexture = ImageTexture.CreateFromImage(coverImage);
+                }
+            }
+
+
+            _mapList.AddItem(titleText, coverTexture);
         }
+    }
+
+    private void MapSelected(long index)
+    {
+        var songName = _mapList.GetItemText((int)index);
+        var coverTexture = _mapList.GetItemIcon((int)index);
+
+        _mapDetails.Show();
+
+        var songNameEdit = (LineEdit)_mapDetails.FindChild("SongNameEdit", true, false);
+        songNameEdit.Text = songName;
+
+        var coverImage = (TextureRect)_mapDetails.FindChild("Cover", true, false);
+        coverImage.Texture = coverTexture;
     }
 
     private void ProcessPendingHydrations()

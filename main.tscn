@@ -413,7 +413,7 @@ theme_override_font_sizes/font_size = 14
 horizontal_alignment = 1
 autowrap_mode = 3
 
-[node name="HomeScreen" type="MarginContainer" parent="." unique_id=99629438]
+[node name="HomeScreenOld" type="MarginContainer" parent="." unique_id=99629438]
 visible = false
 layout_mode = 1
 anchors_preset = 15
@@ -426,25 +426,25 @@ theme_override_constants/margin_top = 32
 theme_override_constants/margin_right = 48
 theme_override_constants/margin_bottom = 32
 
-[node name="VBox" type="VBoxContainer" parent="HomeScreen" unique_id=908283523]
+[node name="VBox" type="VBoxContainer" parent="HomeScreenOld" unique_id=908283523]
 layout_mode = 2
 theme_override_constants/separation = 20
 
-[node name="Header" type="HBoxContainer" parent="HomeScreen/VBox" unique_id=1008469100]
+[node name="Header" type="HBoxContainer" parent="HomeScreenOld/VBox" unique_id=1008469100]
 layout_mode = 2
 theme_override_constants/separation = 16
 
-[node name="Title" type="Label" parent="HomeScreen/VBox/Header" unique_id=310084053]
+[node name="Title" type="Label" parent="HomeScreenOld/VBox/Header" unique_id=310084053]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.95, 0.96, 0.98, 1)
 theme_override_font_sizes/font_size = 36
 text = "BSMapper"
 
-[node name="Spacer" type="Control" parent="HomeScreen/VBox/Header" unique_id=1096593328]
+[node name="Spacer" type="Control" parent="HomeScreenOld/VBox/Header" unique_id=1096593328]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="NewMapButton" type="Button" parent="HomeScreen/VBox/Header" unique_id=806157913]
+[node name="NewMapButton" type="Button" parent="HomeScreenOld/VBox/Header" unique_id=806157913]
 layout_mode = 2
 size_flags_vertical = 4
 theme_override_colors/font_color = Color(1, 1, 1, 1)
@@ -456,12 +456,12 @@ theme_override_styles/pressed = SubResource("StyleBoxFlat_accent_button_pressed"
 theme_override_styles/hover = SubResource("StyleBoxFlat_accent_button_hover")
 text = "+ New map"
 
-[node name="InstallLocationLabel" type="Label" parent="HomeScreen/VBox/Header" unique_id=1512118692]
+[node name="InstallLocationLabel" type="Label" parent="HomeScreenOld/VBox/Header" unique_id=1512118692]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.52, 0.56, 0.64, 1)
 theme_override_font_sizes/font_size = 13
 
-[node name="ChangeLocationButton" type="Button" parent="HomeScreen/VBox/Header" unique_id=2135005953]
+[node name="ChangeLocationButton" type="Button" parent="HomeScreenOld/VBox/Header" unique_id=2135005953]
 layout_mode = 2
 size_flags_vertical = 4
 theme_override_colors/font_color = Color(0.8, 0.83, 0.88, 1)
@@ -471,11 +471,11 @@ theme_override_styles/pressed = SubResource("StyleBoxFlat_toggle")
 theme_override_styles/hover = SubResource("StyleBoxFlat_toggle_hover")
 text = "Change location"
 
-[node name="FilterBar" type="HBoxContainer" parent="HomeScreen/VBox" unique_id=1670093074]
+[node name="FilterBar" type="HBoxContainer" parent="HomeScreenOld/VBox" unique_id=1670093074]
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="WipMapsButton" type="Button" parent="HomeScreen/VBox/FilterBar" unique_id=611893984]
+[node name="WipMapsButton" type="Button" parent="HomeScreenOld/VBox/FilterBar" unique_id=611893984]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.8, 0.83, 0.88, 1)
 theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
@@ -489,7 +489,7 @@ toggle_mode = true
 button_pressed = true
 text = "WIP Maps"
 
-[node name="CustomMapsButton" type="Button" parent="HomeScreen/VBox/FilterBar" unique_id=777263773]
+[node name="CustomMapsButton" type="Button" parent="HomeScreenOld/VBox/FilterBar" unique_id=777263773]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.8, 0.83, 0.88, 1)
 theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
@@ -502,7 +502,7 @@ theme_override_styles/hover_pressed = SubResource("StyleBoxFlat_toggle_active")
 toggle_mode = true
 text = "Custom Maps"
 
-[node name="SearchBar" type="LineEdit" parent="HomeScreen/VBox/FilterBar" unique_id=1665453019]
+[node name="SearchBar" type="LineEdit" parent="HomeScreenOld/VBox/FilterBar" unique_id=1665453019]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0.95, 0.96, 0.98, 1)
@@ -513,17 +513,17 @@ theme_override_styles/focus = SubResource("StyleBoxFlat_toggle_hover")
 placeholder_text = "Search by title or author..."
 clear_button_enabled = true
 
-[node name="MapScroll" type="ScrollContainer" parent="HomeScreen/VBox" unique_id=1982759291]
+[node name="MapScroll" type="ScrollContainer" parent="HomeScreenOld/VBox" unique_id=1982759291]
 layout_mode = 2
 size_flags_vertical = 3
 horizontal_scroll_mode = 0
 
-[node name="MapList" type="VBoxContainer" parent="HomeScreen/VBox/MapScroll" unique_id=1428375967]
+[node name="MapList" type="VBoxContainer" parent="HomeScreenOld/VBox/MapScroll" unique_id=1428375967]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 12
 
-[node name="EmptyLabel" type="Label" parent="HomeScreen/VBox" unique_id=418854345]
+[node name="EmptyLabel" type="Label" parent="HomeScreenOld/VBox" unique_id=418854345]
 visible = false
 layout_mode = 2
 theme_override_colors/font_color = Color(0.52, 0.56, 0.64, 1)
@@ -531,7 +531,7 @@ theme_override_font_sizes/font_size = 16
 text = "No maps found in this folder."
 horizontal_alignment = 1
 
-[node name="HomeScreen2" type="MarginContainer" parent="." unique_id=787820621]
+[node name="HomeScreen" type="MarginContainer" parent="." unique_id=787820621]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -539,46 +539,46 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="VBox" type="VBoxContainer" parent="HomeScreen2" unique_id=746069528]
+[node name="VBox" type="VBoxContainer" parent="HomeScreen" unique_id=746069528]
 visible = false
 layout_mode = 2
 theme_override_constants/separation = 20
 
-[node name="Header" type="HBoxContainer" parent="HomeScreen2/VBox" unique_id=243455181]
+[node name="Header" type="HBoxContainer" parent="HomeScreen/VBox" unique_id=243455181]
 layout_mode = 2
 theme_override_constants/separation = 16
 
-[node name="Title" type="Label" parent="HomeScreen2/VBox/Header" unique_id=1110181364]
+[node name="Title" type="Label" parent="HomeScreen/VBox/Header" unique_id=1110181364]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.95, 0.96, 0.98, 1)
 theme_override_font_sizes/font_size = 36
 text = "BSMapper"
 
-[node name="Spacer" type="Control" parent="HomeScreen2/VBox/Header" unique_id=1526608626]
+[node name="Spacer" type="Control" parent="HomeScreen/VBox/Header" unique_id=1526608626]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="NewMapButton" type="Button" parent="HomeScreen2/VBox/Header" unique_id=1644301771]
+[node name="NewMapButton" type="Button" parent="HomeScreen/VBox/Header" unique_id=1644301771]
 layout_mode = 2
 size_flags_vertical = 4
 theme_override_font_sizes/font_size = 15
 text = "+ New map"
 
-[node name="InstallLocationLabel" type="Label" parent="HomeScreen2/VBox/Header" unique_id=1848266520]
+[node name="InstallLocationLabel" type="Label" parent="HomeScreen/VBox/Header" unique_id=1848266520]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.52, 0.56, 0.64, 1)
 theme_override_font_sizes/font_size = 13
 
-[node name="ChangeLocationButton" type="Button" parent="HomeScreen2/VBox/Header" unique_id=951458608]
+[node name="ChangeLocationButton" type="Button" parent="HomeScreen/VBox/Header" unique_id=951458608]
 layout_mode = 2
 size_flags_vertical = 4
 text = "Change location"
 
-[node name="FilterBar" type="HBoxContainer" parent="HomeScreen2/VBox" unique_id=2080595665]
+[node name="FilterBar" type="HBoxContainer" parent="HomeScreen/VBox" unique_id=2080595665]
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="WipMapsButton" type="Button" parent="HomeScreen2/VBox/FilterBar" unique_id=1026014682]
+[node name="WipMapsButton" type="Button" parent="HomeScreen/VBox/FilterBar" unique_id=1026014682]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.8, 0.83, 0.88, 1)
 theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
@@ -592,7 +592,7 @@ toggle_mode = true
 button_pressed = true
 text = "WIP Maps"
 
-[node name="CustomMapsButton" type="Button" parent="HomeScreen2/VBox/FilterBar" unique_id=2008511518]
+[node name="CustomMapsButton" type="Button" parent="HomeScreen/VBox/FilterBar" unique_id=2008511518]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.8, 0.83, 0.88, 1)
 theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
@@ -605,7 +605,7 @@ theme_override_styles/hover_pressed = SubResource("StyleBoxFlat_toggle_active")
 toggle_mode = true
 text = "Custom Maps"
 
-[node name="SearchBar" type="LineEdit" parent="HomeScreen2/VBox/FilterBar" unique_id=90071968]
+[node name="SearchBar" type="LineEdit" parent="HomeScreen/VBox/FilterBar" unique_id=90071968]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0.95, 0.96, 0.98, 1)
@@ -616,17 +616,17 @@ theme_override_styles/focus = SubResource("StyleBoxFlat_toggle_hover")
 placeholder_text = "Search by title or author..."
 clear_button_enabled = true
 
-[node name="MapScroll" type="ScrollContainer" parent="HomeScreen2/VBox" unique_id=1579949699]
+[node name="MapScroll" type="ScrollContainer" parent="HomeScreen/VBox" unique_id=1579949699]
 layout_mode = 2
 size_flags_vertical = 3
 horizontal_scroll_mode = 0
 
-[node name="MapList" type="VBoxContainer" parent="HomeScreen2/VBox/MapScroll" unique_id=1714942805]
+[node name="MapList" type="VBoxContainer" parent="HomeScreen/VBox/MapScroll" unique_id=1714942805]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 12
 
-[node name="EmptyLabel" type="Label" parent="HomeScreen2/VBox" unique_id=1377014870]
+[node name="EmptyLabel" type="Label" parent="HomeScreen/VBox" unique_id=1377014870]
 visible = false
 layout_mode = 2
 theme_override_colors/font_color = Color(0.52, 0.56, 0.64, 1)
@@ -634,40 +634,46 @@ theme_override_font_sizes/font_size = 16
 text = "No maps found in this folder."
 horizontal_alignment = 1
 
-[node name="HBoxContainer" type="HBoxContainer" parent="HomeScreen2" unique_id=522489321]
+[node name="HBoxContainer" type="HBoxContainer" parent="HomeScreen" unique_id=522489321]
 layout_mode = 2
 
-[node name="Sidebar" type="VBoxContainer" parent="HomeScreen2/HBoxContainer" unique_id=1285776419]
+[node name="Sidebar" type="VBoxContainer" parent="HomeScreen/HBoxContainer" unique_id=1285776419]
 custom_minimum_size = Vector2(300, 0)
 layout_mode = 2
 
-[node name="Header" type="HBoxContainer" parent="HomeScreen2/HBoxContainer/Sidebar" unique_id=105285895]
+[node name="Header" type="HBoxContainer" parent="HomeScreen/HBoxContainer/Sidebar" unique_id=105285895]
 layout_mode = 2
 alignment = 1
 
-[node name="Title" type="Label" parent="HomeScreen2/HBoxContainer/Sidebar/Header" unique_id=1875205243]
+[node name="Title" type="Label" parent="HomeScreen/HBoxContainer/Sidebar/Header" unique_id=1875205243]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.95, 0.96, 0.98, 1)
 theme_override_font_sizes/font_size = 36
 text = "BSMapper"
 
-[node name="ItemList" type="ItemList" parent="HomeScreen2/HBoxContainer/Sidebar" unique_id=967761982]
+[node name="MapList" type="ItemList" parent="HomeScreen/HBoxContainer/Sidebar" unique_id=967761982]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
-item_count = 1
+theme_override_constants/v_separation = 10
+item_count = 2
 fixed_icon_size = Vector2i(50, 50)
 item_0/text = "test123"
 item_0/icon = ExtResource("2_0xm2m")
+item_1/text = "test456"
+item_1/icon = ExtResource("3_h2yge")
 
-[node name="MapDetails" type="VBoxContainer" parent="HomeScreen2/HBoxContainer" unique_id=1871114016]
+[node name="MapDetails" type="VBoxContainer" parent="HomeScreen/HBoxContainer" unique_id=1871114016]
+unique_name_in_owner = true
+visible = false
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="Header" type="HBoxContainer" parent="HomeScreen2/HBoxContainer/MapDetails" unique_id=1064505888]
+[node name="Header" type="HBoxContainer" parent="HomeScreen/HBoxContainer/MapDetails" unique_id=1064505888]
 custom_minimum_size = Vector2(0, 150)
 layout_mode = 2
 
-[node name="CoverContainer" type="MarginContainer" parent="HomeScreen2/HBoxContainer/MapDetails/Header" unique_id=1662390510]
+[node name="CoverContainer" type="MarginContainer" parent="HomeScreen/HBoxContainer/MapDetails/Header" unique_id=1662390510]
 custom_minimum_size = Vector2(150, 0)
 custom_maximum_size = Vector2(150, -1)
 layout_mode = 2
@@ -676,65 +682,65 @@ theme_override_constants/margin_top = 20
 theme_override_constants/margin_right = 20
 theme_override_constants/margin_bottom = 20
 
-[node name="Cover" type="TextureRect" parent="HomeScreen2/HBoxContainer/MapDetails/Header/CoverContainer" unique_id=2019563026]
+[node name="Cover" type="TextureRect" parent="HomeScreen/HBoxContainer/MapDetails/Header/CoverContainer" unique_id=2019563026]
 layout_mode = 2
 size_flags_vertical = 4
 texture = ExtResource("3_h2yge")
 expand_mode = 4
 
-[node name="BasicInfoContainer" type="MarginContainer" parent="HomeScreen2/HBoxContainer/MapDetails/Header" unique_id=151565454]
+[node name="BasicInfoContainer" type="MarginContainer" parent="HomeScreen/HBoxContainer/MapDetails/Header" unique_id=151565454]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/margin_top = 20
 
-[node name="GridContainer" type="GridContainer" parent="HomeScreen2/HBoxContainer/MapDetails/Header/BasicInfoContainer" unique_id=1173660672]
+[node name="GridContainer" type="GridContainer" parent="HomeScreen/HBoxContainer/MapDetails/Header/BasicInfoContainer" unique_id=1173660672]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/h_separation = 20
 columns = 2
 
-[node name="SongNameContainer" type="VBoxContainer" parent="HomeScreen2/HBoxContainer/MapDetails/Header/BasicInfoContainer/GridContainer" unique_id=1339562470]
+[node name="SongNameContainer" type="VBoxContainer" parent="HomeScreen/HBoxContainer/MapDetails/Header/BasicInfoContainer/GridContainer" unique_id=1339562470]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="SongNameLabel" type="Label" parent="HomeScreen2/HBoxContainer/MapDetails/Header/BasicInfoContainer/GridContainer/SongNameContainer" unique_id=133659360]
+[node name="SongNameLabel" type="Label" parent="HomeScreen/HBoxContainer/MapDetails/Header/BasicInfoContainer/GridContainer/SongNameContainer" unique_id=133659360]
 layout_mode = 2
 text = "Song Name"
 
-[node name="SongNameEdit" type="LineEdit" parent="HomeScreen2/HBoxContainer/MapDetails/Header/BasicInfoContainer/GridContainer/SongNameContainer" unique_id=484994902]
+[node name="SongNameEdit" type="LineEdit" parent="HomeScreen/HBoxContainer/MapDetails/Header/BasicInfoContainer/GridContainer/SongNameContainer" unique_id=484994902]
 layout_mode = 2
 
-[node name="SubNameContainer" type="VBoxContainer" parent="HomeScreen2/HBoxContainer/MapDetails/Header/BasicInfoContainer/GridContainer" unique_id=985889921]
+[node name="SubNameContainer" type="VBoxContainer" parent="HomeScreen/HBoxContainer/MapDetails/Header/BasicInfoContainer/GridContainer" unique_id=985889921]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="SubNameLabel" type="Label" parent="HomeScreen2/HBoxContainer/MapDetails/Header/BasicInfoContainer/GridContainer/SubNameContainer" unique_id=1056709270]
+[node name="SubNameLabel" type="Label" parent="HomeScreen/HBoxContainer/MapDetails/Header/BasicInfoContainer/GridContainer/SubNameContainer" unique_id=1056709270]
 layout_mode = 2
 text = "Sub Name"
 
-[node name="SubNameEdit" type="LineEdit" parent="HomeScreen2/HBoxContainer/MapDetails/Header/BasicInfoContainer/GridContainer/SubNameContainer" unique_id=1569642188]
+[node name="SubNameEdit" type="LineEdit" parent="HomeScreen/HBoxContainer/MapDetails/Header/BasicInfoContainer/GridContainer/SubNameContainer" unique_id=1569642188]
 layout_mode = 2
 
-[node name="SongAuthorContainer" type="VBoxContainer" parent="HomeScreen2/HBoxContainer/MapDetails/Header/BasicInfoContainer/GridContainer" unique_id=1188825841]
+[node name="SongAuthorContainer" type="VBoxContainer" parent="HomeScreen/HBoxContainer/MapDetails/Header/BasicInfoContainer/GridContainer" unique_id=1188825841]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="SongAuthorLabel" type="Label" parent="HomeScreen2/HBoxContainer/MapDetails/Header/BasicInfoContainer/GridContainer/SongAuthorContainer" unique_id=1143738931]
+[node name="SongAuthorLabel" type="Label" parent="HomeScreen/HBoxContainer/MapDetails/Header/BasicInfoContainer/GridContainer/SongAuthorContainer" unique_id=1143738931]
 layout_mode = 2
 text = "Song Author"
 
-[node name="SongAuthorEdit" type="LineEdit" parent="HomeScreen2/HBoxContainer/MapDetails/Header/BasicInfoContainer/GridContainer/SongAuthorContainer" unique_id=588495554]
+[node name="SongAuthorEdit" type="LineEdit" parent="HomeScreen/HBoxContainer/MapDetails/Header/BasicInfoContainer/GridContainer/SongAuthorContainer" unique_id=588495554]
 layout_mode = 2
 
-[node name="CreatorContainer" type="VBoxContainer" parent="HomeScreen2/HBoxContainer/MapDetails/Header/BasicInfoContainer/GridContainer" unique_id=351018412]
+[node name="CreatorContainer" type="VBoxContainer" parent="HomeScreen/HBoxContainer/MapDetails/Header/BasicInfoContainer/GridContainer" unique_id=351018412]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="CreatorLabel" type="Label" parent="HomeScreen2/HBoxContainer/MapDetails/Header/BasicInfoContainer/GridContainer/CreatorContainer" unique_id=1228870533]
+[node name="CreatorLabel" type="Label" parent="HomeScreen/HBoxContainer/MapDetails/Header/BasicInfoContainer/GridContainer/CreatorContainer" unique_id=1228870533]
 layout_mode = 2
 text = "Creator"
 
-[node name="CreatorEdit" type="LineEdit" parent="HomeScreen2/HBoxContainer/MapDetails/Header/BasicInfoContainer/GridContainer/CreatorContainer" unique_id=1926265558]
+[node name="CreatorEdit" type="LineEdit" parent="HomeScreen/HBoxContainer/MapDetails/Header/BasicInfoContainer/GridContainer/CreatorContainer" unique_id=1926265558]
 layout_mode = 2
 
 [connection signal="dir_selected" from="InstallLocationFolderDialog" to="." method="OnInstallLocationFolderDialogDirSelected"]
@@ -742,8 +748,8 @@ layout_mode = 2
 [connection signal="confirmed" from="NewMapDialog" to="." method="OnNewMapDialogConfirmed"]
 [connection signal="pressed" from="NewMapDialog/Margin/VBox/Grid/AudioFileBox/SelectAudioFileButton" to="." method="OnSelectAudioFilePressed"]
 [connection signal="pressed" from="InstallLocationScreen/Panel/VBox/SelectButton" to="." method="OnSelectInstallLocationPressed"]
-[connection signal="pressed" from="HomeScreen/VBox/Header/NewMapButton" to="." method="OnNewMapButtonPressed"]
-[connection signal="pressed" from="HomeScreen/VBox/Header/ChangeLocationButton" to="." method="OnSelectInstallLocationPressed"]
-[connection signal="toggled" from="HomeScreen/VBox/FilterBar/WipMapsButton" to="." method="OnWipMapsButtonToggled"]
-[connection signal="toggled" from="HomeScreen/VBox/FilterBar/CustomMapsButton" to="." method="OnCustomMapsButtonToggled"]
-[connection signal="text_changed" from="HomeScreen/VBox/FilterBar/SearchBar" to="." method="OnSearchTextChanged"]
+[connection signal="pressed" from="HomeScreenOld/VBox/Header/NewMapButton" to="." method="OnNewMapButtonPressed"]
+[connection signal="pressed" from="HomeScreenOld/VBox/Header/ChangeLocationButton" to="." method="OnSelectInstallLocationPressed"]
+[connection signal="toggled" from="HomeScreenOld/VBox/FilterBar/WipMapsButton" to="." method="OnWipMapsButtonToggled"]
+[connection signal="toggled" from="HomeScreenOld/VBox/FilterBar/CustomMapsButton" to="." method="OnCustomMapsButtonToggled"]
+[connection signal="text_changed" from="HomeScreenOld/VBox/FilterBar/SearchBar" to="." method="OnSearchTextChanged"]
