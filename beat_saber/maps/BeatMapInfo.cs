@@ -20,7 +20,13 @@ public partial class BeatMapInfo : RefCounted
     public string SongAuthorName { get; set; } = string.Empty;
 
     [Export]
+    public string LevelAuthorName { get; set; } = string.Empty;
+
+    [Export]
     public string SongFileName { get; set; } = string.Empty;
+
+    [Export]
+    public string CoverImageFileName { get; set; } = string.Empty;
 
     /// <summary>Folder containing the map's info.dat, song and difficulty files.</summary>
     public string MapFolder => Path.GetDirectoryName(FilePath);
@@ -29,6 +35,15 @@ public partial class BeatMapInfo : RefCounted
 
     [Export]
     public float Bpm { get; set; }
+
+    [Export]
+    public float PreviewStartTime { get; set; }
+
+    [Export]
+    public float PreviewDuration { get; set; }
+
+    [Export]
+    public float SongTimeOffset { get; set; }
 
     [Export]
     public Variant OriginalObject { get; set; }
@@ -50,8 +65,13 @@ public partial class BeatMapInfo : RefCounted
             ["_songName"] = songName,
             ["_songSubName"] = songSubName,
             ["_songAuthorName"] = songAuthorName,
+            ["_levelAuthorName"] = string.Empty,
             ["_songFilename"] = songFileName,
+            ["_coverImageFilename"] = string.Empty,
             ["_beatsPerMinute"] = bpm,
+            ["_previewStartTime"] = 0.0f,
+            ["_previewDuration"] = 0.0f,
+            ["_songTimeOffset"] = 0.0f,
             ["_difficultyBeatmapSets"] = new Array(),
         };
         return FromFile(data, mapFolder.PathJoin("info.dat"));
@@ -73,8 +93,13 @@ public partial class BeatMapInfo : RefCounted
             SongName = data["_songName"].AsString(),
             SongSubName = data["_songSubName"].AsString(),
             SongAuthorName = data["_songAuthorName"].AsString(),
+            LevelAuthorName = GetString(data, "_levelAuthorName"),
             SongFileName = data["_songFilename"].AsString(),
+            CoverImageFileName = GetString(data, "_coverImageFilename"),
             Bpm = (float)data["_beatsPerMinute"].AsDouble(),
+            PreviewStartTime = GetFloat(data, "_previewStartTime"),
+            PreviewDuration = GetFloat(data, "_previewDuration"),
+            SongTimeOffset = GetFloat(data, "_songTimeOffset"),
         };
 
         foreach (var difficultySet in data["_difficultyBeatmapSets"].AsGodotArray())
@@ -85,11 +110,23 @@ public partial class BeatMapInfo : RefCounted
         return info;
     }
 
-    public void UpdateSongInfo(string songName, string songSubName, string songAuthorName, float bpm)
+    public void UpdateSongInfo(
+        string songName,
+        string songSubName,
+        string songAuthorName,
+        string levelAuthorName,
+        float bpm,
+        float previewStartTime,
+        float previewDuration,
+        float songTimeOffset)
     {
         SongName = songName;
         SongSubName = songSubName;
         SongAuthorName = songAuthorName;
+        LevelAuthorName = levelAuthorName;
+        PreviewStartTime = previewStartTime;
+        PreviewDuration = previewDuration;
+        SongTimeOffset = songTimeOffset;
 
         var bpmChanged = !Mathf.IsEqualApprox(Bpm, bpm);
         Bpm = bpm;
@@ -98,7 +135,11 @@ public partial class BeatMapInfo : RefCounted
         data["_songName"] = songName;
         data["_songSubName"] = songSubName;
         data["_songAuthorName"] = songAuthorName;
+        data["_levelAuthorName"] = levelAuthorName;
         data["_beatsPerMinute"] = bpm;
+        data["_previewStartTime"] = previewStartTime;
+        data["_previewDuration"] = previewDuration;
+        data["_songTimeOffset"] = songTimeOffset;
 
         if (!bpmChanged)
         {
@@ -113,6 +154,16 @@ public partial class BeatMapInfo : RefCounted
                 difficulty.Initialize();
             }
         }
+    }
+
+    private static string GetString(Dictionary data, string key)
+    {
+        return data.TryGetValue(key, out var value) ? value.AsString() : string.Empty;
+    }
+
+    private static float GetFloat(Dictionary data, string key)
+    {
+        return data.TryGetValue(key, out var value) ? (float)value.AsDouble() : 0.0f;
     }
 
     public BeatMapDifficultyInfo FindDifficulty(

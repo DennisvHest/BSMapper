@@ -125,11 +125,23 @@ public partial class BeatMapManager : Node
         string songName,
         string songSubName,
         string songAuthorName,
+        string levelAuthorName,
         float bpm,
+        float previewStartTime,
+        float previewDuration,
+        float songTimeOffset,
         string songPath,
         IReadOnlyList<DifficultySettings> difficulties)
     {
-        beatmapInfo.UpdateSongInfo(songName, songSubName, songAuthorName, bpm);
+        beatmapInfo.UpdateSongInfo(
+            songName,
+            songSubName,
+            songAuthorName,
+            levelAuthorName,
+            bpm,
+            previewStartTime,
+            previewDuration,
+            songTimeOffset);
 
         if (!string.IsNullOrEmpty(songPath))
         {

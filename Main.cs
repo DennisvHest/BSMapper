@@ -4,41 +4,21 @@ using System.Collections.Generic;
 
 public partial class Main : Control
 {
-    private const int ButtonsPerFrame = 50;
-    private const int HydrationsPerFrame = 4;
-    private const string NewMapDialogPath = "NewMapDialog";
-
     [Export]
     public bool DebugWithoutVr { get; set; }
 
     public string BeatSaberInstallLocation { get; set; } = string.Empty;
 
-    private bool _showWipMaps = true;
-    private string _searchText = string.Empty;
-    private string _newMapSongPath = string.Empty;
-    private BeatMapInfo _editingBeatmapInfo;
-    private readonly Queue<(string FolderName, string MapFolder, string InfoPath)> _mapListItems = new();
-    private readonly List<MapListEntry> _pendingHydrations = new();
-
-    private ItemList _mapList;
-    private Container _mapDetails;
-
-    private sealed class MapListEntry
-    {
-        public Button Button;
-        public TextureRect Cover;
-        public Label DurationLabel;
-        public string MapFolder;
-        public string CoverImageFileName;
-        public string SongFileName;
-    }
+    private MapList _mapList;
+    private MapDetails _mapDetails;
 
     public override void _Ready()
     {
-        _mapList = GetNode<ItemList>("%MapList");
-        _mapDetails = GetNode<Container>("%MapDetails");
+        _mapList = GetNode<MapList>("%MapList");
+        _mapDetails = GetNode<MapDetails>("%MapDetails");
 
-        _mapList.ItemSelected += MapSelected;
+        _mapList.MapSelected += MapSelected;
+        _mapDetails.OpenMapRequested += OpenMapInEditor;
 
         LoadSettings();
         if (IsValidInstallLocation(BeatSaberInstallLocation))
@@ -110,156 +90,16 @@ public partial class Main : Control
 
     private void RefreshMapList()
     {
-        _mapListItems.Clear();
-        _pendingHydrations.Clear();
-
-        _mapList.Clear();
-        foreach (var child in _mapList.GetChildren())
-        {
-            child.QueueFree();
-        }
-
         var mapsLocation = BeatSaberInstallLocation
-            .PathJoin(_showWipMaps ? Settings.CustomWipLevelsFolder : Settings.CustomLevelsFolder);
-
-        if (DirAccess.DirExistsAbsolute(mapsLocation))
-        {
-            using var directory = DirAccess.Open(mapsLocation);
-            if (directory is not null)
-            {
-                foreach (var folderName in directory.GetDirectories())
-                {
-                    var mapFolder = mapsLocation.PathJoin(folderName);
-                    var infoPath = mapFolder.PathJoin("info.dat");
-                    if (!FileAccess.FileExists(infoPath))
-                    {
-                        infoPath = mapFolder.PathJoin("Info.dat");
-                        if (!FileAccess.FileExists(infoPath))
-                        {
-                            continue;
-                        }
-                    }
-
-                    _mapListItems.Enqueue((folderName, mapFolder, infoPath));
-                }
-            }
-        }
-
-        // GetNode<Label>("HomeScreen/VBox/EmptyLabel").Visible = _pendingButtons.Count == 0; TODO
+            .PathJoin(Settings.CustomWipLevelsFolder);
+        _mapDetails.Hide();
+        _mapList.Refresh(mapsLocation);
     }
 
-    public override void _Process(double delta)
+    private void MapSelected(string infoPath)
     {
-        ProcessPendingMapListItems();
-    }
-
-    private void ProcessPendingMapListItems()
-    {
-        if (_mapListItems.Count == 0)
-        {
-            return;
-        }
-
-        for (var i = 0; i < ButtonsPerFrame && _mapListItems.Count > 0; i++)
-        {
-            var (folderName, mapFolder, infoPath) = _mapListItems.Dequeue();
-
-            var songName = folderName;
-            var songAuthor = string.Empty;
-            var coverImageFileName = string.Empty;
-            var songFileName = string.Empty;
-
-            var json = new Json();
-            if (json.Parse(FileAccess.GetFileAsString(infoPath)) == Error.Ok)
-            {
-                var data = json.Data.AsGodotDictionary();
-                if (data.TryGetValue("_songName", out var songNameValue) && !string.IsNullOrEmpty(songNameValue.AsString()))
-                {
-                    songName = songNameValue.AsString();
-                }
-
-                if (data.TryGetValue("_songAuthorName", out var authorValue))
-                {
-                    songAuthor = authorValue.AsString();
-                }
-
-                if (data.TryGetValue("_coverImageFilename", out var coverValue))
-                {
-                    coverImageFileName = coverValue.AsString();
-                }
-
-                if (data.TryGetValue("_songFilename", out var songFileValue))
-                {
-                    songFileName = songFileValue.AsString();
-                }
-            }
-
-            const int maxTitleLength = 100;
-            var titleText = songName.Length > maxTitleLength
-                ? songName[..maxTitleLength] + "..."
-                : songName;
-
-            Texture2D coverTexture = null;
-
-            var coverImagePath = !string.IsNullOrWhiteSpace(coverImageFileName)
-                ? mapFolder.PathJoin(coverImageFileName)
-                : "res://icon.svg";
-
-            var coverImage = new Image();
-
-            var result = coverImage.Load(coverImagePath);
-
-            if (result == Error.Ok)
-            {
-                coverTexture = ImageTexture.CreateFromImage(coverImage);
-            }
-            else
-            {
-                if (coverImage.Load("res://icon.svg") == Error.Ok)
-                {
-                    coverTexture = ImageTexture.CreateFromImage(coverImage);
-                }
-            }
-
-
-            _mapList.AddItem(titleText, coverTexture);
-        }
-    }
-
-    private void MapSelected(long index)
-    {
-        var songName = _mapList.GetItemText((int)index);
-        var coverTexture = _mapList.GetItemIcon((int)index);
-
-        _mapDetails.Show();
-
-        var songNameEdit = (LineEdit)_mapDetails.FindChild("SongNameEdit", true, false);
-        songNameEdit.Text = songName;
-
-        var coverImage = (TextureRect)_mapDetails.FindChild("Cover", true, false);
-        coverImage.Texture = coverTexture;
-    }
-
-    private static Texture2D LoadCoverImage(string mapFolder, string coverImageFileName)
-    {
-        if (string.IsNullOrEmpty(coverImageFileName))
-        {
-            return null;
-        }
-
-        var coverPath = mapFolder.PathJoin(coverImageFileName);
-        if (!FileAccess.FileExists(coverPath))
-        {
-            return null;
-        }
-
-        var image = Image.LoadFromFile(coverPath);
-        if (image is null)
-        {
-            return null;
-        }
-
-        return ImageTexture.CreateFromImage(image);
+        var manager = GetNode<BeatMapManager>("/root/BeatMapManager");
+        _mapDetails.Populate(manager, manager.ReadBeatmapInfo(infoPath));
     }
 
     private void OpenMapInEditor(string infoPath)
@@ -342,40 +182,4 @@ public partial class Main : Control
         }
     }
 
-    private void OnWipMapsButtonToggled(bool toggledOn)
-    {
-        SetMapFilter(showWipMaps: toggledOn);
-    }
-
-    private void OnCustomMapsButtonToggled(bool toggledOn)
-    {
-        SetMapFilter(showWipMaps: !toggledOn);
-    }
-
-    private void SetMapFilter(bool showWipMaps)
-    {
-        _showWipMaps = showWipMaps;
-        GetNode<Button>("HomeScreen/VBox/FilterBar/WipMapsButton").SetPressedNoSignal(showWipMaps);
-        GetNode<Button>("HomeScreen/VBox/FilterBar/CustomMapsButton").SetPressedNoSignal(!showWipMaps);
-        RefreshMapList();
-    }
-
-    private void OnSearchTextChanged(string newText)
-    {
-        _searchText = newText.Trim().ToLowerInvariant();
-        var mapList = GetNode<VBoxContainer>("HomeScreen/VBox/MapScroll/MapList");
-        foreach (var child in mapList.GetChildren())
-        {
-            if (child is Button button)
-            {
-                button.Visible = MatchesSearch(button);
-            }
-        }
-    }
-
-    private bool MatchesSearch(Button button)
-    {
-        return string.IsNullOrEmpty(_searchText)
-            || button.GetMeta("search_text", string.Empty).AsString().Contains(_searchText);
-    }
 }

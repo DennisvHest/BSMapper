@@ -186,6 +186,18 @@ public partial class BeatMapDifficultyInfo : RefCounted
         };
     }
 
+    public static string GetDifficultyDisplayName(Difficulty difficulty)
+    {
+        return difficulty switch
+        {
+            Difficulty.Normal => "Normal",
+            Difficulty.Hard => "Hard",
+            Difficulty.Expert => "Expert",
+            Difficulty.ExpertPlus => "Expert+",
+            _ => "Easy",
+        };
+    }
+
     public static string GetFileName(Difficulty difficulty, BeatMapDifficultySet.BeatmapMode mode)
     {
         return $"{GetDifficultyName(difficulty)}{BeatMapDifficultySet.GetModeName(mode)}.dat";

@@ -6,5 +6,8 @@
   <ItemGroup>
     <None Include=".github\copilot-instructions.md" />
     <None Include="main.tscn" />
+    <None Include="ui\difficulty_configuration.tscn" />
+    <None Include="ui\map_details.tscn" />
+    <None Include="ui\map_list.tscn" />
   </ItemGroup>
 </Project>
