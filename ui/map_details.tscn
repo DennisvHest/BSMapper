@@ -16,6 +16,12 @@ access = 2
 filters = PackedStringArray("*.egg,*.ogg,*.wav,*.mp3 ; Audio files")
 use_native_dialog = true
 
+[node name="DeleteConfirmation" type="ConfirmationDialog" parent="."]
+unique_name_in_owner = true
+title = "Delete map"
+dialog_text = "Delete this map and all of its difficulty files? This cannot be undone."
+ok_button_text = "Delete"
+
 [node name="Header" type="HBoxContainer" parent="." unique_id=184620779]
 custom_minimum_size = Vector2(0, 150)
 layout_mode = 2
@@ -220,3 +226,8 @@ text = "Create map"
 unique_name_in_owner = true
 layout_mode = 2
 text = "Open map in editor"
+
+[node name="DeleteMap" type="Button" parent="ExtraInfo/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Delete map"

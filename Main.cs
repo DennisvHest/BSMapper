@@ -21,6 +21,7 @@ public partial class Main : Control
         _mapList.NewMapRequested += OnNewMapRequested;
         _mapDetails.OpenMapRequested += OpenMapInEditor;
         _mapDetails.MapCreated += OnMapCreated;
+        _mapDetails.MapDeleted += OnMapDeleted;
 
         LoadSettings();
         if (IsValidInstallLocation(BeatSaberInstallLocation))
@@ -111,6 +112,12 @@ public partial class Main : Control
     }
 
     private void OnMapCreated()
+    {
+        var mapsLocation = BeatSaberInstallLocation.PathJoin(Settings.CustomWipLevelsFolder);
+        _mapList.Refresh(mapsLocation);
+    }
+
+    private void OnMapDeleted()
     {
         var mapsLocation = BeatSaberInstallLocation.PathJoin(Settings.CustomWipLevelsFolder);
         _mapList.Refresh(mapsLocation);

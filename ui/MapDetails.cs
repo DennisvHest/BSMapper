@@ -9,6 +9,7 @@ public partial class MapDetails : VBoxContainer
     public delegate void OpenMapRequestedEventHandler(string infoPath);
 
     public event Action MapCreated;
+    public event Action MapDeleted;
 
     private BeatMapManager _manager;
     private BeatMapInfo _beatmapInfo;
@@ -28,6 +29,8 @@ public partial class MapDetails : VBoxContainer
     private Label _error;
     private Button _createMap;
     private Button _openMap;
+    private Button _deleteMap;
+    private ConfirmationDialog _deleteConfirmation;
     private readonly List<DifficultyConfiguration> _difficulties = new();
 
     public override void _Ready()
@@ -45,6 +48,8 @@ public partial class MapDetails : VBoxContainer
         _error = GetNode<Label>("%Error");
         _createMap = GetNode<Button>("%CreateMap");
         _openMap = GetNode<Button>("%OpenMap");
+        _deleteMap = GetNode<Button>("%DeleteMap");
+        _deleteConfirmation = GetNode<ConfirmationDialog>("%DeleteConfirmation");
 
         foreach (var child in GetNode("%Difficulties").GetChildren())
         {
@@ -64,6 +69,8 @@ public partial class MapDetails : VBoxContainer
         GetNode<Button>("%SelectAudioFile").Pressed += () => GetNode<FileDialog>("%AudioFileDialog").Show();
         GetNode<FileDialog>("%AudioFileDialog").FileSelected += OnAudioFileSelected;
         _createMap.Pressed += CreateMap;
+        _deleteMap.Pressed += () => _deleteConfirmation.PopupCentered();
+        _deleteConfirmation.Confirmed += DeleteMap;
         _openMap.Pressed += () =>
         {
             if (_beatmapInfo is not null)
@@ -99,6 +106,7 @@ public partial class MapDetails : VBoxContainer
 
         _createMap.Show();
         _openMap.Hide();
+        _deleteMap.Hide();
         Show();
         _isPopulating = false;
         _songName.GrabFocus();
@@ -131,8 +139,29 @@ public partial class MapDetails : VBoxContainer
 
         _createMap.Hide();
         _openMap.Show();
+        _deleteMap.Show();
         Show();
         _isPopulating = false;
+    }
+
+    private void DeleteMap()
+    {
+        if (_manager is null || _beatmapInfo is null)
+        {
+            return;
+        }
+
+        try
+        {
+            _manager.DeleteMap(_beatmapInfo);
+            _beatmapInfo = null;
+            Hide();
+            MapDeleted?.Invoke();
+        }
+        catch (Exception exception)
+        {
+            ShowError(exception.Message);
+        }
     }
 
     private void CreateMap()

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using BSMapper;
 using Godot;
+using Path = System.IO.Path;
 
 public partial class BeatMapManager : Node
 {
@@ -205,6 +206,30 @@ public partial class BeatMapManager : Node
     {
         var original = ParseJsonFile(filePath);
         return BeatMapInfo.FromFile(original, filePath);
+    }
+
+    public void DeleteMap(BeatMapInfo beatmapInfo)
+    {
+        var mapsRoot = Path.GetFullPath(Settings.WipBeatmapLocation)
+            .TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)
+            + Path.DirectorySeparatorChar;
+        var mapFolder = Path.GetFullPath(beatmapInfo.MapFolder);
+        if (!mapFolder.StartsWith(mapsRoot, StringComparison.OrdinalIgnoreCase))
+        {
+            throw new InvalidOperationException("The selected map is outside the WIP maps folder.");
+        }
+
+        if (!DirAccess.DirExistsAbsolute(mapFolder))
+        {
+            return;
+        }
+
+        ClearDirectory(mapFolder);
+        var error = DirAccess.RemoveAbsolute(mapFolder);
+        if (error != Error.Ok)
+        {
+            throw new InvalidOperationException($"Failed to delete map folder: {mapFolder}");
+        }
     }
 
     public void LoadDifficulty(BeatMapDifficultyInfo difficulty)
