@@ -77,11 +77,12 @@ use_native_dialog = true
 
 [node name="SongFileDialog" type="FileDialog" parent="." unique_id=1612747444]
 oversampling_override = 1.0
-title = "Open a File"
+title = "Select map audio"
 initial_position = 2
 ok_button_text = "Open"
 file_mode = 0
 access = 2
+filters = PackedStringArray("*.egg,*.ogg ; Beat Saber audio")
 use_native_dialog = true
 
 [node name="NewMapDialog" type="ConfirmationDialog" parent="." unique_id=1612747445]
@@ -148,6 +149,24 @@ min_value = 1.0
 max_value = 1000.0
 step = 0.001
 value = 120.0
+
+[node name="SongFileLabel" type="Label" parent="NewMapDialog/Margin/VBox/Grid"]
+layout_mode = 2
+text = "Audio file"
+
+[node name="SongFileBox" type="HBoxContainer" parent="NewMapDialog/Margin/VBox/Grid"]
+layout_mode = 2
+
+[node name="SongFilePath" type="Label" parent="NewMapDialog/Margin/VBox/Grid/SongFileBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "No file selected"
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="SelectSongFileButton" type="Button" parent="NewMapDialog/Margin/VBox/Grid/SongFileBox"]
+layout_mode = 2
+text = "Select..."
 
 [node name="DifficultiesLabel" type="Label" parent="NewMapDialog/Margin/VBox" unique_id=1612747461]
 layout_mode = 2
@@ -233,7 +252,6 @@ step = 0.01
 
 [node name="Expert" type="CheckBox" parent="NewMapDialog/Margin/VBox/Difficulties" unique_id=1612747466]
 layout_mode = 2
-button_pressed = true
 text = "Expert"
 
 [node name="ExpertNjs" type="SpinBox" parent="NewMapDialog/Margin/VBox/Difficulties" unique_id=1612747481]
@@ -379,4 +397,7 @@ unique_name_in_owner = true
 layout_mode = 2
 
 [connection signal="dir_selected" from="InstallLocationFolderDialog" to="." method="OnInstallLocationFolderDialogDirSelected"]
+[connection signal="file_selected" from="SongFileDialog" to="." method="OnSongFileDialogFileSelected"]
+[connection signal="confirmed" from="NewMapDialog" to="." method="OnNewMapDialogConfirmed"]
+[connection signal="pressed" from="NewMapDialog/Margin/VBox/Grid/SongFileBox/SelectSongFileButton" to="." method="OnSelectNewMapSongFilePressed"]
 [connection signal="pressed" from="InstallLocationScreen/Panel/VBox/SelectButton" to="." method="OnSelectInstallLocationPressed"]

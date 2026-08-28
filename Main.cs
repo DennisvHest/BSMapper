@@ -18,7 +18,9 @@ public partial class Main : Control
         _mapDetails = GetNode<MapDetails>("%MapDetails");
 
         _mapList.MapSelected += MapSelected;
+        _mapList.NewMapRequested += OnNewMapRequested;
         _mapDetails.OpenMapRequested += OpenMapInEditor;
+        _mapDetails.MapCreated += OnMapCreated;
 
         LoadSettings();
         if (IsValidInstallLocation(BeatSaberInstallLocation))
@@ -100,6 +102,18 @@ public partial class Main : Control
     {
         var manager = GetNode<BeatMapManager>("/root/BeatMapManager");
         _mapDetails.Populate(manager, manager.ReadBeatmapInfo(infoPath));
+    }
+
+    private void OnNewMapRequested()
+    {
+        var manager = GetNode<BeatMapManager>("/root/BeatMapManager");
+        _mapDetails.BeginCreate(manager);
+    }
+
+    private void OnMapCreated()
+    {
+        var mapsLocation = BeatSaberInstallLocation.PathJoin(Settings.CustomWipLevelsFolder);
+        _mapList.Refresh(mapsLocation);
     }
 
     private void OpenMapInEditor(string infoPath)

@@ -46,7 +46,7 @@ public partial class BeatMapManager : Node
 
         if (DirAccess.DirExistsAbsolute(mapFolder))
         {
-            ClearDirectory(mapFolder);
+            throw new InvalidOperationException($"A map folder already exists at: {mapFolder}");
         }
 
         var makeDirectoryError = directory.MakeDirRecursive(mapFolder);

@@ -8,6 +8,8 @@ public partial class MapDetails : VBoxContainer
     [Signal]
     public delegate void OpenMapRequestedEventHandler(string infoPath);
 
+    public event Action MapCreated;
+
     private BeatMapManager _manager;
     private BeatMapInfo _beatmapInfo;
     private string _replacementAudioPath = string.Empty;
@@ -24,6 +26,8 @@ public partial class MapDetails : VBoxContainer
     private LineEdit _bpm;
     private LineEdit _songTimeOffset;
     private Label _error;
+    private Button _createMap;
+    private Button _openMap;
     private readonly List<DifficultyConfiguration> _difficulties = new();
 
     public override void _Ready()
@@ -39,6 +43,8 @@ public partial class MapDetails : VBoxContainer
         _bpm = GetNode<LineEdit>("%Bpm");
         _songTimeOffset = GetNode<LineEdit>("%SongTimeOffset");
         _error = GetNode<Label>("%Error");
+        _createMap = GetNode<Button>("%CreateMap");
+        _openMap = GetNode<Button>("%OpenMap");
 
         foreach (var child in GetNode("%Difficulties").GetChildren())
         {
@@ -57,13 +63,45 @@ public partial class MapDetails : VBoxContainer
 
         GetNode<Button>("%SelectAudioFile").Pressed += () => GetNode<FileDialog>("%AudioFileDialog").Show();
         GetNode<FileDialog>("%AudioFileDialog").FileSelected += OnAudioFileSelected;
-        GetNode<Button>("%OpenMap").Pressed += () =>
+        _createMap.Pressed += CreateMap;
+        _openMap.Pressed += () =>
         {
             if (_beatmapInfo is not null)
             {
                 EmitSignal(SignalName.OpenMapRequested, _beatmapInfo.FilePath);
             }
         };
+    }
+
+    public void BeginCreate(BeatMapManager manager)
+    {
+        _isPopulating = true;
+        _manager = manager;
+        _beatmapInfo = null;
+        _replacementAudioPath = string.Empty;
+
+        _songName.Clear();
+        _subName.Clear();
+        _songAuthor.Clear();
+        _creator.Clear();
+        _audioFilePath.Text = "No file selected";
+        _previewStartTime.Text = "0";
+        _previewDuration.Text = "0";
+        _bpm.Text = "120";
+        _songTimeOffset.Text = "0";
+        _cover.Texture = LoadImage("res://icon.svg");
+        _error.Hide();
+
+        foreach (var difficulty in _difficulties)
+        {
+            difficulty.Populate(null);
+        }
+
+        _createMap.Show();
+        _openMap.Hide();
+        Show();
+        _isPopulating = false;
+        _songName.GrabFocus();
     }
 
     public void Populate(BeatMapManager manager, BeatMapInfo beatmapInfo)
@@ -91,8 +129,70 @@ public partial class MapDetails : VBoxContainer
             difficulty.Populate(beatmapInfo.FindDifficulty(difficulty.DifficultyLevel, mode));
         }
 
+        _createMap.Hide();
+        _openMap.Show();
         Show();
         _isPopulating = false;
+    }
+
+    private void CreateMap()
+    {
+        if (_manager is null || string.IsNullOrWhiteSpace(_songName.Text)
+            || !FileAccess.FileExists(_replacementAudioPath))
+        {
+            ShowError("Enter a song name and select an existing audio file.");
+            return;
+        }
+
+        if (!TryReadFormValues(
+                out var bpm,
+                out var previewStartTime,
+                out var previewDuration,
+                out var songTimeOffset))
+        {
+            return;
+        }
+
+        var settings = GetDifficultySettings();
+        try
+        {
+            var beatmapInfo = _manager.NewMap(
+                _replacementAudioPath,
+                _songName.Text.Trim(),
+                _subName.Text.Trim(),
+                _songAuthor.Text.Trim(),
+                bpm);
+
+            foreach (var setting in settings)
+            {
+                _manager.NewDifficulty(
+                    beatmapInfo,
+                    BeatMapDifficultySet.BeatmapMode.Standard,
+                    setting.Difficulty,
+                    setting.Njs,
+                    setting.NoteJumpStartBeatOffset);
+            }
+
+            _manager.UpdateMap(
+                beatmapInfo,
+                beatmapInfo.SongName,
+                beatmapInfo.SongSubName,
+                beatmapInfo.SongAuthorName,
+                _creator.Text.Trim(),
+                bpm,
+                previewStartTime,
+                previewDuration,
+                songTimeOffset,
+                string.Empty,
+                settings);
+
+            Populate(_manager, beatmapInfo);
+            MapCreated?.Invoke();
+        }
+        catch (Exception exception)
+        {
+            ShowError(exception.Message);
+        }
     }
 
     private void Save()
@@ -102,24 +202,16 @@ public partial class MapDetails : VBoxContainer
             return;
         }
 
-        if (!TryReadFloat(_bpm, out var bpm) || bpm <= 0.0f
-            || !TryReadFloat(_previewStartTime, out var previewStartTime)
-            || !TryReadFloat(_previewDuration, out var previewDuration)
-            || !TryReadFloat(_songTimeOffset, out var songTimeOffset))
+        if (!TryReadFormValues(
+                out var bpm,
+                out var previewStartTime,
+                out var previewDuration,
+                out var songTimeOffset))
         {
-            _error.Text = "BPM must be greater than zero and timing values must be valid numbers.";
-            _error.Show();
             return;
         }
 
-        var settings = new List<BeatMapManager.DifficultySettings>();
-        foreach (var difficulty in _difficulties)
-        {
-            if (difficulty.ButtonPressed)
-            {
-                settings.Add(difficulty.GetSettings());
-            }
-        }
+        var settings = GetDifficultySettings();
 
         try
         {
@@ -144,6 +236,47 @@ public partial class MapDetails : VBoxContainer
             _error.Text = exception.Message;
             _error.Show();
         }
+    }
+
+    private bool TryReadFormValues(
+        out float bpm,
+        out float previewStartTime,
+        out float previewDuration,
+        out float songTimeOffset)
+    {
+        if (TryReadFloat(_bpm, out bpm) && bpm > 0.0f
+            && TryReadFloat(_previewStartTime, out previewStartTime)
+            && TryReadFloat(_previewDuration, out previewDuration)
+            && TryReadFloat(_songTimeOffset, out songTimeOffset))
+        {
+            return true;
+        }
+
+        previewStartTime = 0.0f;
+        previewDuration = 0.0f;
+        songTimeOffset = 0.0f;
+        ShowError("BPM must be greater than zero and timing values must be valid numbers.");
+        return false;
+    }
+
+    private List<BeatMapManager.DifficultySettings> GetDifficultySettings()
+    {
+        var settings = new List<BeatMapManager.DifficultySettings>();
+        foreach (var difficulty in _difficulties)
+        {
+            if (difficulty.ButtonPressed)
+            {
+                settings.Add(difficulty.GetSettings());
+            }
+        }
+
+        return settings;
+    }
+
+    private void ShowError(string message)
+    {
+        _error.Text = message;
+        _error.Show();
     }
 
     private void OnAudioFileSelected(string path)
@@ -180,7 +313,12 @@ public partial class MapDetails : VBoxContainer
         var path = string.IsNullOrWhiteSpace(beatmapInfo.CoverImageFileName)
             ? "res://icon.svg"
             : beatmapInfo.MapFolder.PathJoin(beatmapInfo.CoverImageFileName);
-        var image = Image.LoadFromFile(path) ?? Image.LoadFromFile("res://icon.svg");
+        return LoadImage(path) ?? LoadImage("res://icon.svg");
+    }
+
+    private static Texture2D LoadImage(string path)
+    {
+        var image = Image.LoadFromFile(path);
         return image is null ? null : ImageTexture.CreateFromImage(image);
     }
 }

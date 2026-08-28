@@ -1,4 +1,5 @@
 using Godot;
+using System;
 using System.Collections.Generic;
 
 public partial class MapList : VBoxContainer
@@ -8,6 +9,8 @@ public partial class MapList : VBoxContainer
     [Signal]
     public delegate void MapSelectedEventHandler(string infoPath);
 
+    public event Action NewMapRequested;
+
     private readonly Queue<(string FolderName, string MapFolder, string InfoPath)> _pendingItems = new();
     private ItemList _items;
 
@@ -15,6 +18,7 @@ public partial class MapList : VBoxContainer
     {
         _items = GetNode<ItemList>("%Items");
         _items.ItemSelected += OnItemSelected;
+        GetNode<Button>("%NewMap").Pressed += () => NewMapRequested?.Invoke();
     }
 
     public override void _Process(double delta)

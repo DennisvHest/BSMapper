@@ -210,6 +210,12 @@ layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.42, 0.42, 1)
 autowrap_mode = 3
 
+[node name="CreateMap" type="Button" parent="ExtraInfo/Content"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+text = "Create map"
+
 [node name="OpenMap" type="Button" parent="ExtraInfo/Content" unique_id=1629684647]
 unique_name_in_owner = true
 layout_mode = 2
