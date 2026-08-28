@@ -641,6 +641,7 @@ item_1/icon = ExtResource("3_h2yge")
 
 [node name="MapDetails" type="VBoxContainer" parent="HomeScreen/HBoxContainer" unique_id=1871114016]
 unique_name_in_owner = true
+visible = false
 layout_mode = 2
 size_flags_horizontal = 3
 
