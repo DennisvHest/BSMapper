@@ -753,54 +753,116 @@ text_overrun_behavior = 3
 layout_mode = 2
 text = "Select..."
 
-[node name="GridContainer" type="GridContainer" parent="HomeScreen/HBoxContainer/MapDetails/ExtraInfoContainer/VBoxContainer" unique_id=1393752891]
+[node name="AudioFileInfoContainer" type="GridContainer" parent="HomeScreen/HBoxContainer/MapDetails/ExtraInfoContainer/VBoxContainer" unique_id=1393752891]
 layout_mode = 2
 theme_override_constants/h_separation = 20
 columns = 2
 
-[node name="PreviewStartTimeContainer" type="VBoxContainer" parent="HomeScreen/HBoxContainer/MapDetails/ExtraInfoContainer/VBoxContainer/GridContainer" unique_id=1703399252]
+[node name="PreviewStartTimeContainer" type="VBoxContainer" parent="HomeScreen/HBoxContainer/MapDetails/ExtraInfoContainer/VBoxContainer/AudioFileInfoContainer" unique_id=1703399252]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="PreviewStartTimeLabel" type="Label" parent="HomeScreen/HBoxContainer/MapDetails/ExtraInfoContainer/VBoxContainer/GridContainer/PreviewStartTimeContainer" unique_id=1046585112]
+[node name="PreviewStartTimeLabel" type="Label" parent="HomeScreen/HBoxContainer/MapDetails/ExtraInfoContainer/VBoxContainer/AudioFileInfoContainer/PreviewStartTimeContainer" unique_id=1046585112]
 layout_mode = 2
 text = "Preview Start Time"
 
-[node name="PreviewStartTimeEdit" type="LineEdit" parent="HomeScreen/HBoxContainer/MapDetails/ExtraInfoContainer/VBoxContainer/GridContainer/PreviewStartTimeContainer" unique_id=395820165]
+[node name="PreviewStartTimeEdit" type="LineEdit" parent="HomeScreen/HBoxContainer/MapDetails/ExtraInfoContainer/VBoxContainer/AudioFileInfoContainer/PreviewStartTimeContainer" unique_id=395820165]
 layout_mode = 2
 
-[node name="PreviewDurationContainer" type="VBoxContainer" parent="HomeScreen/HBoxContainer/MapDetails/ExtraInfoContainer/VBoxContainer/GridContainer" unique_id=1586534192]
+[node name="PreviewDurationContainer" type="VBoxContainer" parent="HomeScreen/HBoxContainer/MapDetails/ExtraInfoContainer/VBoxContainer/AudioFileInfoContainer" unique_id=1586534192]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="PreviewDurationLabel" type="Label" parent="HomeScreen/HBoxContainer/MapDetails/ExtraInfoContainer/VBoxContainer/GridContainer/PreviewDurationContainer" unique_id=798064261]
+[node name="PreviewDurationLabel" type="Label" parent="HomeScreen/HBoxContainer/MapDetails/ExtraInfoContainer/VBoxContainer/AudioFileInfoContainer/PreviewDurationContainer" unique_id=798064261]
 layout_mode = 2
 text = "Preview Duration"
 
-[node name="PreviewDurationEdit" type="LineEdit" parent="HomeScreen/HBoxContainer/MapDetails/ExtraInfoContainer/VBoxContainer/GridContainer/PreviewDurationContainer" unique_id=18231885]
+[node name="PreviewDurationEdit" type="LineEdit" parent="HomeScreen/HBoxContainer/MapDetails/ExtraInfoContainer/VBoxContainer/AudioFileInfoContainer/PreviewDurationContainer" unique_id=18231885]
 layout_mode = 2
 
-[node name="BpmContainer" type="VBoxContainer" parent="HomeScreen/HBoxContainer/MapDetails/ExtraInfoContainer/VBoxContainer/GridContainer" unique_id=883709418]
+[node name="BpmContainer" type="VBoxContainer" parent="HomeScreen/HBoxContainer/MapDetails/ExtraInfoContainer/VBoxContainer/AudioFileInfoContainer" unique_id=883709418]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="BpmLabel" type="Label" parent="HomeScreen/HBoxContainer/MapDetails/ExtraInfoContainer/VBoxContainer/GridContainer/BpmContainer" unique_id=1779456378]
+[node name="BpmLabel" type="Label" parent="HomeScreen/HBoxContainer/MapDetails/ExtraInfoContainer/VBoxContainer/AudioFileInfoContainer/BpmContainer" unique_id=1779456378]
 layout_mode = 2
 text = "Beats Per Minute"
 
-[node name="BpmEdit" type="LineEdit" parent="HomeScreen/HBoxContainer/MapDetails/ExtraInfoContainer/VBoxContainer/GridContainer/BpmContainer" unique_id=998194833]
+[node name="BpmEdit" type="LineEdit" parent="HomeScreen/HBoxContainer/MapDetails/ExtraInfoContainer/VBoxContainer/AudioFileInfoContainer/BpmContainer" unique_id=998194833]
 layout_mode = 2
 
-[node name="SongTimeOffsetContainer" type="VBoxContainer" parent="HomeScreen/HBoxContainer/MapDetails/ExtraInfoContainer/VBoxContainer/GridContainer" unique_id=1467007161]
+[node name="SongTimeOffsetContainer" type="VBoxContainer" parent="HomeScreen/HBoxContainer/MapDetails/ExtraInfoContainer/VBoxContainer/AudioFileInfoContainer" unique_id=1467007161]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="SongTimeOffsetLabel" type="Label" parent="HomeScreen/HBoxContainer/MapDetails/ExtraInfoContainer/VBoxContainer/GridContainer/SongTimeOffsetContainer" unique_id=360844985]
+[node name="SongTimeOffsetLabel" type="Label" parent="HomeScreen/HBoxContainer/MapDetails/ExtraInfoContainer/VBoxContainer/AudioFileInfoContainer/SongTimeOffsetContainer" unique_id=360844985]
 layout_mode = 2
 text = "Song Time Offset"
 
-[node name="SongTimeOffsetEdit" type="LineEdit" parent="HomeScreen/HBoxContainer/MapDetails/ExtraInfoContainer/VBoxContainer/GridContainer/SongTimeOffsetContainer" unique_id=1757479297]
+[node name="SongTimeOffsetEdit" type="LineEdit" parent="HomeScreen/HBoxContainer/MapDetails/ExtraInfoContainer/VBoxContainer/AudioFileInfoContainer/SongTimeOffsetContainer" unique_id=1757479297]
 layout_mode = 2
+
+[node name="DifficultiesContainer" type="VBoxContainer" parent="HomeScreen/HBoxContainer/MapDetails/ExtraInfoContainer/VBoxContainer" unique_id=1293467480]
+layout_mode = 2
+
+[node name="Easy" type="CheckBox" parent="HomeScreen/HBoxContainer/MapDetails/ExtraInfoContainer/VBoxContainer/DifficultiesContainer" unique_id=753960385]
+custom_minimum_size = Vector2(0, 70)
+layout_mode = 2
+text = "Easy"
+
+[node name="MarginContainer" type="MarginContainer" parent="HomeScreen/HBoxContainer/MapDetails/ExtraInfoContainer/VBoxContainer/DifficultiesContainer/Easy" unique_id=1565012273]
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -212.0
+offset_top = -26.5
+offset_bottom = 26.5
+grow_horizontal = 0
+grow_vertical = 2
+theme_override_constants/margin_right = 20
+
+[node name="HBoxContainer" type="HBoxContainer" parent="HomeScreen/HBoxContainer/MapDetails/ExtraInfoContainer/VBoxContainer/DifficultiesContainer/Easy/MarginContainer" unique_id=1897471652]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="EasyNjsContainer" type="VBoxContainer" parent="HomeScreen/HBoxContainer/MapDetails/ExtraInfoContainer/VBoxContainer/DifficultiesContainer/Easy/MarginContainer/HBoxContainer" unique_id=1290219695]
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+
+[node name="EasyNjsLabel" type="Label" parent="HomeScreen/HBoxContainer/MapDetails/ExtraInfoContainer/VBoxContainer/DifficultiesContainer/Easy/MarginContainer/HBoxContainer/EasyNjsContainer" unique_id=522949528]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.62, 0.66, 0.74, 1)
+theme_override_font_sizes/font_size = 13
+text = "NJS"
+
+[node name="EasyNjs" type="SpinBox" parent="HomeScreen/HBoxContainer/MapDetails/ExtraInfoContainer/VBoxContainer/DifficultiesContainer/Easy/MarginContainer/HBoxContainer/EasyNjsContainer" unique_id=661012943]
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = 1.0
+max_value = 50.0
+step = 0.1
+value = 10.0
+
+[node name="EasyOffsetContainer" type="VBoxContainer" parent="HomeScreen/HBoxContainer/MapDetails/ExtraInfoContainer/VBoxContainer/DifficultiesContainer/Easy/MarginContainer/HBoxContainer" unique_id=1445553150]
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+
+[node name="EasyOffsetLabel" type="Label" parent="HomeScreen/HBoxContainer/MapDetails/ExtraInfoContainer/VBoxContainer/DifficultiesContainer/Easy/MarginContainer/HBoxContainer/EasyOffsetContainer" unique_id=1728587681]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.62, 0.66, 0.74, 1)
+theme_override_font_sizes/font_size = 13
+text = "Start Beat Offset"
+
+[node name="EasyOffset" type="SpinBox" parent="HomeScreen/HBoxContainer/MapDetails/ExtraInfoContainer/VBoxContainer/DifficultiesContainer/Easy/MarginContainer/HBoxContainer/EasyOffsetContainer" unique_id=1298124076]
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = 1.0
+max_value = 50.0
+step = 0.1
+value = 10.0
 
 [connection signal="dir_selected" from="InstallLocationFolderDialog" to="." method="OnInstallLocationFolderDialogDirSelected"]
 [connection signal="file_selected" from="SongFileDialog" to="." method="OnSongFileDialogFileSelected"]
