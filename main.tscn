@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://dujhi4qdtiee8"]
 
 [ext_resource type="Script" uid="uid://cta1tvj0wsg7j" path="res://Main.cs" id="1_ig7tw"]
-[ext_resource type="PackedScene" path="res://ui/map_list.tscn" id="4_map_list"]
+[ext_resource type="PackedScene" uid="uid://cey56bw5lv1qi" path="res://ui/map_list.tscn" id="4_map_list"]
 [ext_resource type="PackedScene" uid="uid://84svxiw4j58l" path="res://ui/map_details.tscn" id="5_map_details"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
@@ -168,12 +168,9 @@ layout_mode = 2
 
 [node name="MapList" parent="HomeScreen/Content" unique_id=159566717 instance=ExtResource("4_map_list")]
 unique_name_in_owner = true
-
-[node name="ScrollContainer" type="ScrollContainer" parent="HomeScreen/Content" unique_id=1351785032]
 layout_mode = 2
-size_flags_horizontal = 3
 
-[node name="MapDetails" parent="HomeScreen/Content/ScrollContainer" unique_id=1223881927 instance=ExtResource("5_map_details")]
+[node name="MapDetails" parent="HomeScreen/Content" unique_id=1223881927 instance=ExtResource("5_map_details")]
 unique_name_in_owner = true
 layout_mode = 2
 
