@@ -8,7 +8,7 @@ content_margin_left = 20.0
 content_margin_top = 8.0
 content_margin_right = 20.0
 content_margin_bottom = 8.0
-bg_color = Color(0.066000015, 0.18690002, 0.3, 1)
+bg_color = Color(0.06666667, 0.1882353, 0.3019608, 1)
 corner_radius_top_left = 5
 corner_radius_top_right = 5
 corner_radius_bottom_right = 5
@@ -45,6 +45,49 @@ shadow_color = Color(0, 0, 0, 0.15686275)
 shadow_size = 2
 shadow_offset = Vector2(0, 1)
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_q4706"]
+content_margin_left = 20.0
+content_margin_top = 10.0
+content_margin_right = 20.0
+content_margin_bottom = 10.0
+bg_color = Color(0.06666667, 0.1882353, 0.3019608, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_5rgc2"]
+content_margin_left = 20.0
+content_margin_top = 10.0
+content_margin_right = 20.0
+content_margin_bottom = 10.0
+bg_color = Color(0.16000001, 0.176, 0.2, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_xbc2w"]
+bg_color = Color(0.3, 0, 0, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_3v077"]
+bg_color = Color(0.4, 0, 0, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_x0wnj"]
+bg_color = Color(0.5, 0, 0, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
 [resource]
 AcceptDialog/styles/panel = SubResource("StyleBoxFlat_0xm2m")
 Button/colors/font_color = Color(0.8, 0.83137256, 0.8784314, 1)
@@ -52,4 +95,10 @@ Button/font_sizes/font_size = 15
 Button/styles/hover = SubResource("StyleBoxFlat_bknds")
 Button/styles/normal = SubResource("StyleBoxFlat_6hpnh")
 Button/styles/pressed = SubResource("StyleBoxFlat_rxcny")
+CheckBox/styles/hover_pressed = SubResource("StyleBoxFlat_q4706")
+CheckBox/styles/normal = SubResource("StyleBoxFlat_5rgc2")
 ItemList/constants/icon_margin = 10
+SecondaryButton/base_type = &"Button"
+SecondaryButton/styles/hover = SubResource("StyleBoxFlat_xbc2w")
+SecondaryButton/styles/normal = SubResource("StyleBoxFlat_3v077")
+SecondaryButton/styles/pressed = SubResource("StyleBoxFlat_x0wnj")

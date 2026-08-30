@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://84svxiw4j58l"]
 
 [ext_resource type="Script" uid="uid://bwm54rut4igm" path="res://ui/MapDetails.cs" id="1"]
-[ext_resource type="PackedScene" path="res://ui/difficulty_configuration.tscn" id="2"]
+[ext_resource type="PackedScene" uid="uid://bl1lujyqwvmdr" path="res://ui/difficulty_configuration.tscn" id="2"]
 [ext_resource type="PackedScene" uid="uid://sobnmw34a3gp" path="res://ui/icon_button.tscn" id="3_icon_button"]
 
 [node name="MapDetails" type="VBoxContainer" unique_id=308837148]
@@ -68,7 +68,7 @@ size_flags_horizontal = 3
 
 [node name="Label" type="Label" parent="ScrollContainer/VBoxContainer/Header/BasicInfo/Grid/SongNameContainer" unique_id=969876699]
 layout_mode = 2
-text = "Song Name"
+text = "Song name"
 
 [node name="SongName" type="LineEdit" parent="ScrollContainer/VBoxContainer/Header/BasicInfo/Grid/SongNameContainer" unique_id=987266648]
 unique_name_in_owner = true
@@ -80,7 +80,7 @@ size_flags_horizontal = 3
 
 [node name="Label" type="Label" parent="ScrollContainer/VBoxContainer/Header/BasicInfo/Grid/SubNameContainer" unique_id=28337710]
 layout_mode = 2
-text = "Sub Name"
+text = "Sub name"
 
 [node name="SubName" type="LineEdit" parent="ScrollContainer/VBoxContainer/Header/BasicInfo/Grid/SubNameContainer" unique_id=1790985752]
 unique_name_in_owner = true
@@ -92,7 +92,7 @@ size_flags_horizontal = 3
 
 [node name="Label" type="Label" parent="ScrollContainer/VBoxContainer/Header/BasicInfo/Grid/SongAuthorContainer" unique_id=1469168991]
 layout_mode = 2
-text = "Song Author"
+text = "Song author"
 
 [node name="SongAuthor" type="LineEdit" parent="ScrollContainer/VBoxContainer/Header/BasicInfo/Grid/SongAuthorContainer" unique_id=1189242385]
 unique_name_in_owner = true
@@ -158,7 +158,7 @@ size_flags_horizontal = 3
 
 [node name="Label" type="Label" parent="ScrollContainer/VBoxContainer/ExtraInfo/Content/TimingGrid/PreviewStartContainer" unique_id=1486149716]
 layout_mode = 2
-text = "Preview Start Time"
+text = "Preview start time"
 
 [node name="PreviewStartTime" type="LineEdit" parent="ScrollContainer/VBoxContainer/ExtraInfo/Content/TimingGrid/PreviewStartContainer" unique_id=1712883098]
 unique_name_in_owner = true
@@ -170,7 +170,7 @@ size_flags_horizontal = 3
 
 [node name="Label" type="Label" parent="ScrollContainer/VBoxContainer/ExtraInfo/Content/TimingGrid/PreviewDurationContainer" unique_id=2052498463]
 layout_mode = 2
-text = "Preview Duration"
+text = "Preview duration"
 
 [node name="PreviewDuration" type="LineEdit" parent="ScrollContainer/VBoxContainer/ExtraInfo/Content/TimingGrid/PreviewDurationContainer" unique_id=1197671039]
 unique_name_in_owner = true
@@ -182,7 +182,7 @@ size_flags_horizontal = 3
 
 [node name="Label" type="Label" parent="ScrollContainer/VBoxContainer/ExtraInfo/Content/TimingGrid/BpmContainer" unique_id=616076688]
 layout_mode = 2
-text = "Beats Per Minute"
+text = "Beats per minute"
 
 [node name="Bpm" type="LineEdit" parent="ScrollContainer/VBoxContainer/ExtraInfo/Content/TimingGrid/BpmContainer" unique_id=817061541]
 unique_name_in_owner = true
@@ -194,7 +194,7 @@ size_flags_horizontal = 3
 
 [node name="Label" type="Label" parent="ScrollContainer/VBoxContainer/ExtraInfo/Content/TimingGrid/SongTimeOffsetContainer" unique_id=2085458164]
 layout_mode = 2
-text = "Song Time Offset"
+text = "Song time offset"
 
 [node name="SongTimeOffset" type="LineEdit" parent="ScrollContainer/VBoxContainer/ExtraInfo/Content/TimingGrid/SongTimeOffsetContainer" unique_id=876049733]
 unique_name_in_owner = true
@@ -205,19 +205,24 @@ unique_name_in_owner = true
 layout_mode = 2
 
 [node name="Easy" parent="ScrollContainer/VBoxContainer/ExtraInfo/Content/Difficulties" unique_id=1278151249 instance=ExtResource("2")]
+layout_mode = 2
 
 [node name="Normal" parent="ScrollContainer/VBoxContainer/ExtraInfo/Content/Difficulties" unique_id=1517508456 instance=ExtResource("2")]
+layout_mode = 2
 DifficultyLevel = 1
 
 [node name="Hard" parent="ScrollContainer/VBoxContainer/ExtraInfo/Content/Difficulties" unique_id=2100211352 instance=ExtResource("2")]
+layout_mode = 2
 DifficultyLevel = 2
 DefaultNjs = 12.0
 
 [node name="Expert" parent="ScrollContainer/VBoxContainer/ExtraInfo/Content/Difficulties" unique_id=1297477125 instance=ExtResource("2")]
+layout_mode = 2
 DifficultyLevel = 3
 DefaultNjs = 16.0
 
 [node name="ExpertPlus" parent="ScrollContainer/VBoxContainer/ExtraInfo/Content/Difficulties" unique_id=1441899606 instance=ExtResource("2")]
+layout_mode = 2
 DifficultyLevel = 4
 DefaultNjs = 18.0
 
@@ -246,8 +251,9 @@ autowrap_mode = 3
 
 [node name="DeleteMap" parent="MarginContainer/HBoxContainer/Left" unique_id=1053120406 instance=ExtResource("3_icon_button")]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(40, 35)
+custom_minimum_size = Vector2(39, 35)
 layout_mode = 2
+theme_type_variation = &"SecondaryButton"
 IconName = "trash"
 Separation = 0
 
