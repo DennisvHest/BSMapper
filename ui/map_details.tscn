@@ -2,8 +2,7 @@
 
 [ext_resource type="Script" uid="uid://bwm54rut4igm" path="res://ui/MapDetails.cs" id="1"]
 [ext_resource type="PackedScene" path="res://ui/difficulty_configuration.tscn" id="2"]
-[ext_resource type="FontFile" uid="uid://eu3pk330q7xk" path="res://addons/fontawesome/fonts/fa-solid-900.woff2" id="3_q4706"]
-[ext_resource type="Script" uid="uid://dvry5xvheimo8" path="res://addons/fontawesome/FontAwesome.gd" id="4_goh2j"]
+[ext_resource type="PackedScene" uid="uid://sobnmw34a3gp" path="res://ui/icon_button.tscn" id="3_icon_button"]
 
 [node name="MapDetails" type="VBoxContainer" unique_id=308837148]
 custom_minimum_size = Vector2(720, 640)
@@ -141,10 +140,12 @@ text = "No file selected"
 clip_text = true
 text_overrun_behavior = 3
 
-[node name="SelectAudioFile" type="Button" parent="ScrollContainer/VBoxContainer/ExtraInfo/Content/AudioFileContainer/AudioFileBox" unique_id=902092315]
+[node name="SelectAudioFile" parent="ScrollContainer/VBoxContainer/ExtraInfo/Content/AudioFileContainer/AudioFileBox" unique_id=2053971564 instance=ExtResource("3_icon_button")]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(41, 35)
 layout_mode = 2
-text = "Select..."
+IconName = "folder"
+Separation = 0
 
 [node name="TimingGrid" type="GridContainer" parent="ScrollContainer/VBoxContainer/ExtraInfo/Content" unique_id=1666884215]
 layout_mode = 2
@@ -234,11 +235,6 @@ layout_mode = 2
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="DeleteMap" type="Button" parent="MarginContainer/HBoxContainer/Left" unique_id=617183203]
-unique_name_in_owner = true
-layout_mode = 2
-text = "Delete map"
-
 [node name="Error" type="Label" parent="MarginContainer/HBoxContainer/Left" unique_id=1148260656]
 unique_name_in_owner = true
 visible = false
@@ -248,46 +244,29 @@ size_flags_horizontal = 3
 theme_override_colors/font_color = Color(1, 0.42, 0.42, 1)
 autowrap_mode = 3
 
+[node name="DeleteMap" parent="MarginContainer/HBoxContainer/Left" unique_id=1053120406 instance=ExtResource("3_icon_button")]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(40, 35)
+layout_mode = 2
+IconName = "trash"
+Separation = 0
+
 [node name="Right" type="HBoxContainer" parent="MarginContainer/HBoxContainer" unique_id=346218726]
 layout_mode = 2
 size_flags_horizontal = 3
 alignment = 2
 
-[node name="CreateMap" type="Button" parent="MarginContainer/HBoxContainer/Right" unique_id=1814721395]
+[node name="CreateMap" parent="MarginContainer/HBoxContainer/Right" unique_id=1780603266 instance=ExtResource("3_icon_button")]
 unique_name_in_owner = true
 visible = false
+custom_minimum_size = Vector2(136, 35)
 layout_mode = 2
-text = "Create map"
+LabelText = "Create map"
+IconName = "floppy-disk"
 
-[node name="OpenMap" type="Button" parent="MarginContainer/HBoxContainer/Right" unique_id=2067435989]
+[node name="OpenMap" parent="MarginContainer/HBoxContainer/Right" unique_id=2067435989 instance=ExtResource("3_icon_button")]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(200, 0)
+custom_minimum_size = Vector2(203, 35)
 layout_mode = 2
-size_flags_horizontal = 0
-
-[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/HBoxContainer/Right/OpenMap" unique_id=143759508]
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
-theme_override_constants/margin_left = 10
-
-[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/HBoxContainer/Right/OpenMap/MarginContainer" unique_id=991531923]
-layout_mode = 2
-theme_override_constants/separation = 10
-
-[node name="FontAwesome" type="Label" parent="MarginContainer/HBoxContainer/Right/OpenMap/MarginContainer/HBoxContainer" unique_id=1980891615]
-auto_translate_mode = 2
-layout_mode = 2
-localize_numeral_system = false
-theme_override_fonts/font = ExtResource("3_q4706")
-theme_override_font_sizes/font_size = 16
-text = ""
-horizontal_alignment = 1
-vertical_alignment = 1
-script = ExtResource("4_goh2j")
-icon_name = "vr-cardboard"
-metadata/_custom_type_script = "uid://dvry5xvheimo8"
-
-[node name="Label" type="Label" parent="MarginContainer/HBoxContainer/Right/OpenMap/MarginContainer/HBoxContainer" unique_id=572446249]
-layout_mode = 2
-text = "Open map in editor"
+LabelText = "Open map in editor"
+IconName = "vr-cardboard"

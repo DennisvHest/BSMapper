@@ -1,0 +1,48 @@
+[gd_scene format=3 uid="uid://sobnmw34a3gp"]
+
+[ext_resource type="Script" uid="uid://ciffj81f8rd5w" path="res://ui/IconButton.cs" id="1_icon_button"]
+[ext_resource type="FontFile" uid="uid://eu3pk330q7xk" path="res://addons/fontawesome/fonts/fa-solid-900.woff2" id="2_dvy7b"]
+[ext_resource type="Script" uid="uid://dvry5xvheimo8" path="res://addons/fontawesome/FontAwesome.gd" id="2_font_awesome"]
+
+[node name="IconButton" type="Button" unique_id=2053971564]
+custom_minimum_size = Vector2(49, 35)
+size_flags_horizontal = 0
+script = ExtResource("1_icon_button")
+
+[node name="Margin" type="MarginContainer" parent="." unique_id=207466636]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 6
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 6
+
+[node name="Content" type="HBoxContainer" parent="Margin" unique_id=897412775]
+unique_name_in_owner = true
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 8
+alignment = 1
+
+[node name="Icon" type="Label" parent="Margin/Content" unique_id=2110075033]
+unique_name_in_owner = true
+auto_translate_mode = 2
+layout_mode = 2
+localize_numeral_system = false
+theme_override_fonts/font = ExtResource("2_dvy7b")
+theme_override_font_sizes/font_size = 16
+text = ""
+horizontal_alignment = 1
+vertical_alignment = 1
+script = ExtResource("2_font_awesome")
+metadata/_custom_type_script = "uid://dvry5xvheimo8"
+
+[node name="Label" type="Label" parent="Margin/Content" unique_id=1454014573]
+unique_name_in_owner = true
+layout_mode = 2
