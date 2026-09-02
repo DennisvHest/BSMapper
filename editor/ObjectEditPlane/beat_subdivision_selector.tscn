@@ -38,6 +38,7 @@ corner_radius_bottom_right = 12
 corner_radius_bottom_left = 12
 
 [node name="BeatSubdivisionSelector" type="Node3D"]
+rotation_degrees = Vector3(0, 45, 0)
 script = ExtResource("1_selector")
 
 [node name="ViewportPanel" parent="." instance=ExtResource("2_viewport")]

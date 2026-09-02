@@ -38,6 +38,7 @@ corner_radius_bottom_right = 16
 corner_radius_bottom_left = 16
 
 [node name="ObjectTypeSelector" type="Node3D"]
+rotation_degrees = Vector3(0, 45, 0)
 script = ExtResource("1_2mrtu")
 
 [node name="ViewportPanel" parent="." instance=ExtResource("2_x3lrt")]

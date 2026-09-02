@@ -5,6 +5,7 @@
 [ext_resource type="PackedScene" path="res://editor/ObjectEditPlane/selection_panel_ui.tscn" id="3_ui"]
 
 [node name="SelectionPanel" type="Node3D"]
+rotation_degrees = Vector3(0, -45, 0)
 visible = false
 script = ExtResource("1_panel")
 
