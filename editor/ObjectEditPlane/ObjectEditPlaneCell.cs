@@ -81,13 +81,16 @@ public partial class ObjectEditPlaneCell : Node3D
                 var localPressPosition = ToLocal(eventPosition);
                 var noteType = GetNoteTypeForPointer(pointer);
                 var objectType = _objectEditPlane?.SelectedObjectType ?? ObjectEditPlane.PlaceableObjectType.NoteBlock;
+                var cutDirection = objectType == ObjectEditPlane.PlaceableObjectType.AnyDirectionNoteBlock
+                    ? BeatMapNote.CutDirection.Any
+                    : BeatMapNote.CutDirection.Down;
                 _activePointerDrags[pointerId] = new DragState(
                     localPressPosition,
-                    BeatMapNote.CutDirection.Down,
+                    cutDirection,
                     PlaybackManager.PlaybackBeat,
                     noteType,
                     objectType);
-                ShowPreview(objectType, BeatMapNote.CutDirection.Down, noteType);
+                ShowPreview(objectType, cutDirection, noteType);
                 break;
             case 4:
                 if (!_activePointerDrags.TryGetValue(pointerId, out var moveState))

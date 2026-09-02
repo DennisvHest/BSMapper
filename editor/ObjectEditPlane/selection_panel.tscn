@@ -9,7 +9,7 @@ visible = false
 script = ExtResource("1_panel")
 
 [node name="ViewportPanel" parent="." instance=ExtResource("2_viewport")]
-screen_size = Vector2(0.72, 0.62)
+screen_size = Vector2(0.72, 0.78)
 scene = ExtResource("3_ui")
-viewport_size = Vector2(432, 372)
+viewport_size = Vector2(432, 468)
 unshaded = true

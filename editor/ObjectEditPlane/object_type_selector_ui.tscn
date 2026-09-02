@@ -116,6 +116,24 @@ theme_override_styles/pressed = SubResource("StyleBoxFlat_button_selected")
 theme_override_styles/normal = SubResource("StyleBoxFlat_button_idle")
 text = "N"
 
+[node name="AnyDirectionNoteButton" type="Button" parent="Panel/MarginContainer/VBoxContainer/Buttons"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 120)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+focus_mode = 0
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.45)
+theme_override_constants/outline_size = 10
+theme_override_constants/h_separation = 0
+theme_override_font_sizes/font_size = 56
+theme_override_styles/focus = SubResource("StyleBoxFlat_button_hover")
+theme_override_styles/disabled = SubResource("StyleBoxFlat_button_idle")
+theme_override_styles/hover = SubResource("StyleBoxFlat_button_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_button_selected")
+theme_override_styles/normal = SubResource("StyleBoxFlat_button_idle")
+text = "A"
+
 [node name="BombButton" type="Button" parent="Panel/MarginContainer/VBoxContainer/Buttons"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 120)

@@ -121,6 +121,17 @@ public partial class Editor : Node3D
         }
     }
 
+    public void SetSelectedNoteCutDirection(BeatMapNote.CutDirection cutDirection)
+    {
+        foreach (var selectedObject in _selectedObjects)
+        {
+            if (selectedObject is NoteBlock noteBlock)
+            {
+                noteBlock.SetCutDirection(cutDirection);
+            }
+        }
+    }
+
     public void DeleteSelectedObjects()
     {
         var objectsToDelete = new List<BeatmapObject>(_selectedObjects);

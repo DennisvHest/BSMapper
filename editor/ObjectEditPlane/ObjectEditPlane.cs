@@ -7,6 +7,7 @@ public partial class ObjectEditPlane : Node3D
     {
         NoteBlock,
         Bomb,
+        AnyDirectionNoteBlock,
     }
 
     private const float ObjectSelectorMargin = 0.95f;

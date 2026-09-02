@@ -89,7 +89,7 @@ corner_radius_bottom_right = 14
 corner_radius_bottom_left = 14
 
 [node name="SelectionPanelUI" type="Control" unique_id=1379940873]
-custom_minimum_size = Vector2(432, 372)
+custom_minimum_size = Vector2(432, 468)
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -169,6 +169,23 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_0i6tp")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_k1m0j")
 theme_override_styles/hover = SubResource("StyleBoxFlat_button_hover")
 text = "Right"
+
+[node name="DirectionLabel" type="Label" parent="Panel/MarginContainer/VBoxContainer/ColorSection"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.83, 0.86, 0.9, 1)
+theme_override_font_sizes/font_size = 22
+text = "Cut direction"
+
+[node name="AnyDirectionButton" type="Button" parent="Panel/MarginContainer/VBoxContainer/ColorSection"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 72)
+layout_mode = 2
+focus_mode = 0
+theme_override_font_sizes/font_size = 24
+theme_override_styles/normal = SubResource("StyleBoxFlat_button")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_button_hover")
+theme_override_styles/hover = SubResource("StyleBoxFlat_button_hover")
+text = "Any direction"
 
 [node name="Spacer" type="Control" parent="Panel/MarginContainer/VBoxContainer" unique_id=1998953504]
 layout_mode = 2

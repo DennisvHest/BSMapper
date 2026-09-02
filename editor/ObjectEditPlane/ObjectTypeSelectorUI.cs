@@ -22,13 +22,16 @@ public partial class ObjectTypeSelectorUI : Control
     public Color SelectedTextColor { get; set; } = Colors.White;
 
     private Button _noteButton;
+    private Button _anyDirectionNoteButton;
     private Button _bombButton;
 
     public override void _Ready()
     {
         _noteButton = GetNode<Button>("%NoteButton");
+        _anyDirectionNoteButton = GetNode<Button>("%AnyDirectionNoteButton");
         _bombButton = GetNode<Button>("%BombButton");
         _noteButton.Pressed += OnNoteButtonPressed;
+        _anyDirectionNoteButton.Pressed += OnAnyDirectionNoteButtonPressed;
         _bombButton.Pressed += OnBombButtonPressed;
         SetSelectedObjectType(ObjectEditPlane.PlaceableObjectType.NoteBlock);
     }
@@ -36,6 +39,9 @@ public partial class ObjectTypeSelectorUI : Control
     public void SetSelectedObjectType(ObjectEditPlane.PlaceableObjectType selectedObjectType)
     {
         ApplyButtonState(_noteButton, selectedObjectType == ObjectEditPlane.PlaceableObjectType.NoteBlock);
+        ApplyButtonState(
+            _anyDirectionNoteButton,
+            selectedObjectType == ObjectEditPlane.PlaceableObjectType.AnyDirectionNoteBlock);
         ApplyButtonState(_bombButton, selectedObjectType == ObjectEditPlane.PlaceableObjectType.Bomb);
     }
 
@@ -47,6 +53,11 @@ public partial class ObjectTypeSelectorUI : Control
     private void OnBombButtonPressed()
     {
         EmitSignal(SignalName.PlaceableSelected, (int)ObjectEditPlane.PlaceableObjectType.Bomb);
+    }
+
+    private void OnAnyDirectionNoteButtonPressed()
+    {
+        EmitSignal(SignalName.PlaceableSelected, (int)ObjectEditPlane.PlaceableObjectType.AnyDirectionNoteBlock);
     }
 
     private void ApplyButtonState(Button button, bool isSelected)
