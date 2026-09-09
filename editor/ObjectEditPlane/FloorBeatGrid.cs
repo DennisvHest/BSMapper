@@ -16,6 +16,7 @@ public partial class FloorBeatGrid : Node3D
     private const float BeatLabelHeight = 0.04f;
     private const float BeatLabelPixelSize = 0.005f;
 
+    private Node3D _gridVisuals;
     private Node3D _floorGridRoot;
     private FloorSpectrogram _spectrogram;
     private Vector2 _visibleWindow;
@@ -37,6 +38,7 @@ public partial class FloorBeatGrid : Node3D
         OnPlaybackModeChanged();
         RebuildFloorGrid();
         PlaybackManager.ModeChanged += OnPlaybackModeChanged;
+        PlaybackManager.ShowSpectrogramDuringPlaybackChanged += OnSpectrogramPlaybackVisibilityChanged;
         BeatMapManager.CurrentBeatmapChanged += OnCurrentBeatmapChanged;
         BeatMapManager.CurrentBeatmapDifficultyInfoChanged += OnCurrentBeatmapDifficultyInfoChanged;
         UpdateFloorGridPosition();
@@ -56,14 +58,16 @@ public partial class FloorBeatGrid : Node3D
         _longitudinalLineMaterial = CreateLineMaterial(new Color(1.0f, 1.0f, 1.0f, 0.18f));
         _currentBeatLineMaterial = CreateLineMaterial(new Color(0.3f, 0.8f, 1.0f, 0.75f));
 
+        _gridVisuals = new Node3D { Name = "GridVisuals" };
+        AddChild(_gridVisuals);
         _floorGridRoot = new Node3D { Name = "FloorBeatGrid" };
-        AddChild(_floorGridRoot);
+        _gridVisuals.AddChild(_floorGridRoot);
         _currentBeatMarker = CreateLine(
             "CurrentBeatMarker",
             new Vector3(NoteBlockLane.LaneWidth, LineHeight, CurrentBeatLineThickness),
             _currentBeatLineMaterial);
         _currentBeatMarker.Position = new Vector3(0.0f, FloorMarkerY, 0.0f);
-        AddChild(_currentBeatMarker);
+        _gridVisuals.AddChild(_currentBeatMarker);
         _spectrogram = new FloorSpectrogram { Name = "FloorSpectrogram" };
         AddChild(_spectrogram);
     }
@@ -281,12 +285,20 @@ public partial class FloorBeatGrid : Node3D
 
     private void OnPlaybackModeChanged()
     {
-        Visible = PlaybackManager.Mode == PlaybackManager.EditMode.Editing;
+        var editing = PlaybackManager.Mode == PlaybackManager.EditMode.Editing;
+        Visible = editing || PlaybackManager.ShowSpectrogramDuringPlayback;
+        _gridVisuals.Visible = Visible;
+    }
+
+    private void OnSpectrogramPlaybackVisibilityChanged(bool enabled)
+    {
+        OnPlaybackModeChanged();
     }
 
     public override void _ExitTree()
     {
         PlaybackManager.ModeChanged -= OnPlaybackModeChanged;
+        PlaybackManager.ShowSpectrogramDuringPlaybackChanged -= OnSpectrogramPlaybackVisibilityChanged;
         BeatMapManager.CurrentBeatmapChanged -= OnCurrentBeatmapChanged;
         BeatMapManager.CurrentBeatmapDifficultyInfoChanged -= OnCurrentBeatmapDifficultyInfoChanged;
     }

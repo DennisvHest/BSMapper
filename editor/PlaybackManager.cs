@@ -14,6 +14,7 @@ public partial class PlaybackManager : Node
     public delegate void ModeChangedEventHandler();
 
     public event Action<int> BeatSubdivisionChanged;
+    public event Action<bool> ShowSpectrogramDuringPlaybackChanged;
 
     public HSlider ProgressBar { get; private set; }
     public AudioStreamPlayer Music { get; private set; }
@@ -23,6 +24,7 @@ public partial class PlaybackManager : Node
         ? 0.0
         : PlaybackPosition / (60.0 / BeatmapDifficulty.Bpm);
     public int BeatSubdivision { get; private set; } = 1;
+    public bool ShowSpectrogramDuringPlayback { get; private set; }
     public EditMode Mode { get; private set; } = EditMode.Playing;
     public bool Initialized { get; private set; }
 
@@ -63,6 +65,17 @@ public partial class PlaybackManager : Node
         BeatSubdivision = subdivision;
         _beatSnapOffset = GetPlaybackPosition();
         BeatSubdivisionChanged?.Invoke(subdivision);
+    }
+
+    public void SetShowSpectrogramDuringPlayback(bool enabled)
+    {
+        if (ShowSpectrogramDuringPlayback == enabled)
+        {
+            return;
+        }
+
+        ShowSpectrogramDuringPlayback = enabled;
+        ShowSpectrogramDuringPlaybackChanged?.Invoke(enabled);
     }
 
     private void OnCurrentBeatMapInfoChanged(BeatMapInfo beatmap)

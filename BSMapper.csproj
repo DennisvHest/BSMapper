@@ -8,6 +8,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include=".github\copilot-instructions.md" />
+    <None Include="editor\ObjectEditPlane\spectrogram_settings_panel.tscn" />
+    <None Include="editor\ObjectEditPlane\spectrogram_settings_ui.tscn" />
     <None Include="main.tscn" />
     <None Include="ui\difficulty_configuration.tscn" />
     <None Include="ui\icon_button.tscn" />
