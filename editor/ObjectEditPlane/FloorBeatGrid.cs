@@ -17,6 +17,8 @@ public partial class FloorBeatGrid : Node3D
     private const float BeatLabelPixelSize = 0.005f;
 
     private Node3D _floorGridRoot;
+    private FloorSpectrogram _spectrogram;
+    private Vector2 _visibleWindow;
     private MeshInstance3D _currentBeatMarker;
     private BoxMesh _lineMesh;
     private StandardMaterial3D _majorLineMaterial;
@@ -62,6 +64,8 @@ public partial class FloorBeatGrid : Node3D
             _currentBeatLineMaterial);
         _currentBeatMarker.Position = new Vector3(0.0f, FloorMarkerY, 0.0f);
         AddChild(_currentBeatMarker);
+        _spectrogram = new FloorSpectrogram { Name = "FloorSpectrogram" };
+        AddChild(_spectrogram);
     }
 
     private static StandardMaterial3D CreateLineMaterial(Color color)
@@ -120,6 +124,7 @@ public partial class FloorBeatGrid : Node3D
         var difficulty = BeatMapManager.CurrentBeatmapDifficultyInfo;
         if (difficulty is null || difficulty.BeatDuration == 0.0f)
         {
+            _visibleWindow = Vector2.Zero;
             ClearFloorLines();
             _currentBeatMarker.Hide();
             return;
@@ -129,11 +134,13 @@ public partial class FloorBeatGrid : Node3D
         var totalBeats = GetTotalBeats(difficulty);
         if (totalBeats <= 0.0f)
         {
+            _visibleWindow = Vector2.Zero;
             ClearFloorLines();
             return;
         }
 
         var visibleWindow = GetVisibleWindow(totalBeats);
+        _visibleWindow = visibleWindow;
         var windowStartQuarter = Mathf.RoundToInt(visibleWindow.X / QuarterBeatStep);
         var windowEndQuarter = Mathf.RoundToInt(visibleWindow.Y / QuarterBeatStep);
         if (windowStartQuarter == _renderedWindowStartQuarter
@@ -210,6 +217,12 @@ public partial class FloorBeatGrid : Node3D
                 0.0f,
                 (float)PlaybackManager.PlaybackPosition * difficulty.Njs);
         }
+
+        _spectrogram.UpdateWindow(
+            _visibleWindow.X * (difficulty?.BeatDuration ?? 0.0f),
+            _visibleWindow.Y * (difficulty?.BeatDuration ?? 0.0f),
+            PlaybackManager.PlaybackPosition,
+            difficulty?.Njs ?? 0.0f);
     }
 
     private float GetTotalBeats(BeatMapDifficultyInfo difficulty)
@@ -269,5 +282,12 @@ public partial class FloorBeatGrid : Node3D
     private void OnPlaybackModeChanged()
     {
         Visible = PlaybackManager.Mode == PlaybackManager.EditMode.Editing;
+    }
+
+    public override void _ExitTree()
+    {
+        PlaybackManager.ModeChanged -= OnPlaybackModeChanged;
+        BeatMapManager.CurrentBeatmapChanged -= OnCurrentBeatmapChanged;
+        BeatMapManager.CurrentBeatmapDifficultyInfoChanged -= OnCurrentBeatmapDifficultyInfoChanged;
     }
 }
