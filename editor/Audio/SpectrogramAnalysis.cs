@@ -4,15 +4,16 @@ using System.Numerics;
 internal sealed class SpectrogramAnalysis
 {
     public const int WindowSize = 2048;
-    public const int FrequencyBands = 512;
-    public const int RowsPerTile = 512;
-    public const double SecondsPerRow = 0.005;
+    public const int FrequencyBands = 1024;
+    public const int RowsPerTile = 1024;
+    public const double SecondsPerRow = 0.0025;
     public const double TileDuration = RowsPerTile * SecondsPerRow;
+    private const int FftSize = WindowSize * 2;
     private const double MaximumFrequency = 16000.0;
     private const double MinimumDecibels = -80.0;
 
-    private readonly Complex[] _left = new Complex[WindowSize];
-    private readonly Complex[] _right = new Complex[WindowSize];
+    private readonly Complex[] _left = new Complex[FftSize];
+    private readonly Complex[] _right = new Complex[FftSize];
     private readonly double[] _window = new double[WindowSize];
     private readonly int[] _firstBins = new int[FrequencyBands];
     private readonly int[] _lastBins = new int[FrequencyBands];
@@ -38,8 +39,8 @@ internal sealed class SpectrogramAnalysis
         {
             var low = maximumFrequency * band / FrequencyBands;
             var high = maximumFrequency * (band + 1) / FrequencyBands;
-            _firstBins[band] = Math.Clamp((int)Math.Ceiling(low * WindowSize / sampleRate), 1, WindowSize / 2);
-            _lastBins[band] = Math.Clamp((int)Math.Ceiling(high * WindowSize / sampleRate) - 1, _firstBins[band], WindowSize / 2);
+            _firstBins[band] = Math.Clamp((int)Math.Ceiling(low * FftSize / sampleRate), 1, FftSize / 2);
+            _lastBins[band] = Math.Clamp((int)Math.Ceiling(high * FftSize / sampleRate) - 1, _firstBins[band], FftSize / 2);
         }
     }
 
@@ -67,6 +68,9 @@ internal sealed class SpectrogramAnalysis
             _right[index] = new Complex(right[index] * _window[index], 0.0);
         }
 
+        // Zero-padding samples the spectrum more densely without widening the time window.
+        Array.Clear(_left, WindowSize, FftSize - WindowSize);
+        Array.Clear(_right, WindowSize, FftSize - WindowSize);
         Transform(_left);
         Transform(_right);
         for (var band = 0; band < FrequencyBands; band++)
