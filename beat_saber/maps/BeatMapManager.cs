@@ -66,12 +66,17 @@ public partial class BeatMapManager : Node
 
     private static void CopySongFile(string songPath, string songDestinationPath)
     {
-        using var sourceFile = FileAccess.Open(songPath, FileAccess.ModeFlags.Read)
-            ?? throw new InvalidOperationException($"Failed to open source song file: {songPath}");
-        var songData = sourceFile.GetBuffer(checked((long)sourceFile.GetLength()));
-        using var destinationFile = FileAccess.Open(songDestinationPath, FileAccess.ModeFlags.Write)
-            ?? throw new InvalidOperationException($"Failed to open destination song file: {songDestinationPath}");
-        destinationFile.StoreBuffer(songData);
+        CopyFile(songPath, songDestinationPath, "song file");
+    }
+
+    private static void CopyFile(string sourcePath, string destinationPath, string description)
+    {
+        using var sourceFile = FileAccess.Open(sourcePath, FileAccess.ModeFlags.Read)
+            ?? throw new InvalidOperationException($"Failed to open source {description}: {sourcePath}");
+        var fileData = sourceFile.GetBuffer(checked((long)sourceFile.GetLength()));
+        using var destinationFile = FileAccess.Open(destinationPath, FileAccess.ModeFlags.Write)
+            ?? throw new InvalidOperationException($"Failed to open destination {description}: {destinationPath}");
+        destinationFile.StoreBuffer(fileData);
     }
 
     private static string GetMapFolderName(string songName, string songAuthorName)
@@ -192,6 +197,35 @@ public partial class BeatMapManager : Node
         }
 
         beatmapInfo.SyncDifficultySets();
+        SaveBeatmapInfo(beatmapInfo);
+    }
+
+    public void ReplaceCoverImage(BeatMapInfo beatmapInfo, string coverPath)
+    {
+        var extension = Path.GetExtension(coverPath).ToLowerInvariant();
+        if (extension is not (".png" or ".jpg" or ".jpeg"))
+        {
+            throw new InvalidOperationException("Cover images must be PNG or JPEG files.");
+        }
+
+        var coverFileName = $"cover{extension}";
+        var destinationPath = beatmapInfo.MapFolder.PathJoin(coverFileName);
+        if (!Path.GetFullPath(coverPath).Equals(Path.GetFullPath(destinationPath), StringComparison.OrdinalIgnoreCase))
+        {
+            CopyFile(coverPath, destinationPath, "cover image");
+        }
+
+        if (!string.IsNullOrWhiteSpace(beatmapInfo.CoverImageFileName)
+            && !beatmapInfo.CoverImageFileName.Equals(coverFileName, StringComparison.OrdinalIgnoreCase))
+        {
+            var previousCoverPath = beatmapInfo.MapFolder.PathJoin(beatmapInfo.CoverImageFileName);
+            if (FileAccess.FileExists(previousCoverPath))
+            {
+                DirAccess.RemoveAbsolute(previousCoverPath);
+            }
+        }
+
+        beatmapInfo.UpdateCoverImageFileName(coverFileName);
         SaveBeatmapInfo(beatmapInfo);
     }
 

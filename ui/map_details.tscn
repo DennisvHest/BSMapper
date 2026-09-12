@@ -2,7 +2,9 @@
 
 [ext_resource type="Script" uid="uid://bwm54rut4igm" path="res://ui/MapDetails.cs" id="1"]
 [ext_resource type="PackedScene" uid="uid://bl1lujyqwvmdr" path="res://ui/difficulty_configuration.tscn" id="2"]
+[ext_resource type="FontFile" uid="uid://eu3pk330q7xk" path="res://addons/fontawesome/fonts/fa-solid-900.woff2" id="2_goh2j"]
 [ext_resource type="PackedScene" uid="uid://sobnmw34a3gp" path="res://ui/icon_button.tscn" id="3_icon_button"]
+[ext_resource type="Script" uid="uid://dvry5xvheimo8" path="res://addons/fontawesome/FontAwesome.gd" id="4_font_awesome"]
 
 [node name="MapDetails" type="VBoxContainer" unique_id=308837148]
 custom_minimum_size = Vector2(720, 640)
@@ -16,6 +18,14 @@ title = "Open a File"
 file_mode = 0
 access = 2
 filters = PackedStringArray("*.egg,*.ogg,*.wav,*.mp3 ; Audio files")
+use_native_dialog = true
+
+[node name="CoverImageFileDialog" type="FileDialog" parent="." unique_id=386755746]
+unique_name_in_owner = true
+title = "Open a File"
+file_mode = 0
+access = 2
+filters = PackedStringArray("*.png,*.jpg,*.jpeg ; Image files")
 use_native_dialog = true
 
 [node name="DeleteConfirmation" type="ConfirmationDialog" parent="." unique_id=2111227298]
@@ -45,11 +55,50 @@ theme_override_constants/margin_top = 20
 theme_override_constants/margin_right = 20
 theme_override_constants/margin_bottom = 20
 
-[node name="Cover" type="TextureRect" parent="ScrollContainer/VBoxContainer/Header/CoverContainer" unique_id=219676203]
+[node name="CoverButton" type="Button" parent="ScrollContainer/VBoxContainer/Header/CoverContainer" unique_id=687579219]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(110, 110)
 layout_mode = 2
 size_flags_vertical = 4
+tooltip_text = "Select a cover image"
+mouse_default_cursor_shape = 2
+flat = true
+
+[node name="Cover" type="TextureRect" parent="ScrollContainer/VBoxContainer/Header/CoverContainer/CoverButton" unique_id=219676203]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
 expand_mode = 4
+
+[node name="EditIcon" type="Label" parent="ScrollContainer/VBoxContainer/Header/CoverContainer/CoverButton" unique_id=623616457]
+auto_translate_mode = 2
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -28.0
+offset_top = -28.0
+grow_horizontal = 0
+grow_vertical = 0
+localize_numeral_system = false
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 1
+theme_override_constants/shadow_offset_y = 1
+theme_override_fonts/font = ExtResource("2_goh2j")
+theme_override_font_sizes/font_size = 16
+text = ""
+horizontal_alignment = 1
+vertical_alignment = 1
+script = ExtResource("4_font_awesome")
+icon_name = "square-pen"
 
 [node name="BasicInfo" type="MarginContainer" parent="ScrollContainer/VBoxContainer/Header" unique_id=907436282]
 layout_mode = 2

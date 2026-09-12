@@ -10,10 +10,12 @@ public partial class MapDetails : VBoxContainer
 
     public event Action MapCreated;
     public event Action MapDeleted;
+    public event Action CoverChanged;
 
     private BeatMapManager _manager;
     private BeatMapInfo _beatmapInfo;
     private string _replacementAudioPath = string.Empty;
+    private string _replacementCoverPath = string.Empty;
     private bool _isPopulating;
 
     private TextureRect _cover;
@@ -68,6 +70,11 @@ public partial class MapDetails : VBoxContainer
 
         GetNode<Button>("%SelectAudioFile").Pressed += () => GetNode<FileDialog>("%AudioFileDialog").Show();
         GetNode<FileDialog>("%AudioFileDialog").FileSelected += OnAudioFileSelected;
+        var coverButton = GetNode<Button>("%CoverButton");
+        coverButton.Pressed += () => GetNode<FileDialog>("%CoverImageFileDialog").Show();
+        coverButton.MouseEntered += () => _cover.Modulate = new Color(1.2f, 1.2f, 1.2f);
+        coverButton.MouseExited += () => _cover.Modulate = Colors.White;
+        GetNode<FileDialog>("%CoverImageFileDialog").FileSelected += OnCoverImageSelected;
         _createMap.Pressed += CreateMap;
         _deleteMap.Pressed += () => _deleteConfirmation.PopupCentered();
         _deleteConfirmation.Confirmed += DeleteMap;
@@ -86,6 +93,7 @@ public partial class MapDetails : VBoxContainer
         _manager = manager;
         _beatmapInfo = null;
         _replacementAudioPath = string.Empty;
+        _replacementCoverPath = string.Empty;
 
         _songName.Clear();
         _subName.Clear();
@@ -118,6 +126,7 @@ public partial class MapDetails : VBoxContainer
         _manager = manager;
         _beatmapInfo = beatmapInfo;
         _replacementAudioPath = string.Empty;
+        _replacementCoverPath = string.Empty;
 
         _songName.Text = beatmapInfo.SongName;
         _subName.Text = beatmapInfo.SongSubName;
@@ -191,6 +200,11 @@ public partial class MapDetails : VBoxContainer
                 _subName.Text.Trim(),
                 _songAuthor.Text.Trim(),
                 bpm);
+
+            if (!string.IsNullOrEmpty(_replacementCoverPath))
+            {
+                _manager.ReplaceCoverImage(beatmapInfo, _replacementCoverPath);
+            }
 
             foreach (var setting in settings)
             {
@@ -313,6 +327,36 @@ public partial class MapDetails : VBoxContainer
         _replacementAudioPath = path;
         _audioFilePath.Text = path;
         Save();
+    }
+
+    private void OnCoverImageSelected(string path)
+    {
+        var texture = LoadImage(path);
+        if (texture is null)
+        {
+            ShowError("The selected cover image could not be loaded.");
+            return;
+        }
+
+        _replacementCoverPath = path;
+        _cover.Texture = texture;
+
+        if (_beatmapInfo is null || _manager is null)
+        {
+            return;
+        }
+
+        try
+        {
+            _manager.ReplaceCoverImage(_beatmapInfo, path);
+            _replacementCoverPath = string.Empty;
+            _error.Hide();
+            CoverChanged?.Invoke();
+        }
+        catch (Exception exception)
+        {
+            ShowError(exception.Message);
+        }
     }
 
     private IEnumerable<LineEdit> GetMetadataEdits()

@@ -22,6 +22,7 @@ public partial class Main : Control
         _mapDetails.OpenMapRequested += OpenMapInEditor;
         _mapDetails.MapCreated += OnMapCreated;
         _mapDetails.MapDeleted += OnMapDeleted;
+        _mapDetails.CoverChanged += RefreshMapList;
 
         LoadSettings();
         if (IsValidInstallLocation(BeatSaberInstallLocation))

@@ -156,6 +156,12 @@ public partial class BeatMapInfo : RefCounted
         }
     }
 
+    public void UpdateCoverImageFileName(string coverImageFileName)
+    {
+        CoverImageFileName = coverImageFileName;
+        OriginalObject.AsGodotDictionary()["_coverImageFilename"] = coverImageFileName;
+    }
+
     private static string GetString(Dictionary data, string key)
     {
         return data.TryGetValue(key, out var value) ? value.AsString() : string.Empty;
