@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://bwh2pgll34g30"]
+[gd_scene load_steps=11 format=3 uid="uid://bwh2pgll34g30"]
 
 [ext_resource type="Script" path="res://beat_saber/NoteBlockLane.cs" id="1_p2bkp"]
 [ext_resource type="PackedScene" uid="uid://bfhf8qgxqfrw6" path="res://beat_saber/note_block.tscn" id="2_il36q"]
@@ -9,6 +9,7 @@
 [ext_resource type="PackedScene" path="res://editor/ObjectEditPlane/selection_panel.tscn" id="7_selection"]
 [ext_resource type="PackedScene" path="res://editor/ObjectEditPlane/beat_subdivision_selector.tscn" id="8_subdivision"]
 [ext_resource type="PackedScene" path="res://editor/ObjectEditPlane/spectrogram_settings_panel.tscn" id="9_spectrogram"]
+[ext_resource type="PackedScene" path="res://editor/ObjectEditPlane/playback_progress_bar.tscn" id="10_progress"]
 
 [node name="NoteBlockLane" type="Node3D"]
 script = ExtResource("1_p2bkp")
@@ -26,3 +27,5 @@ visible = false
 [node name="BeatSubdivisionSelector" parent="." instance=ExtResource("8_subdivision")]
 
 [node name="SpectrogramSettingsPanel" parent="." instance=ExtResource("9_spectrogram")]
+
+[node name="PlaybackProgressBar" parent="." instance=ExtResource("10_progress")]

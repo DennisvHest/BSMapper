@@ -1,0 +1,16 @@
+[gd_scene format=3 uid="uid://cjnuw4ac8co64"]
+
+[ext_resource type="Script" uid="uid://b70gnns1gm1a1" path="res://editor/ObjectEditPlane/PlaybackProgressBar.cs" id="1_progress"]
+[ext_resource type="PackedScene" uid="uid://clujaf3u776a3" path="res://addons/godot-xr-tools/objects/viewport_2d_in_3d.tscn" id="2_viewport"]
+[ext_resource type="PackedScene" path="res://editor/ObjectEditPlane/playback_progress_bar_ui.tscn" id="3_ui"]
+
+[node name="PlaybackProgressBar" type="Node3D" unique_id=303097985]
+script = ExtResource("1_progress")
+
+[node name="ViewportPanel" parent="." unique_id=477757502 instance=ExtResource("2_viewport")]
+screen_size = Vector2(2, 0.24)
+scene = ExtResource("3_ui")
+viewport_size = Vector2(800, 96)
+transparent = 1
+unshaded = true
+scene_properties_keys = PackedStringArray("PlaybackProgressBarUI")

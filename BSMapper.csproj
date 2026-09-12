@@ -8,6 +8,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include=".github\copilot-instructions.md" />
+    <None Include="editor\ObjectEditPlane\playback_progress_bar.tscn" />
+    <None Include="editor\ObjectEditPlane\playback_progress_bar_ui.tscn" />
     <None Include="editor\ObjectEditPlane\spectrogram_settings_panel.tscn" />
     <None Include="editor\ObjectEditPlane\spectrogram_settings_ui.tscn" />
     <None Include="main.tscn" />
