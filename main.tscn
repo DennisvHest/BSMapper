@@ -75,6 +75,21 @@ file_mode = 2
 access = 2
 use_native_dialog = true
 
+[node name="HeadsetRequiredDialog" type="ConfirmationDialog" parent="." unique_id=2128639344]
+title = "Please put on your headset"
+initial_position = 2
+ok_button_text = "Restart and open editor"
+dialog_text = "Please put on your headset and connect it to your PC (for example, using Virtual Desktop).
+
+OpenXR could not start. Once your headset is connected, confirm to restart BSMapper
+and open this map and difficulty directly in the VR editor."
+
+[node name="EditorResumeErrorDialog" type="AcceptDialog" parent="."]
+title = "Unable to reopen map"
+initial_position = 2
+dialog_text = "The selected map or difficulty could not be reopened.
+Please select the map again. See the log for details."
+
 [node name="DifficultySelectDialog" type="AcceptDialog" parent="." unique_id=1612747469]
 oversampling_override = 1.0
 title = "Select difficulty"

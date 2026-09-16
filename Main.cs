@@ -1,9 +1,13 @@
 using BSMapper;
 using Godot;
+using System;
 using System.Collections.Generic;
 
 public partial class Main : Control
 {
+    private const string ResumeMapArgument = "--bsmapper-resume-map=";
+    private const string ResumeDifficultyArgument = "--bsmapper-resume-difficulty=";
+
     [Export]
     public bool DebugWithoutVr { get; set; }
 
@@ -23,6 +27,7 @@ public partial class Main : Control
         _mapDetails.MapCreated += OnMapCreated;
         _mapDetails.MapDeleted += OnMapDeleted;
         _mapDetails.CoverChanged += RefreshMapList;
+        GetNode<ConfirmationDialog>("HeadsetRequiredDialog").Confirmed += RestartForVr;
 
         LoadSettings();
         if (IsValidInstallLocation(BeatSaberInstallLocation))
@@ -33,23 +38,114 @@ public partial class Main : Control
         {
             ShowInstallLocationScreen();
         }
+
+        // Scene changes must wait until the main scene has finished entering the tree.
+        Callable.From(ResumeEditorAfterRestart).CallDeferred();
     }
 
     private void Start()
     {
-        var xrInterface = XRServer.FindInterface("OpenXR");
-        if (!DebugWithoutVr && xrInterface is not null && xrInterface.IsInitialized())
+        if (!DebugWithoutVr)
         {
+            var xrInterface = XRServer.FindInterface("OpenXR");
+            if (xrInterface is null || !xrInterface.IsInitialized())
+            {
+                GD.Print("OpenXR not initialized, please check if your headset is connected");
+                GetNode<AcceptDialog>("HeadsetRequiredDialog").PopupCentered();
+                return;
+            }
+
             GD.Print("OpenXR initialized successfully");
             DisplayServer.WindowSetVsyncMode(DisplayServer.VSyncMode.Disabled);
             GetViewport().UseXR = true;
         }
-        else
-        {
-            GD.Print("OpenXR not initialized, please check if your headset is connected");
-        }
 
         GetTree().ChangeSceneToFile("res://editor/editor.tscn");
+    }
+
+    private void RestartForVr()
+    {
+        var manager = GetNode<BeatMapManager>("/root/BeatMapManager");
+        if (manager.CurrentBeatmapInfo is null || manager.CurrentBeatmapDifficultyInfo is null)
+        {
+            GetNode<AcceptDialog>("EditorResumeErrorDialog").PopupCentered();
+            return;
+        }
+
+        var arguments = new List<string>();
+        foreach (var argument in OS.GetCmdlineArgs())
+        {
+            if (argument is "--" or "++")
+                break;
+            arguments.Add(argument);
+        }
+
+        // An unexported project must restart in the project, not the project manager.
+        if (OS.HasFeature("editor") && !arguments.Contains("--path"))
+        {
+            arguments.Add("--path");
+            arguments.Add(ProjectSettings.GlobalizePath("res://"));
+        }
+
+        arguments.Add("--");
+        foreach (var argument in OS.GetCmdlineUserArgs())
+        {
+            if (!argument.StartsWith(ResumeMapArgument, StringComparison.Ordinal)
+                && !argument.StartsWith(ResumeDifficultyArgument, StringComparison.Ordinal))
+                arguments.Add(argument);
+        }
+        arguments.Add(ResumeMapArgument + manager.CurrentBeatmapInfo.FilePath);
+        arguments.Add(ResumeDifficultyArgument + manager.CurrentBeatmapDifficultyInfo.BeatMapFileName);
+
+        OS.SetRestartOnExit(true, arguments.ToArray());
+        GetTree().Quit();
+    }
+
+    private void ResumeEditorAfterRestart()
+    {
+        string infoPath = null;
+        string difficultyFileName = null;
+        foreach (var argument in OS.GetCmdlineUserArgs())
+        {
+            if (argument.StartsWith(ResumeMapArgument, StringComparison.Ordinal))
+                infoPath = argument[ResumeMapArgument.Length..];
+            else if (argument.StartsWith(ResumeDifficultyArgument, StringComparison.Ordinal))
+                difficultyFileName = argument[ResumeDifficultyArgument.Length..];
+        }
+
+        // Only an explicitly requested restart resumes a map; normal launches do not.
+        if (infoPath is null && difficultyFileName is null)
+            return;
+
+        try
+        {
+            if (string.IsNullOrEmpty(infoPath) || string.IsNullOrEmpty(difficultyFileName)
+                || !FileAccess.FileExists(infoPath))
+                throw new InvalidOperationException("The restart map is missing or the restart arguments are incomplete.");
+
+            var manager = GetNode<BeatMapManager>("/root/BeatMapManager");
+            var info = manager.LoadBeatmapInfo(infoPath);
+            foreach (var set in info.DifficultyBeatMapSets)
+            {
+                foreach (var difficulty in set.DifficultyBeatMaps)
+                {
+                    if (difficulty.BeatMapFileName != difficultyFileName)
+                        continue;
+                    if (!FileAccess.FileExists(info.MapFolder.PathJoin(difficultyFileName)))
+                        throw new InvalidOperationException("The selected difficulty file no longer exists.");
+
+                    manager.LoadDifficulty(difficulty);
+                    Start();
+                    return;
+                }
+            }
+            throw new InvalidOperationException("The selected difficulty is no longer in the map.");
+        }
+        catch (Exception exception)
+        {
+            GD.PushError($"Unable to resume editor after restart: {exception.Message}");
+            GetNode<AcceptDialog>("EditorResumeErrorDialog").PopupCentered();
+        }
     }
 
     private void LoadSettings()
