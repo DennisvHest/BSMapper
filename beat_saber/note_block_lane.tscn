@@ -1,6 +1,6 @@
-[gd_scene load_steps=11 format=3 uid="uid://bwh2pgll34g30"]
+[gd_scene format=3 uid="uid://bwh2pgll34g30"]
 
-[ext_resource type="Script" path="res://beat_saber/NoteBlockLane.cs" id="1_p2bkp"]
+[ext_resource type="Script" uid="uid://s3p2xdlkeyvi" path="res://beat_saber/NoteBlockLane.cs" id="1_p2bkp"]
 [ext_resource type="PackedScene" uid="uid://bfhf8qgxqfrw6" path="res://beat_saber/note_block.tscn" id="2_il36q"]
 [ext_resource type="PackedScene" uid="uid://c8jif4wpe145k" path="res://editor/ObjectEditPlane/object_edit_plane.tscn" id="3_3sbvc"]
 [ext_resource type="PackedScene" path="res://editor/ObjectEditPlane/floor_beat_grid.tscn" id="4_qtils"]
@@ -9,23 +9,26 @@
 [ext_resource type="PackedScene" path="res://editor/ObjectEditPlane/selection_panel.tscn" id="7_selection"]
 [ext_resource type="PackedScene" path="res://editor/ObjectEditPlane/beat_subdivision_selector.tscn" id="8_subdivision"]
 [ext_resource type="PackedScene" path="res://editor/ObjectEditPlane/spectrogram_settings_panel.tscn" id="9_spectrogram"]
-[ext_resource type="PackedScene" path="res://editor/ObjectEditPlane/playback_progress_bar.tscn" id="10_progress"]
+[ext_resource type="PackedScene" uid="uid://cjnuw4ac8co64" path="res://editor/ObjectEditPlane/playback_progress_bar.tscn" id="10_progress"]
 
-[node name="NoteBlockLane" type="Node3D"]
+[node name="NoteBlockLane" type="Node3D" unique_id=1456432369]
 script = ExtResource("1_p2bkp")
 NoteBlockScene = ExtResource("2_il36q")
 BombScene = ExtResource("5_bomb")
 WallScene = ExtResource("6_wall")
 
-[node name="FloorBeatGrid" parent="." instance=ExtResource("4_qtils")]
+[node name="FloorBeatGrid" parent="." unique_id=1772332104 instance=ExtResource("4_qtils")]
 
-[node name="ObjectEditPlane" parent="." instance=ExtResource("3_3sbvc")]
+[node name="ObjectEditPlane" parent="." unique_id=1491362910 instance=ExtResource("3_3sbvc")]
 visible = false
 
-[node name="SelectionPanel" parent="." instance=ExtResource("7_selection")]
+[node name="SelectionPanel" parent="." unique_id=1859373752 instance=ExtResource("7_selection")]
+transform = Transform3D(0.70710677, 0, -0.70710677, 0, 1, 0, 0.70710677, 0, 0.70710677, 0, 0, 0)
 
-[node name="BeatSubdivisionSelector" parent="." instance=ExtResource("8_subdivision")]
+[node name="BeatSubdivisionSelector" parent="." unique_id=110521179 instance=ExtResource("8_subdivision")]
+transform = Transform3D(0.70710677, 0, 0.70710677, 0, 1, 0, -0.70710677, 0, 0.70710677, 0, 0, 0)
 
-[node name="SpectrogramSettingsPanel" parent="." instance=ExtResource("9_spectrogram")]
+[node name="SpectrogramSettingsPanel" parent="." unique_id=1669897113 instance=ExtResource("9_spectrogram")]
+transform = Transform3D(0.70710677, 0, 0.70710677, 0, 1, 0, -0.70710677, 0, 0.70710677, 0, 0, 0)
 
-[node name="PlaybackProgressBar" parent="." instance=ExtResource("10_progress")]
+[node name="PlaybackProgressBar" parent="." unique_id=711637748 instance=ExtResource("10_progress")]

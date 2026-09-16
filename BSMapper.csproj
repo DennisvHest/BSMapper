@@ -13,6 +13,8 @@
     <None Include="editor\ObjectEditPlane\spectrogram_settings_panel.tscn" />
     <None Include="editor\ObjectEditPlane\spectrogram_settings_ui.tscn" />
     <None Include="main.tscn" />
+    <None Include="tests\bulk-selection.md" />
+    <None Include="tests\bulk_selection_checks.tscn" />
     <None Include="ui\difficulty_configuration.tscn" />
     <None Include="ui\icon_button.tscn" />
     <None Include="ui\map_details.tscn" />

@@ -45,6 +45,11 @@ public partial class ObjectEditPlaneCell : Node3D
             return;
         }
 
+        CancelPlacement();
+    }
+
+    public void CancelPlacement()
+    {
         _activePointerDrags.Clear();
         _preview?.Hide();
     }
@@ -66,6 +71,11 @@ public partial class ObjectEditPlaneCell : Node3D
 
     private void OnEditAreaPointerEvent(GodotObject pointerEvent)
     {
+        if (_objectEditPlane?.BulkSelectionModeEnabled == true)
+        {
+            return;
+        }
+
         var pointer = pointerEvent.Get("pointer").AsGodotObject() as Node;
         if (pointer is null)
         {

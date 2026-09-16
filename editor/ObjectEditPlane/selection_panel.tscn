@@ -1,16 +1,18 @@
-[gd_scene load_steps=4 format=3]
+[gd_scene format=3 uid="uid://bk56jyx5a426y"]
 
-[ext_resource type="Script" path="res://editor/ObjectEditPlane/SelectionPanel.cs" id="1_panel"]
+[ext_resource type="Script" uid="uid://bq44oyujkjdq3" path="res://editor/ObjectEditPlane/SelectionPanel.cs" id="1_panel"]
 [ext_resource type="PackedScene" uid="uid://clujaf3u776a3" path="res://addons/godot-xr-tools/objects/viewport_2d_in_3d.tscn" id="2_viewport"]
-[ext_resource type="PackedScene" path="res://editor/ObjectEditPlane/selection_panel_ui.tscn" id="3_ui"]
+[ext_resource type="PackedScene" uid="uid://cddcnm27acs5" path="res://editor/ObjectEditPlane/selection_panel_ui.tscn" id="3_ui"]
 
-[node name="SelectionPanel" type="Node3D"]
-rotation_degrees = Vector3(0, -45, 0)
+[node name="SelectionPanel" type="Node3D" unique_id=1252282519]
+transform = Transform3D(0.70710677, 0, -0.70710677, 0, 1, 0, 0.70710677, 0, 0.70710677, 0, 0, 0)
 visible = false
 script = ExtResource("1_panel")
 
-[node name="ViewportPanel" parent="." instance=ExtResource("2_viewport")]
+[node name="ViewportPanel" parent="." unique_id=772878952 instance=ExtResource("2_viewport")]
 screen_size = Vector2(0.72, 0.78)
 scene = ExtResource("3_ui")
 viewport_size = Vector2(432, 468)
+transparent = 1
 unshaded = true
+scene_properties_keys = PackedStringArray("SelectionPanelUI")

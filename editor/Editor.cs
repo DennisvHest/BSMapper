@@ -21,6 +21,8 @@ public partial class Editor : Node3D
     private ObjectEditPlane _objectEditPlane;
     private DragState _rightDrag;
     private readonly HashSet<BeatmapObject> _selectedObjects = new();
+    private readonly HashSet<BeatmapObject> _bulkSelectedObjects = new();
+    private readonly HashSet<BeatmapObject> _observedObjects = new();
     private bool _leftSelectionMode;
 
     private PlaybackManager PlaybackManager => GetNode<PlaybackManager>("/root/PlaybackManager");
@@ -35,6 +37,8 @@ public partial class Editor : Node3D
         _hitSound = GetNode<AudioStreamPlayer>("HitSound");
         _badCutSound = GetNode<AudioStreamPlayer>("BadCutSound");
         _objectEditPlane = GetNode<ObjectEditPlane>("NoteBlockLane/ObjectEditPlane");
+        _objectEditPlane.BulkSelectionModeChanged += OnBulkSelectionModeChanged;
+        BeatMapManager.CurrentBeatmapChanged += OnCurrentBeatmapChanged;
 
         var cameraPosition = GetNode<XRCamera3D>("XROrigin3D/XRCamera3D").Position;
         cameraPosition.Y = GlobalSettings.PlayerHeight;
@@ -62,6 +66,15 @@ public partial class Editor : Node3D
 
     private void OnLeftHandButtonPressed(string buttonName)
     {
+        if (_objectEditPlane.BulkSelectionModeEnabled)
+        {
+            if (buttonName == InputActions.SelectObject)
+            {
+                _objectEditPlane.BeginBulkSelectionDrag(InputManager.LeftHandPointer);
+            }
+            return;
+        }
+
         if (buttonName == InputActions.SelectObject && _leftSelectionMode)
         {
             ToggleHoveredObjectSelection(InputManager.LeftHandPointer);
@@ -79,6 +92,15 @@ public partial class Editor : Node3D
 
     private void OnRightHandButtonPressed(string buttonName)
     {
+        if (_objectEditPlane.BulkSelectionModeEnabled)
+        {
+            if (buttonName == InputActions.SelectObject)
+            {
+                _objectEditPlane.BeginBulkSelectionDrag(InputManager.RightHandPointer);
+            }
+            return;
+        }
+
         if (buttonName == InputActions.SelectObject && _leftSelectionMode)
         {
             ToggleHoveredObjectSelection(InputManager.RightHandPointer);
@@ -95,6 +117,11 @@ public partial class Editor : Node3D
 
     private void OnLeftHandButtonReleased(string buttonName)
     {
+        if (buttonName == InputActions.SelectObject)
+        {
+            _objectEditPlane.EndBulkSelectionDrag(InputManager.LeftHandPointer);
+        }
+
         if (buttonName == InputActions.ToggleSelectionMode)
         {
             _leftSelectionMode = false;
@@ -104,6 +131,11 @@ public partial class Editor : Node3D
 
     private void OnRightHandButtonReleased(string buttonName)
     {
+        if (buttonName == InputActions.SelectObject)
+        {
+            _objectEditPlane.EndBulkSelectionDrag(InputManager.RightHandPointer);
+        }
+
         if (buttonName == InputActions.MoveObject)
         {
             _rightDrag = null;
@@ -134,6 +166,8 @@ public partial class Editor : Node3D
 
     public void DeleteSelectedObjects()
     {
+        _objectEditPlane?.ResetBulkSelection();
+        CommitBulkSelection();
         var objectsToDelete = new List<BeatmapObject>(_selectedObjects);
         _selectedObjects.Clear();
         foreach (var selectedObject in objectsToDelete)
@@ -147,6 +181,8 @@ public partial class Editor : Node3D
 
     public void DeselectAllObjects()
     {
+        _objectEditPlane?.ResetBulkSelection();
+        CommitBulkSelection();
         var selectedObjects = new List<BeatmapObject>(_selectedObjects);
         _selectedObjects.Clear();
         foreach (var selectedObject in selectedObjects)
@@ -155,6 +191,86 @@ public partial class Editor : Node3D
         }
 
         EmitSelectionChanged();
+    }
+
+    public void CommitBulkSelection()
+    {
+        _bulkSelectedObjects.Clear();
+    }
+
+    public void UpdateBulkSelection(IEnumerable<BeatmapObject> objects)
+    {
+        var matches = new HashSet<BeatmapObject>(objects);
+        var changed = false;
+        foreach (var previous in new List<BeatmapObject>(_bulkSelectedObjects))
+        {
+            if (!matches.Contains(previous))
+            {
+                _bulkSelectedObjects.Remove(previous);
+                _selectedObjects.Remove(previous);
+                previous.SetSelected(false);
+                changed = true;
+            }
+        }
+
+        foreach (var match in matches)
+        {
+            if (IsInstanceValid(match) && !match.IsQueuedForDeletion() && AddSelectedObject(match))
+            {
+                _bulkSelectedObjects.Add(match);
+                changed = true;
+            }
+        }
+
+        if (changed)
+        {
+            EmitSelectionChanged();
+        }
+    }
+
+    private bool AddSelectedObject(BeatmapObject beatmapObject)
+    {
+        if (!_selectedObjects.Add(beatmapObject))
+        {
+            return false;
+        }
+
+        beatmapObject.SetSelected(true);
+        if (_observedObjects.Add(beatmapObject))
+        {
+            beatmapObject.TreeExiting += () =>
+            {
+                _observedObjects.Remove(beatmapObject);
+                RemoveSelectedObject(beatmapObject);
+            };
+        }
+        return true;
+    }
+
+    private void OnBulkSelectionModeChanged(bool enabled)
+    {
+        if (enabled)
+        {
+            _leftSelectionMode = false;
+            _rightDrag = null;
+            _objectEditPlane.SetSelectionModeEnabled(false);
+        }
+    }
+
+    private void OnCurrentBeatmapChanged(BeatMap beatmap)
+    {
+        DeselectAllObjects();
+    }
+
+    public override void _ExitTree()
+    {
+        BeatMapManager.CurrentBeatmapChanged -= OnCurrentBeatmapChanged;
+        _objectEditPlane.BulkSelectionModeChanged -= OnBulkSelectionModeChanged;
+        InputManager.LeftHand.ButtonPressed -= OnLeftHandButtonPressed;
+        InputManager.LeftHand.ButtonReleased -= OnLeftHandButtonReleased;
+        InputManager.RightHand.ButtonPressed -= OnRightHandButtonPressed;
+        InputManager.RightHand.ButtonReleased -= OnRightHandButtonReleased;
+        PlaybackManager.ModeChanged -= OnPlaybackModeChanged;
     }
 
     private bool DeleteHoveredObjectForPointer(GodotObject pointer)
@@ -184,9 +300,7 @@ public partial class Editor : Node3D
         }
         else
         {
-            _selectedObjects.Add(hoveredObject);
-            hoveredObject.SetSelected(true);
-            hoveredObject.TreeExiting += () => RemoveSelectedObject(hoveredObject);
+            AddSelectedObject(hoveredObject);
         }
 
         EmitSelectionChanged();
@@ -194,6 +308,7 @@ public partial class Editor : Node3D
 
     private void RemoveSelectedObject(BeatmapObject beatmapObject)
     {
+        _bulkSelectedObjects.Remove(beatmapObject);
         if (!_selectedObjects.Remove(beatmapObject))
         {
             return;

@@ -1,3 +1,4 @@
+using System;
 using Godot;
 
 [GlobalClass]
@@ -22,20 +23,28 @@ public partial class ObjectEditPlane : Node3D
     [Export]
     public PlaceableObjectType SelectedObjectType { get; private set; }
 
+    public event Action<bool> BulkSelectionModeChanged;
+    public bool BulkSelectionModeEnabled { get; private set; }
+
     private bool _selectionModeEnabled;
+    private BulkSelection _bulkSelection;
 
     private PlaybackManager PlaybackManager => GetNode<PlaybackManager>("/root/PlaybackManager");
 
     public override void _Ready()
     {
+        _bulkSelection = new BulkSelection { Name = "BulkSelection" };
+        AddChild(_bulkSelection);
         PositionObjectTypeSelector();
         OnPlaybackModeChanged();
         SpawnGridCells();
         PlaybackManager.ModeChanged += OnPlaybackModeChanged;
+        GetNode<BeatMapManager>("/root/BeatMapManager").CurrentBeatmapChanged += OnCurrentBeatmapChanged;
     }
 
     public void SetSelectedObjectType(PlaceableObjectType selectedObjectType)
     {
+        SetBulkSelectionModeEnabled(false);
         if (SelectedObjectType == selectedObjectType)
         {
             return;
@@ -54,6 +63,56 @@ public partial class ObjectEditPlane : Node3D
 
         _selectionModeEnabled = enabled;
         UpdateVisibilityAndInteraction();
+    }
+
+    public void SetBulkSelectionModeEnabled(bool enabled)
+    {
+        enabled = enabled && PlaybackManager.Mode == PlaybackManager.EditMode.Editing;
+        if (BulkSelectionModeEnabled == enabled)
+        {
+            return;
+        }
+
+        ResetBulkSelection();
+        BulkSelectionModeEnabled = enabled;
+        foreach (var child in GetChildren())
+        {
+            if (child is ObjectEditPlaneCell cell)
+            {
+                cell.CancelPlacement();
+            }
+        }
+        UpdateVisibilityAndInteraction();
+        BulkSelectionModeChanged?.Invoke(enabled);
+    }
+
+    public void BeginBulkSelectionDrag(Node pointer)
+    {
+        if (BulkSelectionModeEnabled)
+        {
+            _bulkSelection.BeginDrag(pointer);
+        }
+    }
+
+    public void EndBulkSelectionDrag(Node pointer)
+    {
+        _bulkSelection?.EndDrag(pointer);
+    }
+
+    public void ResetBulkSelection()
+    {
+        _bulkSelection?.Reset();
+    }
+
+    private void OnCurrentBeatmapChanged(BeatMap beatmap)
+    {
+        ResetBulkSelection();
+    }
+
+    public override void _ExitTree()
+    {
+        PlaybackManager.ModeChanged -= OnPlaybackModeChanged;
+        GetNode<BeatMapManager>("/root/BeatMapManager").CurrentBeatmapChanged -= OnCurrentBeatmapChanged;
     }
 
     private void PositionObjectTypeSelector()
@@ -87,6 +146,10 @@ public partial class ObjectEditPlane : Node3D
 
     private void OnPlaybackModeChanged()
     {
+        if (PlaybackManager.Mode != PlaybackManager.EditMode.Editing)
+        {
+            SetBulkSelectionModeEnabled(false);
+        }
         UpdateVisibilityAndInteraction();
     }
 
@@ -105,6 +168,7 @@ public partial class ObjectEditPlane : Node3D
 
     private bool IsEditPlaneEnabled()
     {
-        return PlaybackManager.Mode == PlaybackManager.EditMode.Editing && !_selectionModeEnabled;
+        return PlaybackManager.Mode == PlaybackManager.EditMode.Editing
+            && (!_selectionModeEnabled || BulkSelectionModeEnabled);
     }
 }

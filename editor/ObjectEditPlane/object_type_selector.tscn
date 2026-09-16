@@ -42,9 +42,9 @@ rotation_degrees = Vector3(0, 45, 0)
 script = ExtResource("1_2mrtu")
 
 [node name="ViewportPanel" parent="." instance=ExtResource("2_x3lrt")]
-screen_size = Vector2(0.6, 0.42)
+screen_size = Vector2(0.6, 0.613333)
 scene = ExtResource("3_1xq2r")
-viewport_size = Vector2(360, 252)
+viewport_size = Vector2(360, 368)
 unshaded = true
 scene_properties_keys = PackedStringArray("ObjectTypeSelectorUI.cs", "IdleButtonStyle", "HoverButtonStyle", "SelectedButtonStyle", "IdleTextColor", "SelectedTextColor")
 IdleButtonStyle = SubResource("StyleBoxFlat_button_idle")
