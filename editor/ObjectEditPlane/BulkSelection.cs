@@ -23,8 +23,8 @@ public partial class BulkSelection : Node3D
         _lane = GetParent().GetParent<NoteBlockLane>();
         _editor = _lane.GetParent<Editor>();
         _playback = GetNode<PlaybackManager>("/root/PlaybackManager");
-        _volume = CreateBox(CreateMaterial(new Color(0.0f, 0.9f, 1.0f, 0.12f)));
-        _rectangle = CreateBox(CreateMaterial(new Color(0.0f, 0.9f, 1.0f, 0.3f)));
+        _volume = CreateBox(CreateMaterial(new Color(0.0f, 0.9f, 1.0f, 0.01f)));
+        _rectangle = CreateBox(CreateMaterial(new Color(0.0f, 0.9f, 1.0f, 0.02f)));
         var outlineMaterial = CreateMaterial(new Color(0.0f, 0.95f, 1.0f));
         for (var i = 0; i < 12; i++)
         {
