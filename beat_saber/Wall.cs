@@ -108,6 +108,7 @@ public partial class Wall : BeatmapObject
     private void UpdateHighlightVisible()
     {
         UpdateOutlineColor(_highlightOutline);
-        _highlightOutline.Visible = IsSelected || IsCopied || _hoveringPointers.Count > 0;
+        UpdateCutVisual(GetNode<MeshInstance3D>("Visual/MeshInstance3D"));
+        _highlightOutline.Visible = (!IsCut && (IsSelected || IsCopied)) || _hoveringPointers.Count > 0;
     }
 }

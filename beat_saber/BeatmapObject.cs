@@ -18,6 +18,8 @@ public partial class BeatmapObject : Node3D
     private StandardMaterial3D _outlineMaterial;
     private Color _normalOutlineColor;
     private Color _normalOutlineEmission;
+    private StandardMaterial3D _visualMaterial;
+    private Color _normalVisualColor;
 
     public BeatMapDifficultyInfo MapInfo { get; private set; }
     public BeatMapObjectBase BeatmapData { get; private set; }
@@ -27,6 +29,7 @@ public partial class BeatmapObject : Node3D
     public bool Despawned => ProcessMode == ProcessModeEnum.Disabled;
     public bool IsSelected { get; private set; }
     public bool IsCopied { get; private set; }
+    public bool IsCut { get; private set; }
 
     protected PlaybackManager PlaybackManager => GetNode<PlaybackManager>("/root/PlaybackManager");
 
@@ -77,6 +80,17 @@ public partial class BeatmapObject : Node3D
         OnSelectionChanged();
     }
 
+    public void SetCut(bool cut)
+    {
+        if (IsCut == cut)
+        {
+            return;
+        }
+
+        IsCut = cut;
+        OnSelectionChanged();
+    }
+
     public void SetCopied(bool copied)
     {
         if (IsCopied == copied)
@@ -100,6 +114,23 @@ public partial class BeatmapObject : Node3D
 
         _outlineMaterial.AlbedoColor = IsCopied ? CopiedOutlineColor : _normalOutlineColor;
         _outlineMaterial.Emission = IsCopied ? CopiedOutlineColor : _normalOutlineEmission;
+    }
+
+    protected void UpdateCutVisual(MeshInstance3D visual)
+    {
+        if (_visualMaterial is null)
+        {
+            _visualMaterial = (StandardMaterial3D)visual.GetActiveMaterial(0).Duplicate();
+            _normalVisualColor = _visualMaterial.AlbedoColor;
+            visual.SetSurfaceOverrideMaterial(0, _visualMaterial);
+        }
+
+        var color = _normalVisualColor;
+        color.A = IsCut ? _normalVisualColor.A * 0.25f : _normalVisualColor.A;
+        _visualMaterial.Transparency = color.A < 1.0f
+            ? BaseMaterial3D.TransparencyEnum.Alpha
+            : BaseMaterial3D.TransparencyEnum.Disabled;
+        _visualMaterial.AlbedoColor = color;
     }
 
     public void DeleteBeatmapObject()

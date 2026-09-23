@@ -27,6 +27,7 @@ public partial class Editor : Node3D
     private readonly HashSet<BeatmapObject> _bulkSelectedObjects = new();
     private readonly HashSet<BeatmapObject> _observedObjects = new();
     private readonly HashSet<BeatmapObject> _copiedObjects = new();
+    private readonly HashSet<BeatmapObject> _cutObjects = new();
     private readonly BeatmapClipboard _clipboard = new();
     private bool _leftSelectionMode;
 
@@ -171,6 +172,16 @@ public partial class Editor : Node3D
 
     public void CopySelectedObjects()
     {
+        StartClipboardFromSelection(false);
+    }
+
+    public void CutSelectedObjects()
+    {
+        StartClipboardFromSelection(true);
+    }
+
+    private void StartClipboardFromSelection(bool cut)
+    {
         var sources = new List<BeatmapObject>();
         var data = new List<BeatMapObjectBase>();
         foreach (var selectedObject in _selectedObjects)
@@ -190,12 +201,20 @@ public partial class Editor : Node3D
         _objectEditPlane?.ResetBulkSelection();
         CommitBulkSelection();
         _rightDrag = null;
+        ClearClipboard();
         _clipboard.Copy(data);
-        ClearCopiedSources();
         foreach (var source in sources)
         {
-            _copiedObjects.Add(source);
-            source.SetCopied(true);
+            if (cut)
+            {
+                _cutObjects.Add(source);
+                source.SetCut(true);
+            }
+            else
+            {
+                _copiedObjects.Add(source);
+                source.SetCopied(true);
+            }
         }
         ClipboardChanged?.Invoke(ClipboardCount);
     }
@@ -208,13 +227,34 @@ public partial class Editor : Node3D
             return;
         }
 
-        _objectEditPlane?.ResetBulkSelection();
-        CommitBulkSelection();
+        var pastedData = new HashSet<BeatMapObjectBase>(_clipboard.CreatePaste(PlaybackManager.PlaybackBeat));
+        var cutSources = new List<BeatmapObject>(_cutObjects);
+        DeselectAllObjects();
         _rightDrag = null;
-        foreach (var data in _clipboard.CreatePaste(PlaybackManager.PlaybackBeat))
+        foreach (var data in pastedData)
         {
             beatmap.AddObject(data);
         }
+
+        foreach (var child in GetNode<NoteBlockLane>("NoteBlockLane").GetChildren())
+        {
+            if (child is BeatmapObject beatmapObject && pastedData.Contains(beatmapObject.BeatmapData))
+            {
+                AddSelectedObject(beatmapObject);
+            }
+        }
+
+        ClearCutSources();
+        foreach (var source in cutSources)
+        {
+            if (IsInstanceValid(source) && !source.IsQueuedForDeletion())
+            {
+                source.DeleteBeatmapObject();
+            }
+        }
+
+        CopySelectedObjects();
+        EmitSelectionChanged();
     }
 
     private void ClearCopiedSources()
@@ -229,9 +269,22 @@ public partial class Editor : Node3D
         _copiedObjects.Clear();
     }
 
+    private void ClearCutSources()
+    {
+        foreach (var source in _cutObjects)
+        {
+            if (IsInstanceValid(source))
+            {
+                source.SetCut(false);
+            }
+        }
+        _cutObjects.Clear();
+    }
+
     private void ClearClipboard()
     {
         ClearCopiedSources();
+        ClearCutSources();
         _clipboard.Clear();
         ClipboardChanged?.Invoke(ClipboardCount);
     }
@@ -316,6 +369,10 @@ public partial class Editor : Node3D
                 if (_copiedObjects.Remove(beatmapObject))
                 {
                     beatmapObject.SetCopied(false);
+                }
+                if (_cutObjects.Remove(beatmapObject))
+                {
+                    beatmapObject.SetCut(false);
                 }
                 RemoveSelectedObject(beatmapObject);
             };

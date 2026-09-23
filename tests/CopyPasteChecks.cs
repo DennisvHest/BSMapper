@@ -113,18 +113,24 @@ public partial class CopyPasteChecks : Node
             .Instantiate<SelectionPanelUI>();
         AddChild(panel);
         var copy = panel.GetNode<Button>("%CopyButton");
+        var cut = panel.GetNode<Button>("%CutButton");
         var paste = panel.GetNode<Button>("%PasteButton");
         var copies = 0;
+        var cuts = 0;
         var pastes = 0;
         panel.CopySelected += () => copies++;
+        panel.CutSelected += () => cuts++;
         panel.PasteCopied += () => pastes++;
-        Check(copy.Disabled && paste.Disabled, "Clipboard buttons initially disabled");
+        Check(copy.Disabled && cut.Disabled && paste.Disabled, "Clipboard buttons initially disabled");
         panel.SetSelection(3, true);
-        Check(!copy.Disabled && paste.Disabled, "Copy requires selection and Paste requires clipboard");
+        Check(!copy.Disabled && !cut.Disabled && paste.Disabled, "Copy/Cut require selection and Paste requires clipboard");
         copy.EmitSignal(Button.SignalName.Pressed);
         Check(copies == 1, "Copy button event");
+        cut.EmitSignal(Button.SignalName.Pressed);
+        Check(cuts == 1, "Cut button event");
         panel.SetSelection(0, false, 3);
-        Check(copy.Disabled && !paste.Disabled && paste.Text == "Paste (3)", "Clipboard-only controls and count");
+        Check(copy.Disabled && cut.Disabled && !paste.Disabled && paste.Text == "Paste (3)",
+            "Clipboard-only controls and count");
         Check(panel.GetNode<Button>("%DeleteButton").Disabled && panel.GetNode<Button>("%DeselectButton").Disabled,
             "Selection actions disabled without selection");
         paste.EmitSignal(Button.SignalName.Pressed);
@@ -182,6 +188,7 @@ public partial class CopyPasteChecks : Node
             "Copied source outlines survive deselection");
         Check(panel.Visible && !panelUi.GetNode<Button>("%PasteButton").Disabled, "Clipboard keeps the real panel available");
 
+        editor.UpdateBulkSelection(sources.Take(1));
         playback.SetPlaybackPosition(10.0);
         panelUi.GetNode<Button>("%PasteButton").EmitSignal(Button.SignalName.Pressed);
         Check(map.Notes.Count == 2 && map.Bombs.Count == 2 && map.Walls.Count == 2, "Real panel Paste adds all types");
@@ -189,18 +196,38 @@ public partial class CopyPasteChecks : Node
             "Paste uses current playback beat with preserved spacing");
         Check(map.Notes[1].Type == BeatMapNote.NoteBlockType.Left, "Editor paste uses snapshot rather than edited source");
         var pastedObjects = lane.GetChildren().OfType<BeatmapObject>().Except(sources).ToArray();
-        Check(pastedObjects.Length == 3 && pastedObjects.All(obj => !obj.IsCopied && !obj.IsSelected),
-            "Pasted nodes render as independent unselected objects");
-        Check(pastedObjects.All(obj => GetOutlineMaterial(obj).AlbedoColor.G < 0.9f), "Copied outlines do not leak to new instances");
+        Check(pastedObjects.Length == 3 && pastedObjects.All(obj => obj.IsCopied && obj.IsSelected),
+            "Pasted notes, bombs and walls become selected and copied");
+        Check(pastedObjects.All(obj => GetOutlineMaterial(obj).AlbedoColor.G > 0.9f
+            && GetOutlineMaterial(obj).Emission.G > 0.9f), "Pasted objects have green outlines");
+        Check(sources.All(obj => !obj.IsSelected && !obj.IsCopied), "Paste clears previous selection and copied markers");
+        Check(panelUi.GetNode<Label>("%Title").Text == "Selected: 3"
+            && !panelUi.GetNode<Button>("%CopyButton").Disabled
+            && !panelUi.GetNode<Button>("%DeleteButton").Disabled, "Panel actions target the newly pasted selection");
+        Check(editor.ClipboardCount == 3, "Pasted group remains available in the clipboard");
         playback.SetPlaybackPosition(5.0);
         editor.PasteCopiedObjects();
         Check(map.Notes.Count == 3 && map.Notes[2].Beat == 10.0 && map.Bombs[2].Beat == 11.5,
             "Editor supports repeated paste at an earlier beat");
+        var repeatedObjects = lane.GetChildren().OfType<BeatmapObject>().Except(sources).Except(pastedObjects).ToArray();
+        Check(repeatedObjects.Length == 3 && repeatedObjects.All(obj => obj.IsSelected && obj.IsCopied)
+            && pastedObjects.All(obj => !obj.IsSelected && !obj.IsCopied), "Repeated paste transfers both states to the newest group");
+        Check(pastedObjects.All(obj => GetOutlineMaterial(obj).AlbedoColor.G < 0.9f), "Previous pasted outlines restore their normal color");
 
+        editor.PasteCopiedObjects();
+        var sameBeatObjects = lane.GetChildren().OfType<BeatmapObject>()
+            .Except(sources).Except(pastedObjects).Except(repeatedObjects).ToArray();
+        Check(sameBeatObjects.Length == 3 && sameBeatObjects.All(obj => obj.IsSelected && obj.IsCopied)
+            && repeatedObjects.All(obj => !obj.IsSelected && !obj.IsCopied), "Same-beat paste selects only the new object identities");
+        editor.UpdateBulkSelection(Array.Empty<BeatmapObject>());
+        Check(sameBeatObjects.All(obj => obj.IsSelected && obj.IsCopied), "Pasted selection is not owned by an old live cube");
+
+        editor.DeselectAllObjects();
         var nextSource = pastedObjects.First(obj => obj is NoteBlock);
         editor.UpdateBulkSelection(new[] { nextSource });
         editor.CopySelectedObjects();
-        Check(editor.ClipboardCount == 1 && nextSource.IsCopied && sources.All(source => !source.IsCopied),
+        Check(editor.ClipboardCount == 1 && nextSource.IsCopied && sources.All(source => !source.IsCopied)
+            && sameBeatObjects.All(obj => !obj.IsCopied),
             "Replacing clipboard updates source markers");
         Check(sources.Select((source, index) => GetOutlineMaterial(source).AlbedoColor == originalColors[index]).All(value => value),
             "Replacing clipboard restores original outline colors");
@@ -210,6 +237,36 @@ public partial class CopyPasteChecks : Node
         playback.SetPlaybackPosition(1.0);
         editor.PasteCopiedObjects();
         Check(map.Notes.Last().Beat == 2.0, "Deleted source can still be pasted from snapshot");
+        Check(lane.GetChildren().OfType<BeatmapObject>()
+            .Single(obj => obj.BeatmapData == map.Notes.Last()) is { IsSelected: true, IsCopied: true },
+            "Paste from a deleted source selects and marks the replacement");
+
+        editor.DeselectAllObjects();
+        editor.UpdateBulkSelection(sameBeatObjects);
+        var cutData = sameBeatObjects.Select(obj => obj.BeatmapData).ToHashSet();
+        var cutVisualAlphas = sameBeatObjects.Select(GetVisualMaterial).Select(material => material.AlbedoColor.A).ToArray();
+        var noteCountBeforeCut = map.Notes.Count;
+        var bombCountBeforeCut = map.Bombs.Count;
+        var wallCountBeforeCut = map.Walls.Count;
+        panelUi.GetNode<Button>("%CutButton").EmitSignal(Button.SignalName.Pressed);
+        Check(editor.ClipboardCount == 3 && sameBeatObjects.All(obj => obj.IsCut && obj.IsSelected && !obj.IsCopied),
+            "Real panel Cut captures selected sources without deleting them yet");
+        Check(sameBeatObjects.Select((obj, index) => Mathf.IsEqualApprox(
+            GetVisualMaterial(obj).AlbedoColor.A, cutVisualAlphas[index] * 0.25f)).All(value => value),
+            "Cut note, bomb and wall visuals are semitransparent");
+        Check(map.Notes.Count == noteCountBeforeCut && map.Bombs.Count == bombCountBeforeCut
+            && map.Walls.Count == wallCountBeforeCut, "Cut leaves source map data intact before Paste");
+        editor.DeselectAllObjects();
+        playback.SetPlaybackPosition(15.0);
+        panelUi.GetNode<Button>("%PasteButton").EmitSignal(Button.SignalName.Pressed);
+        await ToSignal(GetTree(), SceneTree.SignalName.ProcessFrame);
+        var cutReplacements = lane.GetChildren().OfType<BeatmapObject>()
+            .Where(obj => !cutData.Contains(obj.BeatmapData) && obj.IsSelected && obj.IsCopied).ToArray();
+        Check(map.Notes.Count == noteCountBeforeCut && map.Bombs.Count == bombCountBeforeCut
+            && map.Walls.Count == wallCountBeforeCut && cutData.All(data => !Contains(map, data)),
+            "Paste deletes cut sources after adding replacements");
+        Check(cutReplacements.Length == 3 && cutReplacements.All(obj => !obj.IsCut),
+            "Cut Paste selects and marks the replacement group without cut state");
 
         var replacement = new BeatMap();
         replacement.InitializeEmpty();
@@ -219,6 +276,22 @@ public partial class CopyPasteChecks : Node
         editor.PasteCopiedObjects();
         Check(replacement.Notes.Count == 0, "Empty clipboard paste is a no-op");
         editor.Free();
+    }
+
+    private static StandardMaterial3D GetVisualMaterial(BeatmapObject obj)
+    {
+        return (StandardMaterial3D)obj.GetNode<MeshInstance3D>("Visual/MeshInstance3D").GetActiveMaterial(0);
+    }
+
+    private static bool Contains(BeatMap map, BeatMapObjectBase data)
+    {
+        return data switch
+        {
+            BeatMapNote note => map.Notes.Contains(note),
+            BeatMapBomb bomb => map.Bombs.Contains(bomb),
+            BeatMapWall wall => map.Walls.Contains(wall),
+            _ => false,
+        };
     }
 
     private static StandardMaterial3D GetOutlineMaterial(BeatmapObject obj)

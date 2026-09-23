@@ -30,6 +30,7 @@ public partial class SelectionPanel : Node3D
         _panelUi.DeselectAll += _editor.DeselectAllObjects;
         _panelUi.DeleteSelected += _editor.DeleteSelectedObjects;
         _panelUi.CopySelected += _editor.CopySelectedObjects;
+        _panelUi.CutSelected += _editor.CutSelectedObjects;
         _panelUi.PasteCopied += _editor.PasteCopiedObjects;
         _editor.SelectionChanged += OnSelectionChanged;
         _editor.ClipboardChanged += OnClipboardChanged;
@@ -49,6 +50,7 @@ public partial class SelectionPanel : Node3D
                 _panelUi.DeselectAll -= _editor.DeselectAllObjects;
                 _panelUi.DeleteSelected -= _editor.DeleteSelectedObjects;
                 _panelUi.CopySelected -= _editor.CopySelectedObjects;
+                _panelUi.CutSelected -= _editor.CutSelectedObjects;
                 _panelUi.PasteCopied -= _editor.PasteCopiedObjects;
             }
         }

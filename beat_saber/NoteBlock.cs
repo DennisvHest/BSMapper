@@ -179,9 +179,10 @@ public partial class NoteBlock : BeatmapObject
     private void UpdateHighlightVisible()
     {
         UpdateOutlineColor(_highlightOutline);
+        UpdateCutVisual(GetNode<MeshInstance3D>("Visual/MeshInstance3D"));
         SetHighlightVisible(
             PlaybackManager.Mode == PlaybackManager.EditMode.Editing &&
-            (IsSelected || IsCopied || _hoveringPointers.Count > 0));
+            ((!IsCut && (IsSelected || IsCopied)) || _hoveringPointers.Count > 0));
     }
 
     private void SetHighlightVisible(bool visible)

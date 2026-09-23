@@ -9,11 +9,13 @@ public partial class SelectionPanelUI : Control
     public event Action DeselectAll;
     public event Action DeleteSelected;
     public event Action CopySelected;
+    public event Action CutSelected;
     public event Action PasteCopied;
 
     private Label _title;
     private Control _colorSection;
     private Button _copyButton;
+    private Button _cutButton;
     private Button _pasteButton;
 
     public override void _Ready()
@@ -21,6 +23,7 @@ public partial class SelectionPanelUI : Control
         _title = GetNode<Label>("%Title");
         _colorSection = GetNode<Control>("%ColorSection");
         _copyButton = GetNode<Button>("%CopyButton");
+        _cutButton = GetNode<Button>("%CutButton");
         _pasteButton = GetNode<Button>("%PasteButton");
         GetNode<Button>("%LeftColorButton").Pressed += () =>
             NoteTypeSelected?.Invoke(BeatMapNote.NoteBlockType.Left);
@@ -31,6 +34,7 @@ public partial class SelectionPanelUI : Control
         GetNode<Button>("%DeselectButton").Pressed += () => DeselectAll?.Invoke();
         GetNode<Button>("%DeleteButton").Pressed += () => DeleteSelected?.Invoke();
         _copyButton.Pressed += () => CopySelected?.Invoke();
+        _cutButton.Pressed += () => CutSelected?.Invoke();
         _pasteButton.Pressed += () => PasteCopied?.Invoke();
         SetSelection(0, false);
     }
@@ -40,6 +44,7 @@ public partial class SelectionPanelUI : Control
         _title.Text = $"Selected: {selectedCount}";
         _colorSection.Visible = containsNotes;
         _copyButton.Disabled = selectedCount == 0;
+        _cutButton.Disabled = selectedCount == 0;
         _pasteButton.Disabled = clipboardCount == 0;
         _pasteButton.Text = clipboardCount > 0 ? $"Paste ({clipboardCount})" : "Paste";
         GetNode<Button>("%DeselectButton").Disabled = selectedCount == 0;
