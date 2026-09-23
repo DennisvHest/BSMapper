@@ -89,7 +89,7 @@ corner_radius_bottom_right = 14
 corner_radius_bottom_left = 14
 
 [node name="SelectionPanelUI" type="Control" unique_id=1379940873]
-custom_minimum_size = Vector2(432, 468)
+custom_minimum_size = Vector2(432, 560)
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -190,6 +190,36 @@ text = "Any direction"
 [node name="Spacer" type="Control" parent="Panel/MarginContainer/VBoxContainer" unique_id=1998953504]
 layout_mode = 2
 size_flags_vertical = 3
+
+[node name="ClipboardActions" type="HBoxContainer" parent="Panel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="CopyButton" type="Button" parent="Panel/MarginContainer/VBoxContainer/ClipboardActions"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 76)
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+theme_override_font_sizes/font_size = 24
+theme_override_styles/normal = SubResource("StyleBoxFlat_button")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_button_hover")
+theme_override_styles/hover = SubResource("StyleBoxFlat_button_hover")
+disabled = true
+text = "Copy"
+
+[node name="PasteButton" type="Button" parent="Panel/MarginContainer/VBoxContainer/ClipboardActions"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 76)
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+theme_override_font_sizes/font_size = 24
+theme_override_styles/normal = SubResource("StyleBoxFlat_button")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_button_hover")
+theme_override_styles/hover = SubResource("StyleBoxFlat_button_hover")
+disabled = true
+text = "Paste"
 
 [node name="Actions" type="HBoxContainer" parent="Panel/MarginContainer/VBoxContainer" unique_id=523979779]
 layout_mode = 2

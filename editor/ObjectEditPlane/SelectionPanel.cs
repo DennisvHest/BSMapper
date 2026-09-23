@@ -9,6 +9,8 @@ public partial class SelectionPanel : Node3D
 
     private Editor _editor;
     private SelectionPanelUI _panelUi;
+    private int _selectedCount;
+    private bool _containsNotes;
 
     public override void _Ready()
     {
@@ -27,7 +29,10 @@ public partial class SelectionPanel : Node3D
         _panelUi.CutDirectionSelected += _editor.SetSelectedNoteCutDirection;
         _panelUi.DeselectAll += _editor.DeselectAllObjects;
         _panelUi.DeleteSelected += _editor.DeleteSelectedObjects;
+        _panelUi.CopySelected += _editor.CopySelectedObjects;
+        _panelUi.PasteCopied += _editor.PasteCopiedObjects;
         _editor.SelectionChanged += OnSelectionChanged;
+        _editor.ClipboardChanged += OnClipboardChanged;
         OnSelectionChanged(0, false);
     }
 
@@ -36,12 +41,34 @@ public partial class SelectionPanel : Node3D
         if (_editor is not null)
         {
             _editor.SelectionChanged -= OnSelectionChanged;
+            _editor.ClipboardChanged -= OnClipboardChanged;
+            if (_panelUi is not null)
+            {
+                _panelUi.NoteTypeSelected -= _editor.SetSelectedNoteBlockType;
+                _panelUi.CutDirectionSelected -= _editor.SetSelectedNoteCutDirection;
+                _panelUi.DeselectAll -= _editor.DeselectAllObjects;
+                _panelUi.DeleteSelected -= _editor.DeleteSelectedObjects;
+                _panelUi.CopySelected -= _editor.CopySelectedObjects;
+                _panelUi.PasteCopied -= _editor.PasteCopiedObjects;
+            }
         }
     }
 
     private void OnSelectionChanged(int selectedCount, bool containsNotes)
     {
-        Visible = selectedCount > 0;
-        _panelUi?.SetSelection(selectedCount, containsNotes);
+        _selectedCount = selectedCount;
+        _containsNotes = containsNotes;
+        UpdatePanel();
+    }
+
+    private void OnClipboardChanged(int clipboardCount)
+    {
+        UpdatePanel();
+    }
+
+    private void UpdatePanel()
+    {
+        Visible = _selectedCount > 0 || _editor.ClipboardCount > 0;
+        _panelUi?.SetSelection(_selectedCount, _containsNotes, _editor.ClipboardCount);
     }
 }

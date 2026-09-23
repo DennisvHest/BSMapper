@@ -107,6 +107,7 @@ public partial class Wall : BeatmapObject
 
     private void UpdateHighlightVisible()
     {
-        _highlightOutline.Visible = IsSelected || _hoveringPointers.Count > 0;
+        UpdateOutlineColor(_highlightOutline);
+        _highlightOutline.Visible = IsSelected || IsCopied || _hoveringPointers.Count > 0;
     }
 }

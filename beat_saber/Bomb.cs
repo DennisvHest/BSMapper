@@ -97,9 +97,10 @@ public partial class Bomb : BeatmapObject
 
     private void UpdateHighlightVisible()
     {
+        UpdateOutlineColor(_highlightOutline);
         SetHighlightVisible(
             PlaybackManager.Mode == PlaybackManager.EditMode.Editing &&
-            (IsSelected || _hoveringPointers.Count > 0));
+            (IsSelected || IsCopied || _hoveringPointers.Count > 0));
     }
 
     private void SetHighlightVisible(bool visible)

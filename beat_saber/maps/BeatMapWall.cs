@@ -60,6 +60,8 @@ public partial class BeatMapWall : BeatMapObjectBase
         data["_type"] = (int)Type;
         data["_duration"] = Duration;
         data["_lineIndex"] = LineIndex;
+        data["_lineLayer"] = LineLayer;
         data["_width"] = Width;
+        data["_height"] = Height;
     }
 }

@@ -14,6 +14,11 @@ public partial class BeatmapObject : Node3D
     public const float SnapInAnimationTime = 0.2f;
     public const float SnapInAnimationDistance = 65.0f;
 
+    private static readonly Color CopiedOutlineColor = new(0.15f, 1.0f, 0.3f);
+    private StandardMaterial3D _outlineMaterial;
+    private Color _normalOutlineColor;
+    private Color _normalOutlineEmission;
+
     public BeatMapDifficultyInfo MapInfo { get; private set; }
     public BeatMapObjectBase BeatmapData { get; private set; }
     public Vector3 InitialPosition { get; private set; }
@@ -21,6 +26,7 @@ public partial class BeatmapObject : Node3D
     public bool JumpAnimationEnabled { get; private set; } = true;
     public bool Despawned => ProcessMode == ProcessModeEnum.Disabled;
     public bool IsSelected { get; private set; }
+    public bool IsCopied { get; private set; }
 
     protected PlaybackManager PlaybackManager => GetNode<PlaybackManager>("/root/PlaybackManager");
 
@@ -69,6 +75,31 @@ public partial class BeatmapObject : Node3D
 
         IsSelected = selected;
         OnSelectionChanged();
+    }
+
+    public void SetCopied(bool copied)
+    {
+        if (IsCopied == copied)
+        {
+            return;
+        }
+
+        IsCopied = copied;
+        OnSelectionChanged();
+    }
+
+    protected void UpdateOutlineColor(MeshInstance3D outline)
+    {
+        if (_outlineMaterial is null)
+        {
+            _outlineMaterial = (StandardMaterial3D)outline.GetActiveMaterial(0).Duplicate();
+            _normalOutlineColor = _outlineMaterial.AlbedoColor;
+            _normalOutlineEmission = _outlineMaterial.Emission;
+            outline.SetSurfaceOverrideMaterial(0, _outlineMaterial);
+        }
+
+        _outlineMaterial.AlbedoColor = IsCopied ? CopiedOutlineColor : _normalOutlineColor;
+        _outlineMaterial.Emission = IsCopied ? CopiedOutlineColor : _normalOutlineEmission;
     }
 
     public void DeleteBeatmapObject()

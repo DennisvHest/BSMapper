@@ -12,6 +12,9 @@ public partial class Editor : Node3D
     public string BeatmapFilePath { get; set; } = string.Empty;
 
     public event Action<int, bool> SelectionChanged;
+    public event Action<int> ClipboardChanged;
+
+    public int ClipboardCount => _clipboard.Count;
 
     private XROrigin3D _xrOrigin;
     private Saber _leftSaber;
@@ -23,6 +26,8 @@ public partial class Editor : Node3D
     private readonly HashSet<BeatmapObject> _selectedObjects = new();
     private readonly HashSet<BeatmapObject> _bulkSelectedObjects = new();
     private readonly HashSet<BeatmapObject> _observedObjects = new();
+    private readonly HashSet<BeatmapObject> _copiedObjects = new();
+    private readonly BeatmapClipboard _clipboard = new();
     private bool _leftSelectionMode;
 
     private PlaybackManager PlaybackManager => GetNode<PlaybackManager>("/root/PlaybackManager");
@@ -164,6 +169,73 @@ public partial class Editor : Node3D
         }
     }
 
+    public void CopySelectedObjects()
+    {
+        var sources = new List<BeatmapObject>();
+        var data = new List<BeatMapObjectBase>();
+        foreach (var selectedObject in _selectedObjects)
+        {
+            if (IsInstanceValid(selectedObject) && !selectedObject.IsQueuedForDeletion()
+                && selectedObject.BeatmapData is not null)
+            {
+                sources.Add(selectedObject);
+                data.Add(selectedObject.BeatmapData);
+            }
+        }
+        if (data.Count == 0)
+        {
+            return;
+        }
+
+        _objectEditPlane?.ResetBulkSelection();
+        CommitBulkSelection();
+        _rightDrag = null;
+        _clipboard.Copy(data);
+        ClearCopiedSources();
+        foreach (var source in sources)
+        {
+            _copiedObjects.Add(source);
+            source.SetCopied(true);
+        }
+        ClipboardChanged?.Invoke(ClipboardCount);
+    }
+
+    public void PasteCopiedObjects()
+    {
+        var beatmap = BeatMapManager.CurrentBeatmap;
+        if (beatmap is null || ClipboardCount == 0)
+        {
+            return;
+        }
+
+        _objectEditPlane?.ResetBulkSelection();
+        CommitBulkSelection();
+        _rightDrag = null;
+        foreach (var data in _clipboard.CreatePaste(PlaybackManager.PlaybackBeat))
+        {
+            beatmap.AddObject(data);
+        }
+    }
+
+    private void ClearCopiedSources()
+    {
+        foreach (var source in _copiedObjects)
+        {
+            if (IsInstanceValid(source))
+            {
+                source.SetCopied(false);
+            }
+        }
+        _copiedObjects.Clear();
+    }
+
+    private void ClearClipboard()
+    {
+        ClearCopiedSources();
+        _clipboard.Clear();
+        ClipboardChanged?.Invoke(ClipboardCount);
+    }
+
     public void DeleteSelectedObjects()
     {
         _objectEditPlane?.ResetBulkSelection();
@@ -241,6 +313,10 @@ public partial class Editor : Node3D
             beatmapObject.TreeExiting += () =>
             {
                 _observedObjects.Remove(beatmapObject);
+                if (_copiedObjects.Remove(beatmapObject))
+                {
+                    beatmapObject.SetCopied(false);
+                }
                 RemoveSelectedObject(beatmapObject);
             };
         }
@@ -259,6 +335,7 @@ public partial class Editor : Node3D
 
     private void OnCurrentBeatmapChanged(BeatMap beatmap)
     {
+        ClearClipboard();
         DeselectAllObjects();
     }
 
@@ -271,6 +348,7 @@ public partial class Editor : Node3D
         InputManager.RightHand.ButtonPressed -= OnRightHandButtonPressed;
         InputManager.RightHand.ButtonReleased -= OnRightHandButtonReleased;
         PlaybackManager.ModeChanged -= OnPlaybackModeChanged;
+        ClearClipboard();
     }
 
     private bool DeleteHoveredObjectForPointer(GodotObject pointer)
