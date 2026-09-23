@@ -11,12 +11,15 @@ public partial class SelectionPanelUI : Control
     public event Action CopySelected;
     public event Action CutSelected;
     public event Action PasteCopied;
+    public event Action<int> MoveSelectedBySubdivision;
 
     private Label _title;
     private Control _colorSection;
     private Button _copyButton;
     private Button _cutButton;
     private Button _pasteButton;
+    private Button _moveBackButton;
+    private Button _moveForwardButton;
 
     public override void _Ready()
     {
@@ -25,6 +28,8 @@ public partial class SelectionPanelUI : Control
         _copyButton = GetNode<Button>("%CopyButton");
         _cutButton = GetNode<Button>("%CutButton");
         _pasteButton = GetNode<Button>("%PasteButton");
+        _moveBackButton = GetNode<Button>("%MoveBackButton");
+        _moveForwardButton = GetNode<Button>("%MoveForwardButton");
         GetNode<Button>("%LeftColorButton").Pressed += () =>
             NoteTypeSelected?.Invoke(BeatMapNote.NoteBlockType.Left);
         GetNode<Button>("%RightColorButton").Pressed += () =>
@@ -36,6 +41,8 @@ public partial class SelectionPanelUI : Control
         _copyButton.Pressed += () => CopySelected?.Invoke();
         _cutButton.Pressed += () => CutSelected?.Invoke();
         _pasteButton.Pressed += () => PasteCopied?.Invoke();
+        _moveBackButton.Pressed += () => MoveSelectedBySubdivision?.Invoke(-1);
+        _moveForwardButton.Pressed += () => MoveSelectedBySubdivision?.Invoke(1);
         SetSelection(0, false);
     }
 
@@ -46,6 +53,8 @@ public partial class SelectionPanelUI : Control
         _copyButton.Disabled = selectedCount == 0;
         _cutButton.Disabled = selectedCount == 0;
         _pasteButton.Disabled = clipboardCount == 0;
+        _moveBackButton.Disabled = selectedCount == 0;
+        _moveForwardButton.Disabled = selectedCount == 0;
         _pasteButton.Text = clipboardCount > 0 ? $"Paste ({clipboardCount})" : "Paste";
         GetNode<Button>("%DeselectButton").Disabled = selectedCount == 0;
         GetNode<Button>("%DeleteButton").Disabled = selectedCount == 0;

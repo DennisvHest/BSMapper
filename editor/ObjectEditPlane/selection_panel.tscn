@@ -10,9 +10,9 @@ visible = false
 script = ExtResource("1_panel")
 
 [node name="ViewportPanel" parent="." unique_id=772878952 instance=ExtResource("2_viewport")]
-screen_size = Vector2(0.72, 0.933333)
+screen_size = Vector2(0.72, 1.086667)
 scene = ExtResource("3_ui")
-viewport_size = Vector2(432, 560)
+viewport_size = Vector2(432, 652)
 transparent = 1
 unshaded = true
 scene_properties_keys = PackedStringArray("SelectionPanelUI")

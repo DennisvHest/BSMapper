@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Godot;
@@ -115,21 +116,31 @@ public partial class CopyPasteChecks : Node
         var copy = panel.GetNode<Button>("%CopyButton");
         var cut = panel.GetNode<Button>("%CutButton");
         var paste = panel.GetNode<Button>("%PasteButton");
+        var moveBack = panel.GetNode<Button>("%MoveBackButton");
+        var moveForward = panel.GetNode<Button>("%MoveForwardButton");
         var copies = 0;
         var cuts = 0;
         var pastes = 0;
+        var moves = new List<int>();
         panel.CopySelected += () => copies++;
         panel.CutSelected += () => cuts++;
         panel.PasteCopied += () => pastes++;
-        Check(copy.Disabled && cut.Disabled && paste.Disabled, "Clipboard buttons initially disabled");
+        panel.MoveSelectedBySubdivision += direction => moves.Add(direction);
+        Check(copy.Disabled && cut.Disabled && paste.Disabled && moveBack.Disabled && moveForward.Disabled,
+            "Clipboard and movement buttons initially disabled");
         panel.SetSelection(3, true);
-        Check(!copy.Disabled && !cut.Disabled && paste.Disabled, "Copy/Cut require selection and Paste requires clipboard");
+        Check(!copy.Disabled && !cut.Disabled && paste.Disabled && !moveBack.Disabled && !moveForward.Disabled,
+            "Copy/Cut and movement require selection; Paste requires clipboard");
         copy.EmitSignal(Button.SignalName.Pressed);
         Check(copies == 1, "Copy button event");
         cut.EmitSignal(Button.SignalName.Pressed);
         Check(cuts == 1, "Cut button event");
+        moveBack.EmitSignal(Button.SignalName.Pressed);
+        moveForward.EmitSignal(Button.SignalName.Pressed);
+        Check(moves.SequenceEqual(new[] { -1, 1 }), "Back/Forth button directions");
         panel.SetSelection(0, false, 3);
-        Check(copy.Disabled && cut.Disabled && !paste.Disabled && paste.Text == "Paste (3)",
+        Check(copy.Disabled && cut.Disabled && !paste.Disabled && moveBack.Disabled && moveForward.Disabled
+            && paste.Text == "Paste (3)",
             "Clipboard-only controls and count");
         Check(panel.GetNode<Button>("%DeleteButton").Disabled && panel.GetNode<Button>("%DeselectButton").Disabled,
             "Selection actions disabled without selection");
@@ -173,8 +184,22 @@ public partial class CopyPasteChecks : Node
         var panel = lane.GetNode<SelectionPanel>("SelectionPanel");
         var panelUi = (SelectionPanelUI)panel.GetNode<Node>("ViewportPanel").Call("get_scene_instance").AsGodotObject();
         var originalColors = sources.Select(GetOutlineMaterial).Select(material => material.AlbedoColor).ToArray();
+        var sourceBeats = sources.Select(source => source.BeatmapData.Beat).ToArray();
         plane.SetBulkSelectionModeEnabled(true);
         editor.UpdateBulkSelection(sources);
+        playback.SetBeatSubdivision(4);
+        panelUi.GetNode<Button>("%MoveForwardButton").EmitSignal(Button.SignalName.Pressed);
+        Check(sources.Select((source, index) => source.BeatmapData.Beat == sourceBeats[index] + 0.25).All(value => value)
+            && sources.All(source => Mathf.IsEqualApprox(source.ObjectTime,
+                (float)(source.BeatmapData.Beat / manager.CurrentBeatmapDifficultyInfo.Bpm * 60.0))),
+            "Forward moves selected note, bomb and wall by the current quarter subdivision");
+        Check(sources.All(source => source.IsSelected), "Subdivision move retains selection");
+        playback.SetBeatSubdivision(1);
+        panelUi.GetNode<Button>("%MoveBackButton").EmitSignal(Button.SignalName.Pressed);
+        Check(sources.Select((source, index) => source.BeatmapData.Beat == sourceBeats[index] - 0.75).All(value => value)
+            && sources.All(source => Mathf.IsEqualApprox(source.ObjectTime,
+                (float)(source.BeatmapData.Beat / manager.CurrentBeatmapDifficultyInfo.Bpm * 60.0))),
+            "Back moves selected objects by one whole beat and refreshes visual timing");
         panelUi.GetNode<Button>("%CopyButton").EmitSignal(Button.SignalName.Pressed);
         Check(editor.ClipboardCount == 3 && sources.All(source => source.IsCopied), "Real panel Copy captures and marks selection");
         Check(sources.All(source => GetOutlineMaterial(source).AlbedoColor.G > 0.9f

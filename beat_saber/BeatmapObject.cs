@@ -64,6 +64,19 @@ public partial class BeatmapObject : Node3D
         Visible = ObjectTime <= objectSpawnTime && ObjectTime >= objectDespawnTime;
     }
 
+    public void MoveByBeat(double beatOffset)
+    {
+        if (beatOffset == 0.0)
+        {
+            return;
+        }
+
+        BeatmapData.Beat += beatOffset;
+        ObjectTime = MapInfo.Bpm == 0.0f
+            ? 0.0f
+            : (float)(BeatmapData.Beat / MapInfo.Bpm * 60.0);
+    }
+
     public void SetJumpAnimationEnabled(bool enabled)
     {
         JumpAnimationEnabled = enabled;

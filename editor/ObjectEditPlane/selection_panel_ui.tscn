@@ -89,7 +89,7 @@ corner_radius_bottom_right = 14
 corner_radius_bottom_left = 14
 
 [node name="SelectionPanelUI" type="Control" unique_id=1379940873]
-custom_minimum_size = Vector2(432, 560)
+custom_minimum_size = Vector2(432, 652)
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -233,6 +233,36 @@ theme_override_styles/pressed = SubResource("StyleBoxFlat_button_hover")
 theme_override_styles/hover = SubResource("StyleBoxFlat_button_hover")
 disabled = true
 text = "Paste"
+
+[node name="MoveActions" type="HBoxContainer" parent="Panel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="MoveBackButton" type="Button" parent="Panel/MarginContainer/VBoxContainer/MoveActions"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 76)
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+theme_override_font_sizes/font_size = 24
+theme_override_styles/normal = SubResource("StyleBoxFlat_button")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_button_hover")
+theme_override_styles/hover = SubResource("StyleBoxFlat_button_hover")
+disabled = true
+text = "Back"
+
+[node name="MoveForwardButton" type="Button" parent="Panel/MarginContainer/VBoxContainer/MoveActions"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 76)
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+theme_override_font_sizes/font_size = 24
+theme_override_styles/normal = SubResource("StyleBoxFlat_button")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_button_hover")
+theme_override_styles/hover = SubResource("StyleBoxFlat_button_hover")
+disabled = true
+text = "Forth"
 
 [node name="Actions" type="HBoxContainer" parent="Panel/MarginContainer/VBoxContainer" unique_id=523979779]
 layout_mode = 2

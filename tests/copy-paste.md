@@ -8,12 +8,12 @@ Also run the existing regression scene:
 
 `godot --headless --xr-mode off --path . res://tests/bulk_selection_checks.tscn`
 
-The copy/paste checks cover independent note/bomb/wall snapshots, nested metadata, earliest-beat anchoring, relative offsets, repeat paste, source edits, wall save/reload, button events/availability, Cut's deferred deletion and source transparency, and the real editor scene's clipboard actions, selection/copied-state transfer to new objects (including same-beat pastes), source deletion, and map-change cleanup. The scene exits with code 0 on success and 1 on assertion failure. Headless rendering does not verify VR appearance.
+The copy/paste checks cover independent note/bomb/wall snapshots, nested metadata, earliest-beat anchoring, relative offsets, repeat paste, source edits, wall save/reload, button events/availability, Cut's deferred deletion and source transparency, Back/Forth subdivision movement with visual timing updates, and the real editor scene's clipboard actions, selection/copied-state transfer to new objects (including same-beat pastes), source deletion, and map-change cleanup. The scene exits with code 0 on success and 1 on assertion failure. Headless rendering does not verify VR appearance.
 
 ## Validation
 
 - Project build succeeded.
-- All 52 copy/paste checks and all 30 bulk-selection checks passed; both scenes exited with code 0.
+- All 56 copy/paste checks and all 30 bulk-selection checks passed; both scenes exited with code 0.
 - The full-editor headless run logs existing invalid-UID warnings that fall back to valid resource paths, plus two `Viewport Texture must be set to use it` diagnostics. Loading the unchanged XR Tools `viewport_2d_in_3d.tscn` resource alone reproduces both viewport diagnostics, independently of clipboard code.
 - Headset rendering and controller interaction remain manual checks.
 
@@ -27,6 +27,7 @@ The copy/paste checks cover independent note/bomb/wall snapshots, nested metadat
 6. Copy a different selection. The previous source markers should revert to their ordinary highlight state, and only the new clipboard's sources should be green.
 7. Change maps. The clipboard should clear, old markers should disappear, and Paste should be unavailable until a new Copy.
 8. Save/reload a map containing pasted notes, bombs, and walls. Confirm beat positions, attributes, and dimensions are preserved.
-9. Check that the enlarged panel and its Copy, Cut, and Paste buttons are legible and reachable with either controller, and that clicking them does not place notes or start a new selection cube.
-10. Select notes, bombs, and walls and press **Cut**. They should remain in the map but be visibly semitransparent, indicating pending deletion. Scrub to a new location and press **Paste**: the sources should be removed only after the destination group appears, and the new group should be selected with green copied-state outlines.
-11. Before pasting a cut selection, press Copy or Cut on a different selection, change maps, or leave the editor. Confirm the original faded sources return to normal and are not deleted unexpectedly.
+9. Select notes, bombs, and walls, choose 1/4 in the subdivision selector, and press **Forth**. Confirm every selected object moves forward by 0.25 beat, stays selected, and retains lanes/properties. Select 1/1 and press **Back** to move them back one beat. Repeated presses should continue applying the currently selected subdivision.
+10. Check that the enlarged panel and its Copy, Cut, Paste, Back, and Forth buttons are legible and reachable with either controller, and that clicking them does not place notes or start a new selection cube.
+11. Select notes, bombs, and walls and press **Cut**. They should remain in the map but be visibly semitransparent, indicating pending deletion. Scrub to a new location and press **Paste**: the sources should be removed only after the destination group appears, and the new group should be selected with green copied-state outlines.
+12. Before pasting a cut selection, press Copy or Cut on a different selection, change maps, or leave the editor. Confirm the original faded sources return to normal and are not deleted unexpectedly.

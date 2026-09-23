@@ -170,6 +170,20 @@ public partial class Editor : Node3D
         }
     }
 
+    public void MoveSelectedObjectsBySubdivision(int direction)
+    {
+        if (direction == 0 || PlaybackManager.BeatSubdivision <= 0)
+        {
+            return;
+        }
+
+        var beatOffset = direction / (double)PlaybackManager.BeatSubdivision;
+        foreach (var selectedObject in _selectedObjects)
+        {
+            selectedObject.MoveByBeat(beatOffset);
+        }
+    }
+
     public void CopySelectedObjects()
     {
         StartClipboardFromSelection(false);
