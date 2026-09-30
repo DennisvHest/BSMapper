@@ -1,10 +1,11 @@
+using BSMapper;
 using Godot;
 using System;
 using System.Collections.Generic;
 
 public partial class MapList : VBoxContainer
 {
-    private const int ItemsPerFrame = 50;
+    private const int ItemsPerFrame = 1;
 
     [Signal]
     public delegate void MapSelectedEventHandler(string infoPath);
@@ -12,12 +13,27 @@ public partial class MapList : VBoxContainer
     public event Action NewMapRequested;
 
     private readonly Queue<(string FolderName, string MapFolder, string InfoPath)> _pendingItems = new();
-    private ItemList _items;
+    private ItemList _wipItems;
+    private ItemList _customLevels;
+    private TabContainer _levelTabs;
+
+    private string _currentBeatMapLocation => _levelTabs.CurrentTab == (int)LevelTabs.WIPLevels
+        ? Settings.WipBeatmapLocation
+        : Settings.CustomLevelsLocation;
+
+    private ItemList _currentItemList => _levelTabs.CurrentTab == (int)LevelTabs.WIPLevels ? _wipItems : _customLevels;
 
     public override void _Ready()
     {
-        _items = GetNode<ItemList>("%Items");
-        _items.ItemSelected += OnItemSelected;
+        _levelTabs = GetNode<TabContainer>("%LevelTabs");
+        _levelTabs.TabChanged += _ => Refresh();
+
+        _wipItems = GetNode<ItemList>("%WIP Levels");
+        _wipItems.ItemSelected += OnItemSelected;
+
+        _customLevels = GetNode<ItemList>("%Custom Levels");
+        _customLevels.ItemSelected += OnItemSelected;
+
         GetNode<Button>("%NewMap").Pressed += () => NewMapRequested?.Invoke();
     }
 
@@ -29,17 +45,17 @@ public partial class MapList : VBoxContainer
         }
     }
 
-    public void Refresh(string mapsLocation)
+    public void Refresh()
     {
         _pendingItems.Clear();
-        _items.Clear();
+        _wipItems.Clear();
 
-        if (!DirAccess.DirExistsAbsolute(mapsLocation))
+        if (!DirAccess.DirExistsAbsolute(_currentBeatMapLocation))
         {
             return;
         }
 
-        using var directory = DirAccess.Open(mapsLocation);
+        using var directory = DirAccess.Open(_currentBeatMapLocation);
         if (directory is null)
         {
             return;
@@ -47,7 +63,7 @@ public partial class MapList : VBoxContainer
 
         foreach (var folderName in directory.GetDirectories())
         {
-            var mapFolder = mapsLocation.PathJoin(folderName);
+            var mapFolder = _currentBeatMapLocation.PathJoin(folderName);
             var infoPath = FindInfoPath(mapFolder);
             if (!string.IsNullOrEmpty(infoPath))
             {
@@ -78,13 +94,13 @@ public partial class MapList : VBoxContainer
 
         const int maxTitleLength = 100;
         var title = songName.Length > maxTitleLength ? songName[..maxTitleLength] + "..." : songName;
-        var index = _items.AddItem(title, LoadCoverImage(item.MapFolder, coverImageFileName));
-        _items.SetItemMetadata(index, item.InfoPath);
+        var index = _currentItemList.AddItem(title, LoadCoverImage(item.MapFolder, coverImageFileName));
+        _currentItemList.SetItemMetadata(index, item.InfoPath);
     }
 
     private void OnItemSelected(long index)
     {
-        EmitSignal(SignalName.MapSelected, _items.GetItemMetadata((int)index).AsString());
+        EmitSignal(SignalName.MapSelected, _currentItemList.GetItemMetadata((int)index).AsString());
     }
 
     private static string FindInfoPath(string mapFolder)
@@ -106,5 +122,11 @@ public partial class MapList : VBoxContainer
             : mapFolder.PathJoin(coverImageFileName);
         var image = Image.LoadFromFile(coverPath) ?? Image.LoadFromFile("res://icon.svg");
         return image is null ? null : ImageTexture.CreateFromImage(image);
+    }
+
+    private enum LevelTabs
+    {
+        WIPLevels = 0,
+        CustomLevels = 1,
     }
 }

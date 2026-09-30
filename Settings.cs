@@ -33,6 +33,11 @@ public static class Settings
         _configFile.GetValue(SettingSections.Settings, SettingsKeys.BeatSaberInstallLocation, string.Empty)
             .ToString()
             .PathJoin(CustomWipLevelsFolder);
+
+    public static string CustomLevelsLocation =>
+        _configFile.GetValue(SettingSections.Settings, SettingsKeys.BeatSaberInstallLocation, string.Empty)
+            .ToString()
+            .PathJoin(CustomLevelsFolder);
 }
 
 public static class SettingSections

@@ -24,8 +24,8 @@ public partial class Main : Control
         _mapList.MapSelected += MapSelected;
         _mapList.NewMapRequested += OnNewMapRequested;
         _mapDetails.OpenMapRequested += OpenMapInEditor;
-        _mapDetails.MapCreated += OnMapCreated;
-        _mapDetails.MapDeleted += OnMapDeleted;
+        _mapDetails.MapCreated += _mapList.Refresh;
+        _mapDetails.MapDeleted += _mapList.Refresh;
         _mapDetails.CoverChanged += RefreshMapList;
         GetNode<ConfirmationDialog>("HeadsetRequiredDialog").Confirmed += RestartForVr;
 
@@ -190,10 +190,8 @@ public partial class Main : Control
 
     private void RefreshMapList()
     {
-        var mapsLocation = BeatSaberInstallLocation
-            .PathJoin(Settings.CustomWipLevelsFolder);
         _mapDetails.Hide();
-        _mapList.Refresh(mapsLocation);
+        _mapList.Refresh();
     }
 
     private void MapSelected(string infoPath)
@@ -206,18 +204,6 @@ public partial class Main : Control
     {
         var manager = GetNode<BeatMapManager>("/root/BeatMapManager");
         _mapDetails.BeginCreate(manager);
-    }
-
-    private void OnMapCreated()
-    {
-        var mapsLocation = BeatSaberInstallLocation.PathJoin(Settings.CustomWipLevelsFolder);
-        _mapList.Refresh(mapsLocation);
-    }
-
-    private void OnMapDeleted()
-    {
-        var mapsLocation = BeatSaberInstallLocation.PathJoin(Settings.CustomWipLevelsFolder);
-        _mapList.Refresh(mapsLocation);
     }
 
     private void OpenMapInEditor(string infoPath)
