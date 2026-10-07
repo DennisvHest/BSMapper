@@ -6,6 +6,8 @@ Build BSMapper, then run the Godot .NET executable with:
 
 The scene exits with code 0 on success and code 1 on a failed assertion. It checks grid/beat boundaries, reverse and zero-depth ranges, notes/bombs/wall overlap, additive ownership, shrinking/committing, object removal, deselection/deletion, and selector button signals/styles.
 
+Object selector regression checks also send native mouse press/release events through the real 3D selector viewport and verify application selection, retained highlights, repeated clicks, and bulk-mode transitions. To run these checks without the unrelated beat subdivision and spectrogram settings checks, append `-- --object-selector-only` to the command above.
+
 ## Headset smoke test
 
 1. Enter editing mode and select an object with the existing individual-selection controls.

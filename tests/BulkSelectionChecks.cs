@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using Godot;
 
 public partial class BulkSelectionChecks : Node
@@ -10,14 +11,18 @@ public partial class BulkSelectionChecks : Node
         Callable.From(Run).CallDeferred();
     }
 
-    private void Run()
+    private async void Run()
     {
         try
         {
             CheckRanges();
             CheckAdditiveSelection();
             CheckSelector();
-            CheckSettingsToggles();
+            await CheckSelectorClicks();
+            if (Array.IndexOf(OS.GetCmdlineUserArgs(), "--object-selector-only") < 0)
+            {
+                CheckSettingsToggles();
+            }
             GD.Print($"Bulk selection checks passed: {_checks}");
             GetTree().Quit();
         }
@@ -138,16 +143,15 @@ public partial class BulkSelectionChecks : Node
         var toggles = 0;
         selector.BulkSelectionToggled += () => requests++;
         button.Toggled += _ => toggles++;
-        Check(button.Text == "Bulk select: OFF", "Bulk mode initially off");
+        Check(!button.ButtonPressed && noteButton.ButtonPressed, "Bulk mode initially off with Note selected");
         button.EmitSignal(Button.SignalName.Pressed);
         Check(requests == 1, "VR button emits toggle request");
         selector.SetBulkSelectionEnabled(true);
-        Check(button.Text == "Bulk select: ON", "Enabled label");
+        Check(((IconButton)button).IconName == "table-cells-large", "Bulk selection retains its scene icon");
         Check(button.ButtonPressed, "Enabled highlight uses pressed state");
         Check(!noteButton.ButtonPressed && !anyDirectionButton.ButtonPressed && !bombButton.ButtonPressed,
             "Placement highlight suppressed in bulk mode");
         selector.SetBulkSelectionEnabled(false);
-        Check(button.Text == "Bulk select: OFF", "Disabled label");
         Check(!button.ButtonPressed && noteButton.ButtonPressed, "Placement highlight restored");
         selector.SetSelectedObjectType(ObjectEditPlane.PlaceableObjectType.Bomb);
         Check(bombButton.ButtonPressed && !noteButton.ButtonPressed && !anyDirectionButton.ButtonPressed,
@@ -157,6 +161,95 @@ public partial class BulkSelectionChecks : Node
             "Any-direction selection uses exclusive pressed state");
         Check(requests == 1 && toggles == 0, "State synchronization emits no toggle requests or signals");
         selector.Free();
+    }
+
+    private async Task CheckSelectorClicks()
+    {
+        var manager = GetNode<BeatMapManager>("/root/BeatMapManager");
+        var playback = GetNode<PlaybackManager>("/root/PlaybackManager");
+        var map = new BeatMap();
+        map.InitializeEmpty();
+        manager.CurrentBeatmap = map;
+        manager.CurrentBeatmapDifficultyInfo = new BeatMapDifficultyInfo { Bpm = 120, Njs = 10 };
+        manager.CurrentBeatmapDifficultyInfo.Initialize();
+        manager.EmitSignal(BeatMapManager.SignalName.CurrentBeatmapDifficultyInfoChanged,
+            manager.CurrentBeatmapDifficultyInfo);
+        var editor = GD.Load<PackedScene>("res://editor/editor.tscn").Instantiate<Editor>();
+        GetTree().Root.AddChild(editor);
+        playback.ChangeMode(PlaybackManager.EditMode.Editing);
+        await ToSignal(GetTree(), SceneTree.SignalName.ProcessFrame);
+        await ToSignal(GetTree(), SceneTree.SignalName.ProcessFrame);
+
+        var plane = editor.GetNode<ObjectEditPlane>("NoteBlockLane/ObjectEditPlane");
+        var panel = plane.GetNode<Node>("ObjectTypeSelector/ViewportPanel");
+        var selector = (ObjectTypeSelectorUI)panel.Call("get_scene_instance").AsGodotObject();
+        var viewport = panel.GetNode<SubViewport>("Viewport");
+        var note = selector.GetNode<Button>("%NoteButton");
+        var anyDirection = selector.GetNode<Button>("%AnyDirectionNoteButton");
+        var bomb = selector.GetNode<Button>("%BombButton");
+        var bulk = selector.GetNode<Button>("%BulkSelectionButton");
+        var selectionChanges = 0;
+        plane.SelectedObjectTypeChanged += _ => selectionChanges++;
+
+        void CheckState(ObjectEditPlane.PlaceableObjectType type, bool bulkEnabled)
+        {
+            Check(plane.SelectedObjectType == type && plane.BulkSelectionModeEnabled == bulkEnabled,
+                "Native click synchronizes application selection and bulk mode");
+            Check(note.ButtonPressed == (!bulkEnabled && type == ObjectEditPlane.PlaceableObjectType.NoteBlock)
+                && anyDirection.ButtonPressed == (!bulkEnabled && type == ObjectEditPlane.PlaceableObjectType.AnyDirectionNoteBlock)
+                && bomb.ButtonPressed == (!bulkEnabled && type == ObjectEditPlane.PlaceableObjectType.Bomb)
+                && bulk.ButtonPressed == bulkEnabled, "Native press/release retains exactly the selected highlight");
+        }
+
+        CheckState(ObjectEditPlane.PlaceableObjectType.NoteBlock, false);
+        await Click(bomb);
+        CheckState(ObjectEditPlane.PlaceableObjectType.Bomb, false);
+        var changesBeforeRepeat = selectionChanges;
+        await Click(bomb);
+        CheckState(ObjectEditPlane.PlaceableObjectType.Bomb, false);
+        Check(selectionChanges == changesBeforeRepeat, "Repeated tool click retains highlight without selection notification");
+        await Click(bulk);
+        CheckState(ObjectEditPlane.PlaceableObjectType.Bomb, true);
+        await Click(bomb);
+        CheckState(ObjectEditPlane.PlaceableObjectType.Bomb, false);
+        Check(selectionChanges == changesBeforeRepeat, "Choosing the same tool exits bulk without selection notification");
+        await Click(anyDirection);
+        CheckState(ObjectEditPlane.PlaceableObjectType.AnyDirectionNoteBlock, false);
+        await Click(note);
+        CheckState(ObjectEditPlane.PlaceableObjectType.NoteBlock, false);
+        await Click(bulk);
+        CheckState(ObjectEditPlane.PlaceableObjectType.NoteBlock, true);
+        await Click(bulk);
+        CheckState(ObjectEditPlane.PlaceableObjectType.NoteBlock, false);
+        plane.SetSelectedObjectType(ObjectEditPlane.PlaceableObjectType.Bomb);
+        CheckState(ObjectEditPlane.PlaceableObjectType.Bomb, false);
+        editor.QueueFree();
+        await ToSignal(GetTree(), SceneTree.SignalName.ProcessFrame);
+
+        async Task Click(Button button)
+        {
+            var position = button.GetGlobalRect().GetCenter();
+            Check(button.GetGlobalRect().HasArea(), "Native click target has completed layout");
+            using var motion = new InputEventMouseMotion { Position = position, GlobalPosition = position };
+            viewport.PushInput(motion, true);
+            using var press = new InputEventMouseButton
+            {
+                Position = position, GlobalPosition = position, ButtonIndex = MouseButton.Left,
+                ButtonMask = MouseButtonMask.Left, Pressed = true,
+            };
+            viewport.PushInput(press, true);
+            using var release = new InputEventMouseButton
+            {
+                Position = position, GlobalPosition = position, ButtonIndex = MouseButton.Left, Pressed = false,
+            };
+            viewport.PushInput(release, true);
+            await ToSignal(GetTree(), SceneTree.SignalName.ProcessFrame);
+            var drawMode = button.GetDrawMode();
+            Check(button.ButtonPressed
+                ? drawMode == BaseButton.DrawMode.Pressed || drawMode == BaseButton.DrawMode.HoverPressed
+                : drawMode == BaseButton.DrawMode.Normal || drawMode == BaseButton.DrawMode.Hover,
+                "Native draw mode matches the synchronized state after mouse release");
+        }
     }
 
     private void CheckSettingsToggles()

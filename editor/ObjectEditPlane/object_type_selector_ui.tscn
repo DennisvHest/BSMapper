@@ -12,6 +12,12 @@ corner_radius_bottom_left = 20
 shadow_color = Color(0, 0, 0, 0.28)
 shadow_size = 8
 
+[sub_resource type="ButtonGroup" id="ButtonGroup_g6rrp"]
+
+[sub_resource type="ButtonGroup" id="ButtonGroup_3skom"]
+
+[sub_resource type="ButtonGroup" id="ButtonGroup_cr1ds"]
+
 [node name="ObjectTypeSelectorUI" type="Control" unique_id=193286439]
 layout_mode = 3
 anchors_preset = 15
@@ -67,7 +73,10 @@ custom_minimum_size = Vector2(51, 48)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
+tooltip_text = "Note"
 theme_type_variation = &"EditorToggleButton"
+toggle_mode = true
+button_group = SubResource("ButtonGroup_g6rrp")
 IconName = "square-caret-down"
 IconSize = 48
 HorizontalPadding = 0
@@ -79,7 +88,10 @@ custom_minimum_size = Vector2(57, 48)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
+tooltip_text = "Any Direction Note"
 theme_type_variation = &"EditorToggleButton"
+toggle_mode = true
+button_group = SubResource("ButtonGroup_3skom")
 IconName = "circle"
 IconSize = 48
 HorizontalPadding = 0
@@ -91,7 +103,10 @@ custom_minimum_size = Vector2(57, 48)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
+tooltip_text = "Bomb"
 theme_type_variation = &"EditorToggleButton"
+toggle_mode = true
+button_group = SubResource("ButtonGroup_cr1ds")
 IconName = "bomb"
 IconSize = 48
 HorizontalPadding = 0
@@ -103,7 +118,9 @@ custom_minimum_size = Vector2(57, 48)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
+tooltip_text = "Bulk Select"
 theme_type_variation = &"EditorToggleButton"
+toggle_mode = true
 IconName = "table-cells-large"
 IconSize = 48
 HorizontalPadding = 0
