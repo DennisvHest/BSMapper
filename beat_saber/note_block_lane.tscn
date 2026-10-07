@@ -20,15 +20,11 @@ WallScene = ExtResource("6_wall")
 [node name="FloorBeatGrid" parent="." unique_id=1772332104 instance=ExtResource("4_qtils")]
 
 [node name="ObjectEditPlane" parent="." unique_id=1491362910 instance=ExtResource("3_3sbvc")]
-visible = false
 
 [node name="SelectionPanel" parent="." unique_id=1859373752 instance=ExtResource("7_selection")]
-transform = Transform3D(0.70710677, 0, -0.70710677, 0, 1, 0, 0.70710677, 0, 0.70710677, 0, 0, 0)
 
 [node name="BeatSubdivisionSelector" parent="." unique_id=110521179 instance=ExtResource("8_subdivision")]
-transform = Transform3D(0.70710677, 0, 0.70710677, 0, 1, 0, -0.70710677, 0, 0.70710677, 0, 0, 0)
 
 [node name="SpectrogramSettingsPanel" parent="." unique_id=1669897113 instance=ExtResource("9_spectrogram")]
-transform = Transform3D(0.70710677, 0, 0.70710677, 0, 1, 0, -0.70710677, 0, 0.70710677, 0, 0, 0)
 
 [node name="PlaybackProgressBar" parent="." unique_id=711637748 instance=ExtResource("10_progress")]

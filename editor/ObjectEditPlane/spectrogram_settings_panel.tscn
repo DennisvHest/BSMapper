@@ -5,6 +5,7 @@
 [ext_resource type="PackedScene" path="res://editor/ObjectEditPlane/spectrogram_settings_ui.tscn" id="3_ui"]
 
 [node name="SpectrogramSettingsPanel" type="Node3D"]
+position = Vector3(-1.95, 0.366667, 0.12)
 rotation_degrees = Vector3(0, 45, 0)
 script = ExtResource("1_panel")
 

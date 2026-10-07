@@ -38,7 +38,7 @@ corner_radius_bottom_right = 16
 corner_radius_bottom_left = 16
 
 [node name="ObjectTypeSelector" type="Node3D" unique_id=1694786897]
-transform = Transform3D(0.70710677, 0, 0.70710677, 0, 1, 0, -0.70710677, 0, 0.70710677, 0, 0, 0)
+transform = Transform3D(0.70710677, 0, 0.70710677, 0, 1, 0, -0.70710677, 0, 0.70710677, -1.95, 1.316667, 0.12)
 script = ExtResource("1_2mrtu")
 
 [node name="ViewportPanel" parent="." unique_id=1248561648 instance=ExtResource("2_x3lrt")]

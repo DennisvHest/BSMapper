@@ -5,8 +5,7 @@
 [ext_resource type="PackedScene" uid="uid://cddcnm27acs5" path="res://editor/ObjectEditPlane/selection_panel_ui.tscn" id="3_ui"]
 
 [node name="SelectionPanel" type="Node3D" unique_id=1252282519]
-transform = Transform3D(0.70710677, 0, -0.70710677, 0, 1, 0, 0.70710677, 0, 0.70710677, 0, 0, 0)
-visible = false
+transform = Transform3D(0.70710677, 0, -0.70710677, 0, 1, 0, 0.70710677, 0, 0.70710677, 1.95, 1.316667, 0.12)
 script = ExtResource("1_panel")
 
 [node name="ViewportPanel" parent="." unique_id=772878952 instance=ExtResource("2_viewport")]

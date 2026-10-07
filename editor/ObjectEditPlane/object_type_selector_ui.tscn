@@ -1,6 +1,6 @@
-[gd_scene load_steps=6 format=3 uid="uid://dth3ud1u0dqtq"]
+[gd_scene format=3 uid="uid://dth3ud1u0dqtq"]
 
-[ext_resource type="Script" path="res://editor/ObjectEditPlane/ObjectTypeSelectorUI.cs" id="1_q6b6o"]
+[ext_resource type="Script" uid="uid://d1fj7wgq8broq" path="res://editor/ObjectEditPlane/ObjectTypeSelectorUI.cs" id="1_q6b6o"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_button_idle"]
 content_margin_left = 12.0
@@ -44,7 +44,7 @@ corner_radius_bottom_left = 20
 shadow_color = Color(0, 0, 0, 0.28)
 shadow_size = 8
 
-[node name="ObjectTypeSelectorUI" type="Control"]
+[node name="ObjectTypeSelectorUI" type="Control" unique_id=193286439]
 custom_minimum_size = Vector2(360, 368)
 layout_mode = 3
 anchors_preset = 15
@@ -57,7 +57,7 @@ IdleButtonStyle = SubResource("StyleBoxFlat_button_idle")
 HoverButtonStyle = SubResource("StyleBoxFlat_button_hover")
 SelectedButtonStyle = SubResource("StyleBoxFlat_button_selected")
 
-[node name="Panel" type="Panel" parent="."]
+[node name="Panel" type="Panel" parent="." unique_id=528488429]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -66,7 +66,7 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
 
-[node name="MarginContainer" type="MarginContainer" parent="Panel"]
+[node name="MarginContainer" type="MarginContainer" parent="Panel" unique_id=1506862601]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -82,59 +82,43 @@ theme_override_constants/margin_top = 12
 theme_override_constants/margin_right = 12
 theme_override_constants/margin_bottom = 12
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Panel/MarginContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="Panel/MarginContainer" unique_id=1394064259]
 layout_mode = 2
 theme_override_constants/separation = 16
 
-[node name="Title" type="Label" parent="Panel/MarginContainer/VBoxContainer"]
+[node name="Title" type="Label" parent="Panel/MarginContainer/VBoxContainer" unique_id=1591799319]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.98, 0.98, 0.99, 1)
 theme_override_font_sizes/font_size = 28
 text = "Objects"
 horizontal_alignment = 1
 
-[node name="Buttons" type="HBoxContainer" parent="Panel/MarginContainer/VBoxContainer"]
+[node name="Buttons" type="HBoxContainer" parent="Panel/MarginContainer/VBoxContainer" unique_id=854481031]
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_constants/separation = 16
 
-[node name="NoteButton" type="Button" parent="Panel/MarginContainer/VBoxContainer/Buttons"]
+[node name="NoteButton" type="Button" parent="Panel/MarginContainer/VBoxContainer/Buttons" unique_id=602193466]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 120)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 focus_mode = 0
-theme_override_colors/font_outline_color = Color(0, 0, 0, 0.45)
-theme_override_constants/outline_size = 10
-theme_override_constants/h_separation = 0
 theme_override_font_sizes/font_size = 56
-theme_override_styles/focus = SubResource("StyleBoxFlat_button_hover")
-theme_override_styles/disabled = SubResource("StyleBoxFlat_button_idle")
-theme_override_styles/hover = SubResource("StyleBoxFlat_button_hover")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_button_selected")
-theme_override_styles/normal = SubResource("StyleBoxFlat_button_idle")
 text = "N"
 
-[node name="AnyDirectionNoteButton" type="Button" parent="Panel/MarginContainer/VBoxContainer/Buttons"]
+[node name="AnyDirectionNoteButton" type="Button" parent="Panel/MarginContainer/VBoxContainer/Buttons" unique_id=1965300310]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 120)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 focus_mode = 0
-theme_override_colors/font_outline_color = Color(0, 0, 0, 0.45)
-theme_override_constants/outline_size = 10
-theme_override_constants/h_separation = 0
 theme_override_font_sizes/font_size = 56
-theme_override_styles/focus = SubResource("StyleBoxFlat_button_hover")
-theme_override_styles/disabled = SubResource("StyleBoxFlat_button_idle")
-theme_override_styles/hover = SubResource("StyleBoxFlat_button_hover")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_button_selected")
-theme_override_styles/normal = SubResource("StyleBoxFlat_button_idle")
 text = "A"
 
-[node name="BombButton" type="Button" parent="Panel/MarginContainer/VBoxContainer/Buttons"]
+[node name="BombButton" type="Button" parent="Panel/MarginContainer/VBoxContainer/Buttons" unique_id=1194417425]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 120)
 layout_mode = 2
@@ -145,14 +129,9 @@ theme_override_colors/font_outline_color = Color(0, 0, 0, 0.45)
 theme_override_constants/outline_size = 10
 theme_override_constants/h_separation = 0
 theme_override_font_sizes/font_size = 56
-theme_override_styles/focus = SubResource("StyleBoxFlat_button_hover")
-theme_override_styles/disabled = SubResource("StyleBoxFlat_button_idle")
-theme_override_styles/hover = SubResource("StyleBoxFlat_button_hover")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_button_selected")
-theme_override_styles/normal = SubResource("StyleBoxFlat_button_idle")
 text = "B"
 
-[node name="BulkSelectionButton" type="Button" parent="Panel/MarginContainer/VBoxContainer"]
+[node name="BulkSelectionButton" type="Button" parent="Panel/MarginContainer/VBoxContainer" unique_id=141339066]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 80)
 layout_mode = 2

@@ -5,6 +5,7 @@
 [ext_resource type="PackedScene" path="res://editor/ObjectEditPlane/playback_progress_bar_ui.tscn" id="3_ui"]
 
 [node name="PlaybackProgressBar" type="Node3D" unique_id=303097985]
+position = Vector3(0, 0.386667, 0.12)
 script = ExtResource("1_progress")
 
 [node name="ViewportPanel" parent="." unique_id=477757502 instance=ExtResource("2_viewport")]

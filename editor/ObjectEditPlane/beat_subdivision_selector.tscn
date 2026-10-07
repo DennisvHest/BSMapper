@@ -1,8 +1,8 @@
-[gd_scene load_steps=7 format=3]
+[gd_scene format=3 uid="uid://cy7olui1optyr"]
 
-[ext_resource type="Script" path="res://editor/ObjectEditPlane/BeatSubdivisionSelector.cs" id="1_selector"]
+[ext_resource type="Script" uid="uid://bi3qtkr80yk55" path="res://editor/ObjectEditPlane/BeatSubdivisionSelector.cs" id="1_selector"]
 [ext_resource type="PackedScene" uid="uid://clujaf3u776a3" path="res://addons/godot-xr-tools/objects/viewport_2d_in_3d.tscn" id="2_viewport"]
-[ext_resource type="PackedScene" path="res://editor/ObjectEditPlane/beat_subdivision_selector_ui.tscn" id="3_ui"]
+[ext_resource type="PackedScene" uid="uid://dpkkpiixnnjik" path="res://editor/ObjectEditPlane/beat_subdivision_selector_ui.tscn" id="3_ui"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_button_idle"]
 content_margin_left = 10.0
@@ -37,16 +37,17 @@ corner_radius_top_right = 12
 corner_radius_bottom_right = 12
 corner_radius_bottom_left = 12
 
-[node name="BeatSubdivisionSelector" type="Node3D"]
-rotation_degrees = Vector3(0, 45, 0)
+[node name="BeatSubdivisionSelector" type="Node3D" unique_id=996141124]
+transform = Transform3D(0.70710677, 0, 0.70710677, 0, 1, 0, -0.70710677, 0, 0.70710677, -1.95, 0.716667, 0.12)
 script = ExtResource("1_selector")
 
-[node name="ViewportPanel" parent="." instance=ExtResource("2_viewport")]
+[node name="ViewportPanel" parent="." unique_id=1674540896 instance=ExtResource("2_viewport")]
 screen_size = Vector2(0.7, 0.3)
 scene = ExtResource("3_ui")
 viewport_size = Vector2(420, 180)
+transparent = 1
 unshaded = true
-scene_properties_keys = PackedStringArray("BeatSubdivisionSelectorUI.cs", "IdleButtonStyle", "HoverButtonStyle", "SelectedButtonStyle", "IdleTextColor", "SelectedTextColor")
+scene_properties_keys = PackedStringArray("BeatSubdivisionSelectorUI", "IdleButtonStyle", "HoverButtonStyle", "SelectedButtonStyle", "IdleTextColor", "SelectedTextColor")
 IdleButtonStyle = SubResource("StyleBoxFlat_button_idle")
 HoverButtonStyle = SubResource("StyleBoxFlat_button_hover")
 SelectedButtonStyle = SubResource("StyleBoxFlat_button_selected")

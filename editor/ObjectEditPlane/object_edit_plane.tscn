@@ -9,4 +9,3 @@ script = ExtResource("1_x3ow5")
 ObjectEditPlaneCellScene = ExtResource("2_mrxcp")
 
 [node name="ObjectTypeSelector" parent="." unique_id=48788570 instance=ExtResource("3_fa2rk")]
-transform = Transform3D(0.70710677, 0, 0.70710677, 0, 1, 0, -0.70710677, 0, 0.70710677, 0, 0, 0)
