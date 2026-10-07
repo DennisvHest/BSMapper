@@ -9,21 +9,6 @@ public partial class ObjectTypeSelectorUI : Control
     [Signal]
     public delegate void BulkSelectionToggledEventHandler();
 
-    [Export]
-    public StyleBox IdleButtonStyle { get; set; }
-
-    [Export]
-    public StyleBox HoverButtonStyle { get; set; }
-
-    [Export]
-    public StyleBox SelectedButtonStyle { get; set; }
-
-    [Export]
-    public Color IdleTextColor { get; set; } = new(0.83f, 0.86f, 0.9f);
-
-    [Export]
-    public Color SelectedTextColor { get; set; } = Colors.White;
-
     private Button _noteButton;
     private Button _anyDirectionNoteButton;
     private Button _bombButton;
@@ -58,15 +43,13 @@ public partial class ObjectTypeSelectorUI : Control
 
     private void UpdateButtonStates()
     {
-        ApplyButtonState(_noteButton,
+        _noteButton.SetPressedNoSignal(
             !_bulkSelectionEnabled && _selectedObjectType == ObjectEditPlane.PlaceableObjectType.NoteBlock);
-        ApplyButtonState(
-            _anyDirectionNoteButton,
+        _anyDirectionNoteButton.SetPressedNoSignal(
             !_bulkSelectionEnabled && _selectedObjectType == ObjectEditPlane.PlaceableObjectType.AnyDirectionNoteBlock);
-        ApplyButtonState(_bombButton,
+        _bombButton.SetPressedNoSignal(
             !_bulkSelectionEnabled && _selectedObjectType == ObjectEditPlane.PlaceableObjectType.Bomb);
-        ApplyButtonState(_bulkSelectionButton, _bulkSelectionEnabled);
-        _bulkSelectionButton.Text = _bulkSelectionEnabled ? "Bulk select: ON" : "Bulk select: OFF";
+        _bulkSelectionButton.SetPressedNoSignal(_bulkSelectionEnabled);
     }
 
     private void OnNoteButtonPressed()
@@ -82,21 +65,5 @@ public partial class ObjectTypeSelectorUI : Control
     private void OnAnyDirectionNoteButtonPressed()
     {
         EmitSignal(SignalName.PlaceableSelected, (int)ObjectEditPlane.PlaceableObjectType.AnyDirectionNoteBlock);
-    }
-
-    private void ApplyButtonState(Button button, bool isSelected)
-    {
-        var normalStyle = isSelected ? SelectedButtonStyle : IdleButtonStyle;
-        var activeHoverStyle = isSelected ? SelectedButtonStyle : HoverButtonStyle;
-        var textColor = isSelected ? SelectedTextColor : IdleTextColor;
-        button.AddThemeStyleboxOverride("normal", normalStyle);
-        button.AddThemeStyleboxOverride("hover", activeHoverStyle);
-        button.AddThemeStyleboxOverride("pressed", SelectedButtonStyle);
-        button.AddThemeStyleboxOverride("focus", activeHoverStyle);
-        button.AddThemeStyleboxOverride("disabled", normalStyle);
-        button.AddThemeColorOverride("font_color", textColor);
-        button.AddThemeColorOverride("font_hover_color", textColor);
-        button.AddThemeColorOverride("font_pressed_color", SelectedTextColor);
-        button.AddThemeColorOverride("font_focus_color", textColor);
     }
 }

@@ -17,6 +17,7 @@ public partial class BulkSelectionChecks : Node
             CheckRanges();
             CheckAdditiveSelection();
             CheckSelector();
+            CheckSettingsToggles();
             GD.Print($"Bulk selection checks passed: {_checks}");
             GetTree().Quit();
         }
@@ -122,21 +123,99 @@ public partial class BulkSelectionChecks : Node
         var selector = scene.Instantiate<ObjectTypeSelectorUI>();
         AddChild(selector);
         var button = selector.GetNode<Button>("%BulkSelectionButton");
+        var noteButton = selector.GetNode<Button>("%NoteButton");
+        var anyDirectionButton = selector.GetNode<Button>("%AnyDirectionNoteButton");
+        var bombButton = selector.GetNode<Button>("%BombButton");
+        foreach (var toggle in new[] { button, noteButton, anyDirectionButton, bombButton })
+        {
+            CheckToggleTheme(toggle);
+        }
+        Check(noteButton.ButtonGroup is not null && noteButton.ButtonGroup == anyDirectionButton.ButtonGroup
+            && noteButton.ButtonGroup == bombButton.ButtonGroup, "Placement tools share an exclusive group");
+        Check(!noteButton.ButtonGroup.AllowUnpress && button.ButtonGroup is null,
+            "Placement choice stays selected and bulk toggle is independent");
         var requests = 0;
+        var toggles = 0;
         selector.BulkSelectionToggled += () => requests++;
+        button.Toggled += _ => toggles++;
         Check(button.Text == "Bulk select: OFF", "Bulk mode initially off");
         button.EmitSignal(Button.SignalName.Pressed);
         Check(requests == 1, "VR button emits toggle request");
         selector.SetBulkSelectionEnabled(true);
         Check(button.Text == "Bulk select: ON", "Enabled label");
-        Check(button.GetThemeStylebox("normal") == selector.SelectedButtonStyle, "Enabled highlight");
-        Check(selector.GetNode<Button>("%NoteButton").GetThemeStylebox("normal") == selector.IdleButtonStyle,
+        Check(button.ButtonPressed, "Enabled highlight uses pressed state");
+        Check(!noteButton.ButtonPressed && !anyDirectionButton.ButtonPressed && !bombButton.ButtonPressed,
             "Placement highlight suppressed in bulk mode");
         selector.SetBulkSelectionEnabled(false);
         Check(button.Text == "Bulk select: OFF", "Disabled label");
-        Check(selector.GetNode<Button>("%NoteButton").GetThemeStylebox("normal") == selector.SelectedButtonStyle,
-            "Placement highlight restored");
+        Check(!button.ButtonPressed && noteButton.ButtonPressed, "Placement highlight restored");
+        selector.SetSelectedObjectType(ObjectEditPlane.PlaceableObjectType.Bomb);
+        Check(bombButton.ButtonPressed && !noteButton.ButtonPressed && !anyDirectionButton.ButtonPressed,
+            "Bomb selection uses exclusive pressed state");
+        selector.SetSelectedObjectType(ObjectEditPlane.PlaceableObjectType.AnyDirectionNoteBlock);
+        Check(anyDirectionButton.ButtonPressed && !noteButton.ButtonPressed && !bombButton.ButtonPressed,
+            "Any-direction selection uses exclusive pressed state");
+        Check(requests == 1 && toggles == 0, "State synchronization emits no toggle requests or signals");
         selector.Free();
+    }
+
+    private void CheckSettingsToggles()
+    {
+        var subdivisionScene = GD.Load<PackedScene>("res://editor/ObjectEditPlane/beat_subdivision_selector_ui.tscn");
+        var selector = subdivisionScene.Instantiate<BeatSubdivisionSelectorUI>();
+        AddChild(selector);
+        var subdivisions = new[] { 1, 2, 4, 8, 16 };
+        var requests = 0;
+        var selectedSubdivision = 0;
+        var toggles = 0;
+        selector.SubdivisionSelected += subdivision => { requests++; selectedSubdivision = subdivision; };
+        var group = selector.GetNode<Button>("%BeatSubdivision1Button").ButtonGroup;
+        Check(group is not null && !group.AllowUnpress, "Beat snap uses an exclusive group");
+        foreach (var subdivision in subdivisions)
+        {
+            var button = selector.GetNode<Button>($"%BeatSubdivision{subdivision}Button");
+            CheckToggleTheme(button);
+            Check(button.ButtonGroup == group, "Beat snap buttons share a group");
+            button.Toggled += _ => toggles++;
+        }
+        foreach (var selected in subdivisions)
+        {
+            selector.SetSelectedSubdivision(selected);
+            foreach (var subdivision in subdivisions)
+            {
+                Check(selector.GetNode<Button>($"%BeatSubdivision{subdivision}Button").ButtonPressed
+                    == (subdivision == selected), "Beat snap selection synchronizes pressed states");
+            }
+        }
+        Check(requests == 0 && toggles == 0, "Beat snap synchronization is silent");
+        selector.GetNode<Button>("%BeatSubdivision4Button").EmitSignal(Button.SignalName.Pressed);
+        Check(requests == 1 && selectedSubdivision == 4, "Beat snap still emits selection requests");
+        selector.Free();
+
+        var settingsScene = GD.Load<PackedScene>("res://editor/ObjectEditPlane/spectrogram_settings_ui.tscn");
+        var settings = settingsScene.Instantiate<Control>();
+        AddChild(settings);
+        var playbackToggle = settings.GetNode<Button>("%ShowDuringPlaybackButton");
+        CheckToggleTheme(playbackToggle);
+        Check(playbackToggle.ButtonGroup is null, "Playback visibility is an independent toggle");
+        playbackToggle.SetPressedNoSignal(true);
+        Check(playbackToggle.ButtonPressed, "Playback visibility supports native pressed state");
+        settings.Free();
+    }
+
+    private void CheckToggleTheme(Button button)
+    {
+        var theme = GD.Load<Theme>("res://bs_mapper_theme.tres");
+        Check(button.ToggleMode && button.ThemeTypeVariation == "EditorToggleButton",
+            "Setting button uses toggle mode and shared theme variant");
+        foreach (var style in new[] { "normal", "hover", "pressed", "hover_pressed" })
+        {
+            Check(!button.HasThemeStyleboxOverride(style)
+                && button.GetThemeStylebox(style) == theme.GetStylebox(style, "EditorToggleButton"),
+                "Setting button resolves shared style without overrides");
+        }
+        Check(button.GetThemeStylebox("pressed") == button.GetThemeStylebox("hover_pressed"),
+            "Selected highlight remains visible while hovered");
     }
 
     private void Check(bool condition, string name)

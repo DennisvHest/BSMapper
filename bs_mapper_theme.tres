@@ -67,6 +67,41 @@ corner_radius_top_right = 5
 corner_radius_bottom_right = 5
 corner_radius_bottom_left = 5
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_editor_toggle_idle"]
+content_margin_left = 10.0
+content_margin_top = 14.0
+content_margin_right = 10.0
+content_margin_bottom = 14.0
+bg_color = Color(0.17, 0.19, 0.24, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_editor_toggle_focus"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_editor_toggle_hover"]
+content_margin_left = 10.0
+content_margin_top = 14.0
+content_margin_right = 10.0
+content_margin_bottom = 14.0
+bg_color = Color(0.23, 0.26, 0.32, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_editor_toggle_selected"]
+content_margin_left = 10.0
+content_margin_top = 14.0
+content_margin_right = 10.0
+content_margin_bottom = 14.0
+bg_color = Color(0.14902, 0.533333, 1, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_xbc2w"]
 bg_color = Color(0.3, 0, 0, 1)
 corner_radius_top_left = 5
@@ -97,6 +132,17 @@ Button/styles/normal = SubResource("StyleBoxFlat_6hpnh")
 Button/styles/pressed = SubResource("StyleBoxFlat_rxcny")
 CheckBox/styles/hover_pressed = SubResource("StyleBoxFlat_q4706")
 CheckBox/styles/normal = SubResource("StyleBoxFlat_5rgc2")
+EditorToggleButton/base_type = &"Button"
+EditorToggleButton/colors/font_color = Color(0.83, 0.86, 0.9, 1)
+EditorToggleButton/colors/font_hover_color = Color(0.83, 0.86, 0.9, 1)
+EditorToggleButton/colors/font_hover_pressed_color = Color(1, 1, 1, 1)
+EditorToggleButton/colors/font_pressed_color = Color(1, 1, 1, 1)
+EditorToggleButton/styles/disabled = SubResource("StyleBoxFlat_editor_toggle_idle")
+EditorToggleButton/styles/focus = SubResource("StyleBoxEmpty_editor_toggle_focus")
+EditorToggleButton/styles/hover = SubResource("StyleBoxFlat_editor_toggle_hover")
+EditorToggleButton/styles/hover_pressed = SubResource("StyleBoxFlat_editor_toggle_selected")
+EditorToggleButton/styles/normal = SubResource("StyleBoxFlat_editor_toggle_idle")
+EditorToggleButton/styles/pressed = SubResource("StyleBoxFlat_editor_toggle_selected")
 ItemList/constants/icon_margin = 10
 SecondaryButton/base_type = &"Button"
 SecondaryButton/styles/hover = SubResource("StyleBoxFlat_xbc2w")
