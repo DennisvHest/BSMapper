@@ -1,6 +1,9 @@
 [gd_scene format=3 uid="uid://cddcnm27acs5"]
 
 [ext_resource type="Script" uid="uid://cpxd4aqyi3mpe" path="res://editor/ObjectEditPlane/SelectionPanelUI.cs" id="1_ui"]
+[ext_resource type="FontFile" uid="uid://eu3pk330q7xk" path="res://addons/fontawesome/fonts/fa-solid-900.woff2" id="2_0i6tp"]
+[ext_resource type="PackedScene" uid="uid://sobnmw34a3gp" path="res://ui/icon_button.tscn" id="2_4n73c"]
+[ext_resource type="Script" uid="uid://dvry5xvheimo8" path="res://addons/fontawesome/FontAwesome.gd" id="3_k1m0j"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
 bg_color = Color(0.05, 0.06, 0.08, 0.92)
@@ -77,17 +80,6 @@ corner_radius_top_right = 14
 corner_radius_bottom_right = 14
 corner_radius_bottom_left = 14
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_button"]
-content_margin_left = 12.0
-content_margin_top = 14.0
-content_margin_right = 12.0
-content_margin_bottom = 14.0
-bg_color = Color(0.17, 0.19, 0.24, 1)
-corner_radius_top_left = 14
-corner_radius_top_right = 14
-corner_radius_bottom_right = 14
-corner_radius_bottom_left = 14
-
 [node name="SelectionPanelUI" type="Control" unique_id=1379940873]
 custom_minimum_size = Vector2(432, 652)
 layout_mode = 3
@@ -123,7 +115,27 @@ grow_vertical = 2
 layout_mode = 2
 theme_override_constants/separation = 16
 
-[node name="Title" type="Label" parent="Panel/MarginContainer/VBoxContainer" unique_id=173584234]
+[node name="HBoxContainer" type="HBoxContainer" parent="Panel/MarginContainer/VBoxContainer" unique_id=368263487]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_constants/separation = 12
+
+[node name="FontAwesome" type="Label" parent="Panel/MarginContainer/VBoxContainer/HBoxContainer" unique_id=1988918069]
+auto_translate_mode = 2
+layout_mode = 2
+localize_numeral_system = false
+theme_override_fonts/font = ExtResource("2_0i6tp")
+theme_override_font_sizes/font_size = 32
+text = ""
+horizontal_alignment = 1
+vertical_alignment = 1
+script = ExtResource("3_k1m0j")
+icon_size = 32
+icon_name = "cube"
+metadata/_custom_type_script = "uid://dvry5xvheimo8"
+
+[node name="Title" type="Label" parent="Panel/MarginContainer/VBoxContainer/HBoxContainer" unique_id=173584234]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(0.98, 0.98, 0.99, 1)
@@ -136,11 +148,11 @@ unique_name_in_owner = true
 layout_mode = 2
 theme_override_constants/separation = 10
 
-[node name="ColorLabel" type="Label" parent="Panel/MarginContainer/VBoxContainer/ColorSection" unique_id=1885267435]
+[node name="NoteLabel" type="Label" parent="Panel/MarginContainer/VBoxContainer/ColorSection" unique_id=1885267435]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.83, 0.86, 0.9, 1)
 theme_override_font_sizes/font_size = 22
-text = "Note color"
+text = "Note"
 
 [node name="ColorButtons" type="HBoxContainer" parent="Panel/MarginContainer/VBoxContainer/ColorSection" unique_id=2058891985]
 layout_mode = 2
@@ -158,6 +170,15 @@ theme_override_styles/pressed = SubResource("StyleBoxFlat_4n73c")
 theme_override_styles/hover = SubResource("StyleBoxFlat_1526c")
 text = "Left"
 
+[node name="AnyDirectionButton" type="Button" parent="Panel/MarginContainer/VBoxContainer/ColorSection/ColorButtons" unique_id=239643482]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 72)
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+theme_type_variation = &"SelectionPanelButton"
+text = "Any direction"
+
 [node name="RightColorButton" type="Button" parent="Panel/MarginContainer/VBoxContainer/ColorSection/ColorButtons" unique_id=32369271]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 72)
@@ -170,125 +191,142 @@ theme_override_styles/pressed = SubResource("StyleBoxFlat_k1m0j")
 theme_override_styles/hover = SubResource("StyleBoxFlat_button_hover")
 text = "Right"
 
-[node name="DirectionLabel" type="Label" parent="Panel/MarginContainer/VBoxContainer/ColorSection"]
+[node name="MoveLabel" type="Label" parent="Panel/MarginContainer/VBoxContainer" unique_id=872012574]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.83, 0.86, 0.9, 1)
 theme_override_font_sizes/font_size = 22
-text = "Cut direction"
+text = "Move"
 
-[node name="AnyDirectionButton" type="Button" parent="Panel/MarginContainer/VBoxContainer/ColorSection"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 72)
+[node name="MoveActions" type="HBoxContainer" parent="Panel/MarginContainer/VBoxContainer" unique_id=778997706]
 layout_mode = 2
-focus_mode = 0
-theme_override_font_sizes/font_size = 24
-theme_override_styles/normal = SubResource("StyleBoxFlat_button")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_button_hover")
-theme_override_styles/hover = SubResource("StyleBoxFlat_button_hover")
-text = "Any direction"
+theme_override_constants/separation = 12
+
+[node name="MoveBackButton" parent="Panel/MarginContainer/VBoxContainer/MoveActions" unique_id=1740958269 instance=ExtResource("2_4n73c")]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(61, 80)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"SelectionPanelButton"
+IconName = "square-caret-left"
+IconSize = 32
+VerticalPadding = 24
+
+[node name="MoveForwardButton" parent="Panel/MarginContainer/VBoxContainer/MoveActions" unique_id=429177455 instance=ExtResource("2_4n73c")]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(61, 80)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"SelectionPanelButton"
+IconName = "square-caret-right"
+IconSize = 32
+VerticalPadding = 24
 
 [node name="Spacer" type="Control" parent="Panel/MarginContainer/VBoxContainer" unique_id=1998953504]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="ClipboardActions" type="HBoxContainer" parent="Panel/MarginContainer/VBoxContainer"]
+[node name="ClipboardLabel" type="Label" parent="Panel/MarginContainer/VBoxContainer" unique_id=565862700]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.83, 0.86, 0.9, 1)
+theme_override_font_sizes/font_size = 22
+text = "Clipboard"
+
+[node name="ClipboardActions" type="HBoxContainer" parent="Panel/MarginContainer/VBoxContainer" unique_id=1545777695]
 layout_mode = 2
 theme_override_constants/separation = 12
 
-[node name="CopyButton" type="Button" parent="Panel/MarginContainer/VBoxContainer/ClipboardActions"]
+[node name="CopyButton" parent="Panel/MarginContainer/VBoxContainer/ClipboardActions" unique_id=2053971564 instance=ExtResource("2_4n73c")]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 76)
+custom_minimum_size = Vector2(65, 80)
 layout_mode = 2
 size_flags_horizontal = 3
-focus_mode = 0
-theme_override_font_sizes/font_size = 24
-theme_override_styles/normal = SubResource("StyleBoxFlat_button")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_button_hover")
-theme_override_styles/hover = SubResource("StyleBoxFlat_button_hover")
+theme_type_variation = &"SelectionPanelButton"
 disabled = true
-text = "Copy"
+IconName = "copy"
+IconSize = 32
+VerticalPadding = 24
 
-[node name="CutButton" type="Button" parent="Panel/MarginContainer/VBoxContainer/ClipboardActions"]
+[node name="CutButton" parent="Panel/MarginContainer/VBoxContainer/ClipboardActions" unique_id=1022937356 instance=ExtResource("2_4n73c")]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 76)
+custom_minimum_size = Vector2(65, 80)
 layout_mode = 2
 size_flags_horizontal = 3
-focus_mode = 0
-theme_override_font_sizes/font_size = 24
-theme_override_styles/normal = SubResource("StyleBoxFlat_button")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_button_hover")
-theme_override_styles/hover = SubResource("StyleBoxFlat_button_hover")
+theme_type_variation = &"SelectionPanelButton"
 disabled = true
-text = "Cut"
+IconName = "scissors"
+IconSize = 32
+VerticalPadding = 24
 
-[node name="PasteButton" type="Button" parent="Panel/MarginContainer/VBoxContainer/ClipboardActions"]
+[node name="PasteButton" parent="Panel/MarginContainer/VBoxContainer/ClipboardActions" unique_id=1002940064 instance=ExtResource("2_4n73c")]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 76)
+custom_minimum_size = Vector2(65, 80)
 layout_mode = 2
 size_flags_horizontal = 3
-focus_mode = 0
-theme_override_font_sizes/font_size = 24
-theme_override_styles/normal = SubResource("StyleBoxFlat_button")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_button_hover")
-theme_override_styles/hover = SubResource("StyleBoxFlat_button_hover")
+theme_type_variation = &"SelectionPanelButton"
 disabled = true
-text = "Paste"
+IconName = "paste"
+IconSize = 32
+VerticalPadding = 24
 
-[node name="MoveActions" type="HBoxContainer" parent="Panel/MarginContainer/VBoxContainer"]
+[node name="ActionsLabel" type="Label" parent="Panel/MarginContainer/VBoxContainer" unique_id=1699760877]
 layout_mode = 2
-theme_override_constants/separation = 12
-
-[node name="MoveBackButton" type="Button" parent="Panel/MarginContainer/VBoxContainer/MoveActions"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 76)
-layout_mode = 2
-size_flags_horizontal = 3
-focus_mode = 0
-theme_override_font_sizes/font_size = 24
-theme_override_styles/normal = SubResource("StyleBoxFlat_button")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_button_hover")
-theme_override_styles/hover = SubResource("StyleBoxFlat_button_hover")
-disabled = true
-text = "Back"
-
-[node name="MoveForwardButton" type="Button" parent="Panel/MarginContainer/VBoxContainer/MoveActions"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 76)
-layout_mode = 2
-size_flags_horizontal = 3
-focus_mode = 0
-theme_override_font_sizes/font_size = 24
-theme_override_styles/normal = SubResource("StyleBoxFlat_button")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_button_hover")
-theme_override_styles/hover = SubResource("StyleBoxFlat_button_hover")
-disabled = true
-text = "Forth"
+theme_override_colors/font_color = Color(0.83, 0.86, 0.9, 1)
+theme_override_font_sizes/font_size = 22
+text = "Actions"
 
 [node name="Actions" type="HBoxContainer" parent="Panel/MarginContainer/VBoxContainer" unique_id=523979779]
 layout_mode = 2
 theme_override_constants/separation = 12
 
-[node name="DeselectButton" type="Button" parent="Panel/MarginContainer/VBoxContainer/Actions" unique_id=215165992]
+[node name="DeselectButton" parent="Panel/MarginContainer/VBoxContainer/Actions" unique_id=725959401 instance=ExtResource("2_4n73c")]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 76)
+custom_minimum_size = Vector2(159, 82)
 layout_mode = 2
 size_flags_horizontal = 3
-focus_mode = 0
+theme_type_variation = &"SelectionPanelButton"
+LabelText = "Deselect"
+IconName = "square-xmark"
+IconSize = 32
+VerticalPadding = 24
+
+[node name="Margin" parent="Panel/MarginContainer/VBoxContainer/Actions/DeselectButton" index="0" unique_id=207466636]
+theme_override_constants/margin_top = 24
+theme_override_constants/margin_bottom = 24
+
+[node name="Icon" parent="Panel/MarginContainer/VBoxContainer/Actions/DeselectButton/Margin/Content" parent_id_path=PackedInt32Array(725959401, 897412775) index="0" unique_id=2110075033]
+theme_override_font_sizes/font_size = 32
+text = ""
+icon_size = 32
+icon_name = "square-xmark"
+
+[node name="Label" parent="Panel/MarginContainer/VBoxContainer/Actions/DeselectButton/Margin/Content" parent_id_path=PackedInt32Array(725959401, 897412775) index="1" unique_id=1454014573]
 theme_override_font_sizes/font_size = 24
-theme_override_styles/normal = SubResource("StyleBoxFlat_button")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_button_hover")
-theme_override_styles/hover = SubResource("StyleBoxFlat_button_hover")
 text = "Deselect"
 
-[node name="DeleteButton" type="Button" parent="Panel/MarginContainer/VBoxContainer/Actions" unique_id=573208136]
+[node name="DeleteButton" parent="Panel/MarginContainer/VBoxContainer/Actions" unique_id=882302555 instance=ExtResource("2_4n73c")]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 76)
+custom_minimum_size = Vector2(237, 82)
 layout_mode = 2
 size_flags_horizontal = 3
-focus_mode = 0
-theme_override_colors/font_color = Color(1, 0, 0, 1)
+theme_type_variation = &"SecondaryButton"
+LabelText = "Delete selected"
+IconName = "trash"
+IconSize = 32
+VerticalPadding = 24
+
+[node name="Margin" parent="Panel/MarginContainer/VBoxContainer/Actions/DeleteButton" index="0" unique_id=207466636]
+theme_override_constants/margin_top = 24
+theme_override_constants/margin_bottom = 24
+
+[node name="Icon" parent="Panel/MarginContainer/VBoxContainer/Actions/DeleteButton/Margin/Content" parent_id_path=PackedInt32Array(882302555, 897412775) index="0" unique_id=2110075033]
+theme_override_font_sizes/font_size = 32
+text = ""
+icon_size = 32
+icon_name = "trash"
+
+[node name="Label" parent="Panel/MarginContainer/VBoxContainer/Actions/DeleteButton/Margin/Content" parent_id_path=PackedInt32Array(882302555, 897412775) index="1" unique_id=1454014573]
 theme_override_font_sizes/font_size = 24
-theme_override_styles/normal = SubResource("StyleBoxFlat_button")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_button_hover")
-theme_override_styles/hover = SubResource("StyleBoxFlat_button_hover")
 text = "Delete selected"
+
+[editable path="Panel/MarginContainer/VBoxContainer/Actions/DeselectButton"]
+[editable path="Panel/MarginContainer/VBoxContainer/Actions/DeleteButton"]

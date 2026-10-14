@@ -15,29 +15,29 @@ public partial class SelectionPanelUI : Control
 
     private Label _title;
     private Control _colorSection;
-    private Button _copyButton;
-    private Button _cutButton;
-    private Button _pasteButton;
-    private Button _moveBackButton;
-    private Button _moveForwardButton;
+    private IconButton _copyButton;
+    private IconButton _cutButton;
+    private IconButton _pasteButton;
+    private IconButton _moveBackButton;
+    private IconButton _moveForwardButton;
 
     public override void _Ready()
     {
         _title = GetNode<Label>("%Title");
         _colorSection = GetNode<Control>("%ColorSection");
-        _copyButton = GetNode<Button>("%CopyButton");
-        _cutButton = GetNode<Button>("%CutButton");
-        _pasteButton = GetNode<Button>("%PasteButton");
-        _moveBackButton = GetNode<Button>("%MoveBackButton");
-        _moveForwardButton = GetNode<Button>("%MoveForwardButton");
+        _copyButton = GetNode<IconButton>("%CopyButton");
+        _cutButton = GetNode<IconButton>("%CutButton");
+        _pasteButton = GetNode<IconButton>("%PasteButton");
+        _moveBackButton = GetNode<IconButton>("%MoveBackButton");
+        _moveForwardButton = GetNode<IconButton>("%MoveForwardButton");
         GetNode<Button>("%LeftColorButton").Pressed += () =>
             NoteTypeSelected?.Invoke(BeatMapNote.NoteBlockType.Left);
         GetNode<Button>("%RightColorButton").Pressed += () =>
             NoteTypeSelected?.Invoke(BeatMapNote.NoteBlockType.Right);
         GetNode<Button>("%AnyDirectionButton").Pressed += () =>
             CutDirectionSelected?.Invoke(BeatMapNote.CutDirection.Any);
-        GetNode<Button>("%DeselectButton").Pressed += () => DeselectAll?.Invoke();
-        GetNode<Button>("%DeleteButton").Pressed += () => DeleteSelected?.Invoke();
+        GetNode<IconButton>("%DeselectButton").Pressed += () => DeselectAll?.Invoke();
+        GetNode<IconButton>("%DeleteButton").Pressed += () => DeleteSelected?.Invoke();
         _copyButton.Pressed += () => CopySelected?.Invoke();
         _cutButton.Pressed += () => CutSelected?.Invoke();
         _pasteButton.Pressed += () => PasteCopied?.Invoke();
@@ -56,7 +56,7 @@ public partial class SelectionPanelUI : Control
         _moveBackButton.Disabled = selectedCount == 0;
         _moveForwardButton.Disabled = selectedCount == 0;
         _pasteButton.Text = clipboardCount > 0 ? $"Paste ({clipboardCount})" : "Paste";
-        GetNode<Button>("%DeselectButton").Disabled = selectedCount == 0;
-        GetNode<Button>("%DeleteButton").Disabled = selectedCount == 0;
+        GetNode<IconButton>("%DeselectButton").Disabled = selectedCount == 0;
+        GetNode<IconButton>("%DeleteButton").Disabled = selectedCount == 0;
     }
 }

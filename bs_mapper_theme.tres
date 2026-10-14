@@ -123,6 +123,28 @@ corner_radius_top_right = 5
 corner_radius_bottom_right = 5
 corner_radius_bottom_left = 5
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_selection_panel_button_hover"]
+content_margin_left = 12.0
+content_margin_top = 14.0
+content_margin_right = 12.0
+content_margin_bottom = 14.0
+bg_color = Color(0, 0, 0.78431374, 1)
+corner_radius_top_left = 14
+corner_radius_top_right = 14
+corner_radius_bottom_right = 14
+corner_radius_bottom_left = 14
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_selection_panel_button_normal"]
+content_margin_left = 12.0
+content_margin_top = 14.0
+content_margin_right = 12.0
+content_margin_bottom = 14.0
+bg_color = Color(0.17, 0.19, 0.24, 1)
+corner_radius_top_left = 14
+corner_radius_top_right = 14
+corner_radius_bottom_right = 14
+corner_radius_bottom_left = 14
+
 [resource]
 AcceptDialog/styles/panel = SubResource("StyleBoxFlat_0xm2m")
 Button/colors/font_color = Color(0.8, 0.83137256, 0.8784314, 1)
@@ -148,3 +170,8 @@ SecondaryButton/base_type = &"Button"
 SecondaryButton/styles/hover = SubResource("StyleBoxFlat_xbc2w")
 SecondaryButton/styles/normal = SubResource("StyleBoxFlat_3v077")
 SecondaryButton/styles/pressed = SubResource("StyleBoxFlat_x0wnj")
+SelectionPanelButton/base_type = &"Button"
+SelectionPanelButton/font_sizes/font_size = 24
+SelectionPanelButton/styles/hover = SubResource("StyleBoxFlat_selection_panel_button_hover")
+SelectionPanelButton/styles/normal = SubResource("StyleBoxFlat_selection_panel_button_normal")
+SelectionPanelButton/styles/pressed = SubResource("StyleBoxFlat_selection_panel_button_hover")
