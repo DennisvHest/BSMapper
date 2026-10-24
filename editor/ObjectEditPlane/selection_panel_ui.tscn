@@ -176,7 +176,7 @@ custom_minimum_size = Vector2(0, 72)
 layout_mode = 2
 size_flags_horizontal = 3
 focus_mode = 0
-theme_type_variation = &"SelectionPanelButton"
+theme_type_variation = &"EditorToggleButton"
 text = "Any direction"
 
 [node name="RightColorButton" type="Button" parent="Panel/MarginContainer/VBoxContainer/ColorSection/ColorButtons" unique_id=32369271]
@@ -206,7 +206,7 @@ unique_name_in_owner = true
 custom_minimum_size = Vector2(61, 80)
 layout_mode = 2
 size_flags_horizontal = 3
-theme_type_variation = &"SelectionPanelButton"
+theme_type_variation = &"EditorToggleButton"
 IconName = "square-caret-left"
 IconSize = 32
 VerticalPadding = 24

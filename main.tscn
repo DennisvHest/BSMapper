@@ -84,7 +84,7 @@ dialog_text = "Please put on your headset and connect it to your PC (for example
 OpenXR could not start. Once your headset is connected, confirm to restart BSMapper
 and open this map and difficulty directly in the VR editor."
 
-[node name="EditorResumeErrorDialog" type="AcceptDialog" parent="."]
+[node name="EditorResumeErrorDialog" type="AcceptDialog" parent="." unique_id=1064995902]
 title = "Unable to reopen map"
 initial_position = 2
 dialog_text = "The selected map or difficulty could not be reopened.

@@ -55,7 +55,7 @@ public partial class SelectionPanelUI : Control
         _pasteButton.Disabled = clipboardCount == 0;
         _moveBackButton.Disabled = selectedCount == 0;
         _moveForwardButton.Disabled = selectedCount == 0;
-        _pasteButton.Text = clipboardCount > 0 ? $"Paste ({clipboardCount})" : "Paste";
+        _pasteButton.LabelText = clipboardCount > 0 ? $"({clipboardCount})" : "";
         GetNode<IconButton>("%DeselectButton").Disabled = selectedCount == 0;
         GetNode<IconButton>("%DeleteButton").Disabled = selectedCount == 0;
     }
