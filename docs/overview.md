@@ -10,7 +10,7 @@ The start screen also supports creating maps and configuring their metadata, aud
 
 ## Main user flow
 
-1. **Configure the game folder.** On launch, BSMapper loads the saved install path from `user://settings.cfg`. The selected folder is accepted when it contains `Beat Saber_Data/CustomWIPLevels`.
+1. **Configure the game folder.** On launch, BSMapper loads the saved install path from `user://settings.cfg`. The selected folder is accepted when it contains `Beat Saber_Data`; if `Beat Saber_Data/CustomWIPLevels` is missing, BSMapper creates it.
 2. **Choose or create a map.** The start screen lists WIP maps and presents map metadata and difficulty information. New maps and their audio are created under the WIP maps directory.
 3. **Choose a difficulty.** If a map has several difficulties, the user selects one before entering the editor.
 4. **Edit in VR.** BSMapper initializes OpenXR, enables XR rendering, and switches to the editor scene. If OpenXR is unavailable, it prompts the user to connect a headset. A selected difficulty can be retained across the requested restart into VR.

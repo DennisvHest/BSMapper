@@ -163,8 +163,18 @@ public partial class Main : Control
 
     private static bool IsValidInstallLocation(string installLocation)
     {
-        return !string.IsNullOrEmpty(installLocation)
-            && DirAccess.DirExistsAbsolute(installLocation.PathJoin(Settings.CustomWipLevelsFolder));
+        if (string.IsNullOrEmpty(installLocation))
+            return false;
+
+        var beatSaberDataFolder = installLocation.PathJoin("Beat Saber_Data");
+        if (!DirAccess.DirExistsAbsolute(beatSaberDataFolder))
+            return false;
+
+        var customWipLevelsFolder = installLocation.PathJoin(Settings.CustomWipLevelsFolder);
+        if (DirAccess.DirExistsAbsolute(customWipLevelsFolder))
+            return true;
+
+        return DirAccess.MakeDirRecursiveAbsolute(customWipLevelsFolder) == Error.Ok;
     }
 
     private void ConfigureInstallLocation(string directory)
@@ -280,7 +290,7 @@ public partial class Main : Control
         {
             var errorLabel = GetNode<Label>("InstallLocationScreen/Panel/VBox/ErrorLabel");
             errorLabel.Text =
-                $"The selected folder does not contain \"{Settings.CustomWipLevelsFolder}\". Please select the Beat Saber install folder.";
+                "The selected folder is not a valid Beat Saber install folder, or its CustomWIPLevels folder could not be created.";
             errorLabel.Show();
             ShowInstallLocationScreen();
         }
