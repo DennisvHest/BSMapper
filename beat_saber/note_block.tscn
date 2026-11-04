@@ -1,9 +1,9 @@
-[gd_scene load_steps=9 format=3 uid="uid://bfhf8qgxqfrw6"]
+[gd_scene format=3 uid="uid://bfhf8qgxqfrw6"]
 
-[ext_resource type="Script" path="res://beat_saber/NoteBlock.cs" id="1_yqdrt"]
+[ext_resource type="Script" uid="uid://bvidtqhw6w703" path="res://beat_saber/NoteBlock.cs" id="1_yqdrt"]
 [ext_resource type="Texture2D" uid="uid://b7xf7noovx35q" path="res://textures/note_block_texture.png" id="2_ftk3i"]
 [ext_resource type="Texture2D" uid="uid://dquhwpf3rdi53" path="res://textures/note_block_any_cut_direction_texture.png" id="3_rqh18"]
-[ext_resource type="Script" uid="uid://dr2beh7toat6i" path="res://addons/godot-xr-tools/objects/interactable_area.gd" id="4_1p8d7"]
+[ext_resource type="Script" uid="uid://e7gdpxabj45k" path="res://addons/godot-xr-tools/objects/interactable_area.gd" id="4_1p8d7"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_xx8hl"]
 resource_local_to_scene = true
@@ -24,36 +24,36 @@ emission = Color(0.14902, 0.533333, 1, 1)
 [sub_resource type="BoxShape3D" id="BoxShape3D_xx8hl"]
 size = Vector3(1.256, 1.107, 1.484)
 
-[node name="NoteBlock" type="Node3D"]
+[node name="NoteBlock" type="Node3D" unique_id=425517406]
 script = ExtResource("1_yqdrt")
 
-[node name="Visual" type="Node3D" parent="."]
+[node name="Visual" type="Node3D" parent="." unique_id=492417003]
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="Visual"]
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Visual" unique_id=467088521]
 mesh = SubResource("BoxMesh_yqdrt")
 skeleton = NodePath("../..")
 
-[node name="HighlightOutline" type="MeshInstance3D" parent="Visual"]
+[node name="HighlightOutline" type="MeshInstance3D" parent="Visual" unique_id=152660350]
 transform = Transform3D(1.06, 0, 0, 0, 1.06, 0, 0, 0, 1.06, 0, 0, 0)
 visible = false
 mesh = SubResource("BoxMesh_yqdrt")
 skeleton = NodePath("../..")
 surface_material_override/0 = SubResource("StandardMaterial3D_highlight")
 
-[node name="CutDirectionTriangle" type="Sprite3D" parent="Visual"]
+[node name="CutDirectionTriangle" type="Sprite3D" parent="Visual" unique_id=862453844]
 transform = Transform3D(-0.077, 6.73155e-09, 0, -6.73155e-09, -0.077, 0, 0, 0, 0.077, 0, 0, 0.201)
 texture = ExtResource("2_ftk3i")
 
-[node name="AnyCutDirectionCircle" type="Sprite3D" parent="Visual"]
+[node name="AnyCutDirectionCircle" type="Sprite3D" parent="Visual" unique_id=165757127]
 transform = Transform3D(0.077, -1.34631e-08, 0, 1.34631e-08, 0.077, 0, 0, 0, 0.077, 0, 0, 0.201)
 texture = ExtResource("3_rqh18")
 
-[node name="Area3D" type="Area3D" parent="."]
+[node name="Area3D" type="Area3D" parent="." unique_id=84024249]
 transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0, 0)
 collision_layer = 1048576
 script = ExtResource("4_1p8d7")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D" unique_id=192456473]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.121349)
 shape = SubResource("BoxShape3D_xx8hl")
 
