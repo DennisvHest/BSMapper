@@ -156,7 +156,7 @@ public partial class FloorBeatGrid : Node3D
         _renderedWindowStartQuarter = windowStartQuarter;
         _renderedWindowEndQuarter = windowEndQuarter;
         ClearFloorLines();
-        var beatLengthMeters = difficulty.Njs * difficulty.BeatDuration;
+        var beatLengthMeters = PlaybackManager.GetScrollSpeed(difficulty) * difficulty.BeatDuration;
         SpawnLongitudinalLines(visibleWindow.X, visibleWindow.Y, beatLengthMeters);
         SpawnCrossLines(windowStartQuarter, windowEndQuarter, beatLengthMeters);
         UpdateFloorGridPosition();
@@ -219,14 +219,14 @@ public partial class FloorBeatGrid : Node3D
             _floorGridRoot.Position = new Vector3(
                 0.0f,
                 0.0f,
-                (float)PlaybackManager.PlaybackPosition * difficulty.Njs);
+                (float)PlaybackManager.PlaybackPosition * PlaybackManager.GetScrollSpeed(difficulty));
         }
 
         _spectrogram.UpdateWindow(
             _visibleWindow.X * (difficulty?.BeatDuration ?? 0.0f),
             _visibleWindow.Y * (difficulty?.BeatDuration ?? 0.0f),
             PlaybackManager.PlaybackPosition,
-            difficulty?.Njs ?? 0.0f);
+            PlaybackManager.GetScrollSpeed(difficulty));
     }
 
     private float GetTotalBeats(BeatMapDifficultyInfo difficulty)
@@ -288,6 +288,8 @@ public partial class FloorBeatGrid : Node3D
         var editing = PlaybackManager.Mode == PlaybackManager.EditMode.Editing;
         Visible = editing || PlaybackManager.ShowSpectrogramDuringPlayback;
         _gridVisuals.Visible = Visible;
+        RebuildFloorGrid();
+        UpdateFloorGridPosition();
     }
 
     private void OnSpectrogramPlaybackVisibilityChanged(bool enabled)

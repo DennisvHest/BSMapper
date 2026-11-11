@@ -71,6 +71,13 @@ public partial class NoteBlockLane : Node3D
     private void OnCurrentBeatmapDifficultyInfoChanged(BeatMapDifficultyInfo difficulty)
     {
         DifficultyInfo = difficulty;
+        foreach (var child in GetChildren())
+        {
+            if (child is Wall wall)
+            {
+                wall.RefreshJumpSettings();
+            }
+        }
     }
 
     private void OnCurrentBeatmapChanged(BeatMap beatmap)
@@ -104,7 +111,8 @@ public partial class NoteBlockLane : Node3D
         BeatMapDifficultyInfo mapInfo)
     {
         var hitTime = (float)(beatmapObject.Beat * 60.0 / mapInfo.Bpm);
-        var objectPosition = Position + Vector3.Forward * mapInfo.Njs * hitTime;
+        var speed = GetNode<PlaybackManager>("/root/PlaybackManager").GetScrollSpeed(mapInfo);
+        var objectPosition = Position + Vector3.Forward * speed * hitTime;
         var lineIndex = beatmapObject switch
         {
             BeatMapNote note => note.LineIndex,

@@ -58,6 +58,14 @@ public partial class BeatmapObject : Node3D
 
     public override void _Process(double delta)
     {
+        if (PlaybackManager.Mode == PlaybackManager.EditMode.Editing)
+        {
+            // Match the editing grid's visible beat range, regardless of NJS or jump offset.
+            var currentTime = GetPlaybackPosition();
+            Visible = ObjectTime <= currentTime + 8.0f * MapInfo.BeatDuration
+                && ObjectTime >= currentTime - 2.0f * MapInfo.BeatDuration;
+            return;
+        }
         var jumpTime = GetJumpTime();
         var objectSpawnTime = jumpTime + MapInfo.ReactionTime;
         var objectDespawnTime = objectSpawnTime - MapInfo.ReactionTime * 4.0f;
@@ -215,7 +223,7 @@ public partial class BeatmapObject : Node3D
     protected float GetDistance(float jumpTime)
     {
         var timeDistance = ObjectTime - GetPlaybackPosition();
-        return timeDistance * MapInfo.Njs;
+        return timeDistance * PlaybackManager.GetScrollSpeed(MapInfo);
     }
 
     protected float GetVisualDistance(float jumpTime)

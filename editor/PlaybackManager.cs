@@ -4,6 +4,13 @@ using System.IO;
 
 public partial class PlaybackManager : Node
 {
+    /// <summary>Stable timeline scale in editing mode, independent of a difficulty's jump settings.</summary>
+    public const float EditingScrollSpeed = 10.0f;
+
+    public float GetScrollSpeed(BeatMapDifficultyInfo difficulty) => Mode == EditMode.Editing
+        ? EditingScrollSpeed
+        : difficulty?.Njs ?? 0.0f;
+
     public enum EditMode
     {
         Playing,

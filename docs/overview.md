@@ -28,6 +28,8 @@ The current controller bindings are defined in `editor/InputManager.cs` and inte
 
 The editor also exposes selection tools for changing note type and cut direction, moving selected objects by beat subdivision, bulk selection, and copy/cut/paste. Paste preserves the objects' relative beat offsets and places the first copied object at the current playback beat. Walls are represented and loaded/saved, though the edit-plane drag operation is limited to notes and bombs.
 
+An in-world note jump settings panel below the selection tools is available in editing mode. Its minus/plus buttons adjust NJS by 0.1 m/s and start beat offset by 0.01 beats, including negative offsets. Select either number to open a numeric keypad to the right, using Godot XR Tools' existing keyboard event handling. The keypad includes digits, minus, decimal point, backspace, and Enter; a physical keyboard also works. Enter or leaving the field applies the value, and invalid input restores the previous value. Editing uses a fixed 10 m/s timeline scale for objects, walls, selection bounds, beat markings, and the spectrogram. NJS and jump offset affect playback only. The editor's Save and autosave actions also write these settings to `info.dat` for the current difficulty.
+
 ## Technical structure
 
 The project is a Godot 4.7 C# application targeting .NET 8. `project.godot` enables OpenXR and registers shared autoloads. Scenes compose the desktop start interface and VR editor; C# scripts implement application logic, and `.tscn` scenes define the XR rig, lane, controls, and object visuals.

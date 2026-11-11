@@ -6,6 +6,7 @@ using Path = System.IO.Path;
 
 public partial class BeatMapManager : Node
 {
+    private bool _jumpSettingsChanged;
     /// <summary>Note jump settings for a single difficulty, as entered by the user.</summary>
     public readonly record struct DifficultySettings(
         BeatMapDifficultyInfo.Difficulty Difficulty,
@@ -268,6 +269,7 @@ public partial class BeatMapManager : Node
 
     public void LoadDifficulty(BeatMapDifficultyInfo difficulty)
     {
+        _jumpSettingsChanged = false;
         CurrentBeatmapDifficultyInfo = difficulty;
         EmitSignal(SignalName.CurrentBeatmapDifficultyInfoChanged, difficulty);
         var difficultyFilePath = CurrentBeatmapInfo.MapFolder.PathJoin(difficulty.BeatMapFileName);
@@ -290,6 +292,32 @@ public partial class BeatMapManager : Node
         var error = beatmapFile.GetError();
         if (error != Error.Ok)
             throw new InvalidOperationException($"Failed to save beatmap: {error}");
+        if (_jumpSettingsChanged)
+        {
+            SaveBeatmapInfo(CurrentBeatmapInfo);
+            _jumpSettingsChanged = false;
+        }
+    }
+
+    public void SetCurrentJumpSettings(float njs, float startBeatOffset)
+    {
+        var difficulty = CurrentBeatmapDifficultyInfo;
+        if (difficulty is null || !float.IsFinite(njs) || njs <= 0.0f || !float.IsFinite(startBeatOffset))
+        {
+            return;
+        }
+
+        if (difficulty.Njs == njs && difficulty.NoteJumpStartBeatOffset == startBeatOffset)
+        {
+            return;
+        }
+
+        difficulty.Njs = njs;
+        difficulty.NoteJumpStartBeatOffset = startBeatOffset;
+        difficulty.Initialize();
+        difficulty.ToV2Object(); // Update the original info.dat entry without replacing unrelated metadata.
+        _jumpSettingsChanged = true;
+        EmitSignal(SignalName.CurrentBeatmapDifficultyInfoChanged, difficulty);
     }
 
     private static void ClearDirectory(string directoryPath)

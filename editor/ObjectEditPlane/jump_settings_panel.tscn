@@ -1,0 +1,31 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://editor/ObjectEditPlane/JumpSettingsPanel.cs" id="1"]
+[ext_resource type="PackedScene" path="res://addons/godot-xr-tools/objects/viewport_2d_in_3d.tscn" id="2"]
+[ext_resource type="PackedScene" path="res://editor/ObjectEditPlane/jump_settings_ui.tscn" id="3"]
+[ext_resource type="PackedScene" path="res://addons/godot-xr-tools/objects/virtual_keyboard.tscn" id="4_keyboard"]
+[ext_resource type="PackedScene" path="res://editor/ObjectEditPlane/numeric_keyboard_ui.tscn" id="5_numeric"]
+
+[node name="JumpSettingsPanel" type="Node3D"]
+rotation_degrees = Vector3(0, -45, 0)
+script = ExtResource("1")
+
+[node name="ViewportPanel" parent="." instance=ExtResource("2")]
+screen_size = Vector2(0.8, 0.4)
+scene = ExtResource("3")
+viewport_size = Vector2(480, 240)
+transparent = 1
+unshaded = true
+scene_properties_keys = PackedStringArray()
+
+[node name="Keyboard" parent="." instance=ExtResource("4_keyboard")]
+position = Vector3(0.76, 0.2, 0.03)
+visible = false
+enabled = false
+screen_size = Vector2(0.6, 0.8)
+viewport_size = Vector2(360, 480)
+scene = ExtResource("5_numeric")
+transparent = 1
+update_mode = 1
+input_keyboard = false
+input_gamepad = false

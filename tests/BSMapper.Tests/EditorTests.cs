@@ -19,6 +19,7 @@ public class EditorTests : IClassFixture<GodotTestHost>
     [InlineData("BulkSelectionChecks", "CheckSelector")]
     [InlineData("BulkSelectionChecks", "CheckSelectorClicks")]
     [InlineData("BulkSelectionChecks", "CheckSettingsToggles")]
+    [InlineData("BulkSelectionChecks", "CheckJumpSettings")]
     [InlineData("CopyPasteChecks", "CheckClipboardData")]
     [InlineData("CopyPasteChecks", "CheckPanelControls")]
     [InlineData("CopyPasteChecks", "CheckEditorIntegration")]

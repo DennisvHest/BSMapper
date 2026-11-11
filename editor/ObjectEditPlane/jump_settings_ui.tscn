@@ -1,0 +1,119 @@
+[gd_scene format=3]
+
+[ext_resource type="Theme" path="res://bs_mapper_theme.tres" id="1_theme"]
+[ext_resource type="PackedScene" path="res://ui/icon_button.tscn" id="2_icon"]
+
+[node name="JumpSettingsUI" type="PanelContainer"]
+custom_minimum_size = Vector2(480, 240)
+theme = ExtResource("1_theme")
+theme_type_variation = &"EditorPanel"
+
+[node name="Margin" type="MarginContainer" parent="."]
+layout_mode = 2
+theme_override_constants/margin_left = 18
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 18
+theme_override_constants/margin_bottom = 16
+
+[node name="Rows" type="VBoxContainer" parent="Margin"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Title" type="Label" parent="Margin/Rows"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+text = "Note jump settings"
+
+[node name="Njs" type="HBoxContainer" parent="Margin/Rows"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 8
+
+[node name="Label" type="Label" parent="Margin/Rows/Njs"]
+custom_minimum_size = Vector2(176, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+text = "NJS (m/s)"
+
+[node name="NjsMinus" parent="Margin/Rows/Njs" instance=ExtResource("2_icon")]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(56, 56)
+layout_mode = 2
+focus_mode = 0
+theme_type_variation = &"EditorToggleButton"
+IconName = "minus"
+IconSize = 24
+HorizontalPadding = 10
+VerticalPadding = 12
+tooltip_text = "Decrease NJS by 0.1 m/s"
+
+[node name="NjsValue" type="LineEdit" parent="Margin/Rows/Njs"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(104, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 24
+theme_type_variation = &"EditorNumberInput"
+text = "10.0"
+horizontal_alignment = 1
+virtual_keyboard_enabled = false
+select_all_on_focus = true
+
+[node name="NjsPlus" parent="Margin/Rows/Njs" instance=ExtResource("2_icon")]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(56, 56)
+layout_mode = 2
+focus_mode = 0
+theme_type_variation = &"EditorToggleButton"
+IconName = "plus"
+IconSize = 24
+HorizontalPadding = 10
+VerticalPadding = 12
+tooltip_text = "Increase NJS by 0.1 m/s"
+
+[node name="Offset" type="HBoxContainer" parent="Margin/Rows"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 8
+
+[node name="Label" type="Label" parent="Margin/Rows/Offset"]
+custom_minimum_size = Vector2(176, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+text = "Start beat offset"
+
+[node name="OffsetMinus" parent="Margin/Rows/Offset" instance=ExtResource("2_icon")]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(56, 56)
+layout_mode = 2
+focus_mode = 0
+theme_type_variation = &"EditorToggleButton"
+IconName = "minus"
+IconSize = 24
+HorizontalPadding = 10
+VerticalPadding = 12
+tooltip_text = "Decrease start beat offset by 0.01 beats"
+
+[node name="OffsetValue" type="LineEdit" parent="Margin/Rows/Offset"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(104, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 24
+theme_type_variation = &"EditorNumberInput"
+text = "0.00"
+horizontal_alignment = 1
+virtual_keyboard_enabled = false
+select_all_on_focus = true
+
+[node name="OffsetPlus" parent="Margin/Rows/Offset" instance=ExtResource("2_icon")]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(56, 56)
+layout_mode = 2
+focus_mode = 0
+theme_type_variation = &"EditorToggleButton"
+IconName = "plus"
+IconSize = 24
+HorizontalPadding = 10
+VerticalPadding = 12
+tooltip_text = "Increase start beat offset by 0.01 beats"
