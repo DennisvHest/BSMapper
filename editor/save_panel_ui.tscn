@@ -1,0 +1,86 @@
+[gd_scene format=3]
+
+[ext_resource type="Theme" path="res://bs_mapper_theme.tres" id="1_theme"]
+[ext_resource type="PackedScene" path="res://ui/icon_button.tscn" id="2_button"]
+[ext_resource type="Script" path="res://addons/fontawesome/FontAwesome.gd" id="3_icon"]
+[ext_resource type="FontFile" path="res://addons/fontawesome/fonts/fa-solid-900.woff2" id="4_font"]
+
+[sub_resource type="StyleBoxFlat" id="PanelStyle"]
+bg_color = Color(0.05, 0.06, 0.08, 0.92)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_left = 20
+corner_radius_bottom_right = 20
+shadow_color = Color(0, 0, 0, 0.28)
+shadow_size = 8
+
+[node name="SavePanelUI" type="PanelContainer"]
+custom_minimum_size = Vector2(560, 240)
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme = ExtResource("1_theme")
+theme_override_styles/panel = SubResource("PanelStyle")
+
+[node name="Margin" type="MarginContainer" parent="."]
+layout_mode = 2
+theme_override_constants/margin_left = 18
+theme_override_constants/margin_right = 18
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_bottom = 16
+
+[node name="Content" type="VBoxContainer" parent="Margin"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="AutosaveRow" type="HBoxContainer" parent="Margin/Content"]
+layout_mode = 2
+theme_override_constants/separation = 12
+alignment = 1
+
+[node name="ClockIcon" type="Label" parent="Margin/Content/AutosaveRow"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_fonts/font = ExtResource("4_font")
+theme_override_colors/font_color = Color(0.83, 0.86, 0.9, 1)
+script = ExtResource("3_icon")
+icon_name = "clock-rotate-left"
+icon_size = 28
+vertical_alignment = 1
+
+[node name="LastAutosave" type="Label" parent="Margin/Content/AutosaveRow"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 28
+theme_override_colors/font_color = Color(0.98, 0.98, 0.99, 1)
+text = "Last autosave: not yet"
+horizontal_alignment = 1
+
+[node name="SaveStatus" type="Label" parent="Margin/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 23
+theme_override_colors/font_color = Color(0.83, 0.86, 0.9, 1)
+text = "Autosave every 30 seconds"
+horizontal_alignment = 1
+
+[node name="SaveMap" parent="Margin/Content" instance=ExtResource("2_button")]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_horizontal = 3
+focus_mode = 0
+theme_type_variation = &"EditorToggleButton"
+theme_override_font_sizes/font_size = 28
+tooltip_text = "Save the current map difficulty now"
+LabelText = "Save map"
+IconName = "floppy-disk"
+IconSize = 32
+HorizontalPadding = 18
+VerticalPadding = 12
+Separation = 12
+
+[node name="Label" parent="Margin/Content/SaveMap/Margin/Content" index="1"]
+theme_override_font_sizes/font_size = 28
+
+[editable path="Margin/Content/SaveMap"]

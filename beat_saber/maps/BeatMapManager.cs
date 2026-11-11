@@ -286,6 +286,10 @@ public partial class BeatMapManager : Node
         using var beatmapFile = FileAccess.Open(CurrentBeatmapFilePath, FileAccess.ModeFlags.Write)
             ?? throw new InvalidOperationException($"Failed to open beatmap file for writing: {CurrentBeatmapFilePath}");
         beatmapFile.StoreString(Json.Stringify(CurrentBeatmap.OriginalMap, string.Empty, false));
+        beatmapFile.Flush();
+        var error = beatmapFile.GetError();
+        if (error != Error.Ok)
+            throw new InvalidOperationException($"Failed to save beatmap: {error}");
     }
 
     private static void ClearDirectory(string directoryPath)

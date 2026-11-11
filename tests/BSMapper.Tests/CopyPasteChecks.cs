@@ -27,6 +27,7 @@ public partial class CopyPasteChecks : Node
                 case "CheckClipboardData": CheckClipboardData(); break;
                 case "CheckPanelControls": CheckPanelControls(); break;
                 case "CheckEditorIntegration": await CheckEditorIntegration(); break;
+                case "CheckAutosave": await CheckAutosave(); break;
                 default: throw new ArgumentException($"Unknown test case: {arguments[0]}");
             }
             GD.Print($"BSMAPPER_TEST_PASSED: {arguments[0]} ({_checks} assertions)");
@@ -36,6 +37,62 @@ public partial class CopyPasteChecks : Node
         {
             GD.PushError(exception.ToString());
             GetTree().Quit(1);
+        }
+    }
+
+    private async Task CheckAutosave()
+    {
+        var maps = GetNode<BeatMapManager>("/root/BeatMapManager");
+        var path = $"user://autosave-check-{Guid.NewGuid():N}.dat";
+        var map = new BeatMap();
+        map.InitializeEmpty();
+        map.OriginalMap.AsGodotDictionary()["_customData"] = new Dictionary { ["keep"] = "value" };
+        maps.CurrentBeatmapFilePath = path;
+        maps.ChangeBeatmap(map);
+        var editor = new Node3D();
+        AddChild(editor);
+        var saving = new EditorSaveService { Name = "SaveService" };
+        editor.AddChild(saving);
+        var panel = GD.Load<PackedScene>("res://editor/save_panel.tscn").Instantiate<Node3D>();
+        editor.AddChild(panel);
+        var ui = panel.GetNode<Node>("ViewportPanel").Call("get_scene_instance").AsGodotObject() as Control;
+        var button = ui.GetNode<Button>("%SaveMap");
+        var label = ui.GetNode<Label>("%LastAutosave");
+        var timer = saving.GetChild<Timer>(0);
+        try
+        {
+            Check(timer.WaitTime == 30 && timer.IgnoreTimeScale && !timer.OneShot && !timer.IsStopped(),
+                "Repeating autosave runs every 30 real seconds");
+            Check(saving.LastAutosaveTime == null && label.Text == "Last autosave: not yet", "Initial autosave status");
+            Check(!Godot.FileAccess.FileExists(path), "Does not save immediately on entry");
+            await ToSignal(timer, Timer.SignalName.Timeout);
+            Check(saving.LastAutosaveTime != null && Godot.FileAccess.FileExists(path), "Timer saves the loaded map");
+            Check(!label.Text.EndsWith("not yet"), "World panel shows autosave time");
+            var time = saving.LastAutosaveTime;
+            map.Notes.Add(new BeatMapNote { Beat = 7, LineIndex = 2, LineLayer = 1 });
+            button.EmitSignal(Button.SignalName.Pressed);
+            var json = Json.ParseString(Godot.FileAccess.GetFileAsString(path)).AsGodotDictionary();
+            Check(json["_notes"].AsGodotArray().Count == 1, "Manual VR button persists edits");
+            Check(json["_customData"].AsGodotDictionary()["keep"].AsString() == "value", "Saving preserves custom map data");
+            Check(saving.LastAutosaveTime == time && saving.SaveStatus.StartsWith("Map saved at"), "Manual save reports success without changing autosave time");
+            maps.CurrentBeatmapFilePath = path + "/missing/map.dat";
+            timer.EmitSignal(Timer.SignalName.Timeout);
+            Check(saving.LastAutosaveTime == time && saving.SaveStatus.StartsWith("Autosave failed"), "Failure retains latest successful autosave");
+            Check(!timer.IsStopped(), "Failed autosave keeps retry timer active");
+            maps.CurrentBeatmapFilePath = path;
+            timer.EmitSignal(Timer.SignalName.Timeout);
+            Check(saving.SaveStatus == "Autosave every 30 seconds", "Autosave recovers after failure");
+            maps.ChangeBeatmap(map);
+            Check(saving.LastAutosaveTime == null && timer.TimeLeft > 29 && label.Text.EndsWith("not yet"), "Changing maps resets timer and status");
+            maps.ChangeBeatmap(null);
+            Check(timer.IsStopped() && button.Disabled, "No map disables saving and stops autosave");
+        }
+        finally
+        {
+            editor.Free();
+            maps.CurrentBeatmapFilePath = string.Empty;
+            maps.ChangeBeatmap(null);
+            DirAccess.RemoveAbsolute(ProjectSettings.GlobalizePath(path));
         }
     }
 

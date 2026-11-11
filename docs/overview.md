@@ -14,7 +14,7 @@ The start screen also supports creating maps and configuring their metadata, aud
 2. **Choose or create a map.** The start screen lists WIP maps and presents map metadata and difficulty information. New maps and their audio are created under the WIP maps directory.
 3. **Choose a difficulty.** If a map has several difficulties, the user selects one before entering the editor.
 4. **Edit in VR.** BSMapper initializes OpenXR, enables XR rendering, and switches to the editor scene. If OpenXR is unavailable, it prompts the user to connect a headset. A selected difficulty can be retained across the requested restart into VR.
-5. **Save the difficulty.** The editor writes the in-memory object data back to the selected `.dat` difficulty file when the save action is used.
+5. **Save the difficulty.** While the VR editor is open, the selected `.dat` difficulty file is autosaved every 30 seconds during both playback and editing. A small world-space panel above the object-type selector shows the latest successful autosave time and a Save map button. The button and existing controller save action save immediately and report success or failure in the panel. Failed autosaves retain the previous successful timestamp and retry on the next interval. Opening a different difficulty resets the timer and timestamp.
 
 ## Editing model and controls
 

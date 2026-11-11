@@ -113,7 +113,7 @@ public partial class Editor : Node3D
         }
         else if (buttonName == InputActions.SaveMap && !DeleteHoveredObjectForPointer(InputManager.RightHandPointer))
         {
-            BeatMapManager.SaveBeatmap();
+            GetNode<EditorSaveService>("SaveService").SaveManually();
         }
         else if (buttonName == InputActions.MoveObject)
         {

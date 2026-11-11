@@ -6,6 +6,8 @@
 [ext_resource type="PackedScene" uid="uid://bwh2pgll34g30" path="res://beat_saber/note_block_lane.tscn" id="4_dblv8"]
 [ext_resource type="AudioStream" uid="uid://ci872t5wv5mi5" path="res://sounds/hit_sound.ogg" id="7_wj0aq"]
 [ext_resource type="AudioStream" uid="uid://db4a55dhoebuh" path="res://sounds/bad_cut.wav" id="8_icflk"]
+[ext_resource type="Script" path="res://editor/EditorSaveService.cs" id="9_save"]
+[ext_resource type="PackedScene" path="res://editor/save_panel.tscn" id="10_save_panel"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_lquwl"]
 size = Vector3(3, 2, 1)
@@ -13,6 +15,11 @@ size = Vector3(3, 2, 1)
 [node name="Editor" type="Node3D" unique_id=1388809403]
 script = ExtResource("1_yyul4")
 BeatmapFilePath = "res://test_beatmaps/1feab (Turn It Up - abcbadq)/Info.dat"
+
+[node name="SaveService" type="Node" parent="."]
+script = ExtResource("9_save")
+
+[node name="SavePanel" parent="." instance=ExtResource("10_save_panel")]
 
 [node name="XROrigin3D" parent="." unique_id=1786229953 instance=ExtResource("2_aws7q")]
 

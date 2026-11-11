@@ -22,5 +22,6 @@ public class EditorTests : IClassFixture<GodotTestHost>
     [InlineData("CopyPasteChecks", "CheckClipboardData")]
     [InlineData("CopyPasteChecks", "CheckPanelControls")]
     [InlineData("CopyPasteChecks", "CheckEditorIntegration")]
+    [InlineData("CopyPasteChecks", "CheckAutosave")]
     public Task EditorBehavior(string suite, string scenario) => _host.Run(suite, scenario, _output);
 }
