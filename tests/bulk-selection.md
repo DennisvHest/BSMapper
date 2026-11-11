@@ -1,12 +1,12 @@
 # Bulk selection checks
 
-Build BSMapper, then run the Godot .NET executable with:
+Run the xUnit bulk-selection cases from the repository root (see [test setup](README.md)):
 
-`godot --headless --xr-mode off --path . res://tests/bulk_selection_checks.tscn`
+`dotnet test BSMapper.slnx --filter 'DisplayName~BulkSelectionChecks'`
 
-The scene exits with code 0 on success and code 1 on a failed assertion. It checks grid/beat boundaries, reverse and zero-depth ranges, notes/bombs/wall overlap, additive ownership, shrinking/committing, object removal, deselection/deletion, and selector button signals/styles.
+The cases check grid/beat boundaries, reverse and zero-depth ranges, notes/bombs/wall overlap, additive ownership, shrinking/committing, object removal, deselection/deletion, and selector button signals/styles.
 
-Object selector regression checks also send native mouse press/release events through the real 3D selector viewport and verify application selection, retained highlights, repeated clicks, and bulk-mode transitions. To run these checks without the unrelated beat subdivision and spectrogram settings checks, append `-- --object-selector-only` to the command above.
+Object selector regression checks also send native mouse press/release events through the real 3D selector viewport and verify application selection, retained highlights, repeated clicks, and bulk-mode transitions. To run only these checks, use `dotnet test BSMapper.slnx --filter 'DisplayName~CheckSelectorClicks'`.
 
 ## Headset smoke test
 

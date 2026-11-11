@@ -5,4 +5,5 @@
     <BuildType Name="ExportRelease" />
   </Configurations>
   <Project Path="BSMapper.csproj" />
+  <Project Path="tests/BSMapper.Tests/BSMapper.Tests.csproj" />
 </Solution>

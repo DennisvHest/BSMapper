@@ -1,19 +1,19 @@
 # Selection copy/paste checks
 
-Build BSMapper, then run the Godot .NET executable from the repository root:
+Run the xUnit copy/paste cases from the repository root (see [test setup](README.md)):
 
-`godot --headless --xr-mode off --path . res://tests/copy_paste_checks.tscn`
+`dotnet test BSMapper.slnx --filter 'DisplayName~CopyPasteChecks'`
 
-Also run the existing regression scene:
+Also run the bulk-selection regression cases:
 
-`godot --headless --xr-mode off --path . res://tests/bulk_selection_checks.tscn`
+`dotnet test BSMapper.slnx --filter 'DisplayName~BulkSelectionChecks'`
 
-The copy/paste checks cover independent note/bomb/wall snapshots, nested metadata, earliest-beat anchoring, relative offsets, repeat paste, source edits, wall save/reload, button events/availability, Cut's deferred deletion and source transparency, Back/Forth subdivision movement with visual timing updates, and the real editor scene's clipboard actions, selection/copied-state transfer to new objects (including same-beat pastes), source deletion, and map-change cleanup. The scene exits with code 0 on success and 1 on assertion failure. Headless rendering does not verify VR appearance.
+The copy/paste checks cover independent note/bomb/wall snapshots, nested metadata, earliest-beat anchoring, relative offsets, repeat paste, source edits, wall save/reload, button events/availability, Cut's deferred deletion and source transparency, Back/Forth subdivision movement with visual timing updates, and the real editor scene's clipboard actions, selection/copied-state transfer to new objects (including same-beat pastes), source deletion, and map-change cleanup. xUnit reports failures and engine output. Headless rendering does not verify VR appearance.
 
 ## Validation
 
 - Project build succeeded.
-- All 56 copy/paste checks and all 30 bulk-selection checks passed; both scenes exited with code 0.
+- All eight migrated xUnit cases passed, covering copy/paste and bulk selection.
 - The full-editor headless run logs existing invalid-UID warnings that fall back to valid resource paths, plus two `Viewport Texture must be set to use it` diagnostics. Loading the unchanged XR Tools `viewport_2d_in_3d.tscn` resource alone reproduces both viewport diagnostics, independently of clipboard code.
 - Headset rendering and controller interaction remain manual checks.
 

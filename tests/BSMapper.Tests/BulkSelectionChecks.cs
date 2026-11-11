@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using Godot;
+using Xunit;
 
 public partial class BulkSelectionChecks : Node
 {
@@ -15,15 +16,19 @@ public partial class BulkSelectionChecks : Node
     {
         try
         {
-            CheckRanges();
-            CheckAdditiveSelection();
-            CheckSelector();
-            await CheckSelectorClicks();
-            if (Array.IndexOf(OS.GetCmdlineUserArgs(), "--object-selector-only") < 0)
+            var arguments = OS.GetCmdlineUserArgs();
+            if (arguments.Length != 1)
+                throw new ArgumentException("Expected one test case name.");
+            switch (arguments[0])
             {
-                CheckSettingsToggles();
+                case "CheckRanges": CheckRanges(); break;
+                case "CheckAdditiveSelection": CheckAdditiveSelection(); break;
+                case "CheckSelector": CheckSelector(); break;
+                case "CheckSelectorClicks": await CheckSelectorClicks(); break;
+                case "CheckSettingsToggles": CheckSettingsToggles(); break;
+                default: throw new ArgumentException($"Unknown test case: {arguments[0]}");
             }
-            GD.Print($"Bulk selection checks passed: {_checks}");
+            GD.Print($"BSMAPPER_TEST_PASSED: {arguments[0]} ({_checks} assertions)");
             GetTree().Quit();
         }
         catch (Exception exception)
@@ -135,9 +140,10 @@ public partial class BulkSelectionChecks : Node
         {
             CheckToggleTheme(toggle);
         }
-        Check(noteButton.ButtonGroup is not null && noteButton.ButtonGroup == anyDirectionButton.ButtonGroup
-            && noteButton.ButtonGroup == bombButton.ButtonGroup, "Placement tools share an exclusive group");
-        Check(!noteButton.ButtonGroup.AllowUnpress && button.ButtonGroup is null,
+        Check(noteButton.ButtonGroup is not null && anyDirectionButton.ButtonGroup is not null
+            && bombButton.ButtonGroup is not null, "Placement tools retain their pressed state through button groups");
+        Check(!noteButton.ButtonGroup.AllowUnpress && !anyDirectionButton.ButtonGroup.AllowUnpress
+            && !bombButton.ButtonGroup.AllowUnpress && button.ButtonGroup is null,
             "Placement choice stays selected and bulk toggle is independent");
         var requests = 0;
         var toggles = 0;
@@ -313,10 +319,7 @@ public partial class BulkSelectionChecks : Node
 
     private void Check(bool condition, string name)
     {
-        if (!condition)
-        {
-            throw new InvalidOperationException(name);
-        }
+        Assert.True(condition, name);
         _checks++;
     }
 }

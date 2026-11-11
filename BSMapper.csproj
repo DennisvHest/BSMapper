@@ -4,6 +4,7 @@
     <EnableDynamicLoading>true</EnableDynamicLoading>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="tests/**/*.cs" />
     <None Include=".github\copilot-instructions.md" />
     <None Include="editor\ObjectEditPlane\playback_progress_bar.tscn" />
     <None Include="editor\ObjectEditPlane\playback_progress_bar_ui.tscn" />
@@ -11,9 +12,7 @@
     <None Include="editor\ObjectEditPlane\spectrogram_settings_ui.tscn" />
     <None Include="main.tscn" />
     <None Include="tests\bulk-selection.md" />
-    <None Include="tests\bulk_selection_checks.tscn" />
     <None Include="tests\copy-paste.md" />
-    <None Include="tests\copy_paste_checks.tscn" />
     <None Include="tests\headset-required.md" />
     <None Include="ui\difficulty_configuration.tscn" />
     <None Include="ui\icon_button.tscn" />

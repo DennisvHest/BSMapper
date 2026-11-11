@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Godot;
+using Xunit;
 using Dictionary = Godot.Collections.Dictionary;
 
 public partial class CopyPasteChecks : Node
@@ -18,10 +19,17 @@ public partial class CopyPasteChecks : Node
     {
         try
         {
-            CheckClipboardData();
-            CheckPanelControls();
-            await CheckEditorIntegration();
-            GD.Print($"Copy/paste checks passed: {_checks}");
+            var arguments = OS.GetCmdlineUserArgs();
+            if (arguments.Length != 1)
+                throw new ArgumentException("Expected one test case name.");
+            switch (arguments[0])
+            {
+                case "CheckClipboardData": CheckClipboardData(); break;
+                case "CheckPanelControls": CheckPanelControls(); break;
+                case "CheckEditorIntegration": await CheckEditorIntegration(); break;
+                default: throw new ArgumentException($"Unknown test case: {arguments[0]}");
+            }
+            GD.Print($"BSMAPPER_TEST_PASSED: {arguments[0]} ({_checks} assertions)");
             GetTree().Quit();
         }
         catch (Exception exception)
@@ -140,7 +148,8 @@ public partial class CopyPasteChecks : Node
         Check(moves.SequenceEqual(new[] { -1, 1 }), "Back/Forth button directions");
         panel.SetSelection(0, false, 3);
         Check(copy.Disabled && cut.Disabled && !paste.Disabled && moveBack.Disabled && moveForward.Disabled
-            && paste.Text == "Paste (3)",
+            && ((IconButton)paste).LabelText == "(3)"
+            && ((IconButton)paste).GetNode<Label>("%Label").Text == "(3)",
             "Clipboard-only controls and count");
         Check(panel.GetNode<Button>("%DeleteButton").Disabled && panel.GetNode<Button>("%DeselectButton").Disabled,
             "Selection actions disabled without selection");
@@ -326,10 +335,7 @@ public partial class CopyPasteChecks : Node
 
     private void Check(bool condition, string name)
     {
-        if (!condition)
-        {
-            throw new InvalidOperationException(name);
-        }
+        Assert.True(condition, name);
         _checks++;
     }
 }
