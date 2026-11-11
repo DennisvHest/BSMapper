@@ -2,6 +2,7 @@ using Godot;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 
 public partial class MapDetails : VBoxContainer
 {
@@ -17,6 +18,8 @@ public partial class MapDetails : VBoxContainer
     private string _replacementAudioPath = string.Empty;
     private string _replacementCoverPath = string.Empty;
     private bool _isPopulating;
+    private string[] _savedMetadata = Array.Empty<string>();
+    private List<BeatMapManager.DifficultySettings> _savedDifficulties = new();
 
     private TextureRect _cover;
     private LineEdit _songName;
@@ -30,9 +33,16 @@ public partial class MapDetails : VBoxContainer
     private LineEdit _songTimeOffset;
     private Label _error;
     private Button _createMap;
+    private Button _saveMap;
+    private Label _difficultyDeletionWarning;
     private Button _openMap;
     private Button _deleteMap;
     private ConfirmationDialog _deleteConfirmation;
+    private ConfirmationDialog _unsavedChangesDialog;
+    private Action _pendingNavigation;
+
+    public bool HasUnsavedChanges { get; private set; }
+
     private readonly List<DifficultyConfiguration> _difficulties = new();
 
     public override void _Ready()
@@ -49,23 +59,48 @@ public partial class MapDetails : VBoxContainer
         _songTimeOffset = GetNode<LineEdit>("%SongTimeOffset");
         _error = GetNode<Label>("%Error");
         _createMap = GetNode<Button>("%CreateMap");
+        _saveMap = GetNode<Button>("%SaveMap");
+        _difficultyDeletionWarning = GetNode<Label>("%DifficultyDeletionWarning");
         _openMap = GetNode<Button>("%OpenMap");
         _deleteMap = GetNode<Button>("%DeleteMap");
         _deleteConfirmation = GetNode<ConfirmationDialog>("%DeleteConfirmation");
+        _unsavedChangesDialog = GetNode<ConfirmationDialog>("%UnsavedChangesDialog");
+        _unsavedChangesDialog.AddButton("Discard changes", false, "discard");
+        _unsavedChangesDialog.Confirmed += () =>
+        {
+            var navigation = _pendingNavigation;
+            CancelNavigation();
+            if (_beatmapInfo is null ? TryCreateMap() : TrySave())
+            {
+                navigation?.Invoke();
+            }
+        };
+        _unsavedChangesDialog.CustomAction += action =>
+        {
+            if (action != "discard")
+                return;
+            var navigation = _pendingNavigation;
+            CancelNavigation();
+            if (_beatmapInfo is not null)
+                PopulateForm(_manager, _manager.ReadBeatmapInfo(_beatmapInfo.FilePath));
+            else
+                BeginCreateForm(_manager);
+            navigation?.Invoke();
+        };
+        _unsavedChangesDialog.Canceled += CancelNavigation;
 
         foreach (var child in GetNode("%Difficulties").GetChildren())
         {
             if (child is DifficultyConfiguration difficulty)
             {
                 _difficulties.Add(difficulty);
-                difficulty.ConfigurationChanged += Save;
+                difficulty.ConfigurationChanged += UpdatePendingChanges;
             }
         }
 
         foreach (var edit in GetMetadataEdits())
         {
-            edit.TextSubmitted += _ => Save();
-            edit.FocusExited += Save;
+            edit.TextChanged += _ => UpdatePendingChanges();
         }
 
         GetNode<Button>("%SelectAudioFile").Pressed += () => GetNode<FileDialog>("%AudioFileDialog").Show();
@@ -75,19 +110,47 @@ public partial class MapDetails : VBoxContainer
         coverButton.MouseEntered += () => _cover.Modulate = new Color(1.2f, 1.2f, 1.2f);
         coverButton.MouseExited += () => _cover.Modulate = Colors.White;
         GetNode<FileDialog>("%CoverImageFileDialog").FileSelected += OnCoverImageSelected;
-        _createMap.Pressed += CreateMap;
+        _createMap.Pressed += () => TryCreateMap();
+        _saveMap.Pressed += () => TrySave();
         _deleteMap.Pressed += () => _deleteConfirmation.PopupCentered();
         _deleteConfirmation.Confirmed += DeleteMap;
         _openMap.Pressed += () =>
         {
             if (_beatmapInfo is not null)
             {
-                EmitSignal(SignalName.OpenMapRequested, _beatmapInfo.FilePath);
+                RequestNavigation(() => EmitSignal(SignalName.OpenMapRequested, _beatmapInfo.FilePath));
             }
         };
     }
 
     public void BeginCreate(BeatMapManager manager)
+    {
+        RequestNavigation(() => BeginCreateForm(manager));
+    }
+
+    private void RequestNavigation(Action navigation)
+    {
+        if (!IsVisibleInTree() || !HasUnsavedChanges)
+        {
+            navigation();
+            return;
+        }
+
+        if (_pendingNavigation is not null)
+            return;
+        _pendingNavigation = navigation;
+        _unsavedChangesDialog.DialogText = "You have unsaved map details. Save your changes before continuing, discard them, or cancel to keep editing."
+            + (_difficultyDeletionWarning.Visible ? "\n\n" + _difficultyDeletionWarning.Text : string.Empty);
+        _unsavedChangesDialog.PopupCentered();
+    }
+
+    private void CancelNavigation()
+    {
+        _pendingNavigation = null;
+        _unsavedChangesDialog.Hide();
+    }
+
+    private void BeginCreateForm(BeatMapManager manager)
     {
         _isPopulating = true;
         _manager = manager;
@@ -113,14 +176,22 @@ public partial class MapDetails : VBoxContainer
         }
 
         _createMap.Show();
+        _saveMap.Hide();
+        _difficultyDeletionWarning.Hide();
         _openMap.Hide();
         _deleteMap.Hide();
         Show();
         _isPopulating = false;
+        CaptureSavedValues();
         _songName.GrabFocus();
     }
 
     public void Populate(BeatMapManager manager, BeatMapInfo beatmapInfo)
+    {
+        RequestNavigation(() => PopulateForm(manager, manager.ReadBeatmapInfo(beatmapInfo.FilePath)));
+    }
+
+    private void PopulateForm(BeatMapManager manager, BeatMapInfo beatmapInfo)
     {
         _isPopulating = true;
         _manager = manager;
@@ -151,6 +222,36 @@ public partial class MapDetails : VBoxContainer
         _deleteMap.Show();
         Show();
         _isPopulating = false;
+        CaptureSavedValues();
+    }
+
+    private void CaptureSavedValues()
+    {
+        _savedMetadata = GetMetadataEdits().Select(edit => edit.Text).ToArray();
+        _savedDifficulties = GetDifficultySettings();
+        UpdatePendingChanges();
+    }
+
+    private void UpdatePendingChanges()
+    {
+        if (_isPopulating)
+        {
+            return;
+        }
+
+        HasUnsavedChanges = !GetMetadataEdits().Select(edit => edit.Text).SequenceEqual(_savedMetadata)
+            || !GetDifficultySettings().SequenceEqual(_savedDifficulties)
+            || !string.IsNullOrEmpty(_replacementAudioPath)
+            || !string.IsNullOrEmpty(_replacementCoverPath);
+        _saveMap.Visible = _beatmapInfo is not null && HasUnsavedChanges;
+
+        var removed = _difficulties
+            .Where(difficulty => !difficulty.ButtonPressed
+                && _savedDifficulties.Any(saved => saved.Difficulty == difficulty.DifficultyLevel))
+            .Select(difficulty => BeatMapDifficultyInfo.GetDifficultyDisplayName(difficulty.DifficultyLevel))
+            .ToArray();
+        _difficultyDeletionWarning.Visible = _beatmapInfo is not null && removed.Length > 0;
+        _difficultyDeletionWarning.Text = $"Warning: Saving will permanently delete these difficulties and all of their notes, bombs, walls, and other data: {string.Join(", ", removed)}. Recheck a difficulty to keep it.";
     }
 
     private void DeleteMap()
@@ -173,13 +274,13 @@ public partial class MapDetails : VBoxContainer
         }
     }
 
-    private void CreateMap()
+    private bool TryCreateMap()
     {
         if (_manager is null || string.IsNullOrWhiteSpace(_songName.Text)
             || !FileAccess.FileExists(_replacementAudioPath))
         {
             ShowError("Enter a song name and select an existing audio file.");
-            return;
+            return false;
         }
 
         if (!TryReadFormValues(
@@ -188,7 +289,7 @@ public partial class MapDetails : VBoxContainer
                 out var previewDuration,
                 out var songTimeOffset))
         {
-            return;
+            return false;
         }
 
         var settings = GetDifficultySettings();
@@ -229,20 +330,22 @@ public partial class MapDetails : VBoxContainer
                 string.Empty,
                 settings);
 
-            Populate(_manager, beatmapInfo);
+            PopulateForm(_manager, beatmapInfo);
             MapCreated?.Invoke();
+            return true;
         }
         catch (Exception exception)
         {
             ShowError(exception.Message);
+            return false;
         }
     }
 
-    private void Save()
+    private bool TrySave()
     {
         if (_isPopulating || _beatmapInfo is null || _manager is null)
         {
-            return;
+            return false;
         }
 
         if (!TryReadFormValues(
@@ -251,7 +354,7 @@ public partial class MapDetails : VBoxContainer
                 out var previewDuration,
                 out var songTimeOffset))
         {
-            return;
+            return false;
         }
 
         var settings = GetDifficultySettings();
@@ -271,13 +374,26 @@ public partial class MapDetails : VBoxContainer
                 _replacementAudioPath,
                 settings);
             _replacementAudioPath = string.Empty;
+            var coverChanged = !string.IsNullOrEmpty(_replacementCoverPath);
+            if (coverChanged)
+            {
+                _manager.ReplaceCoverImage(_beatmapInfo, _replacementCoverPath);
+                _replacementCoverPath = string.Empty;
+            }
             _audioFilePath.Text = _beatmapInfo.SongFilePath;
             _error.Hide();
+            CaptureSavedValues();
+            if (coverChanged)
+            {
+                CoverChanged?.Invoke();
+            }
+            return true;
         }
         catch (Exception exception)
         {
             _error.Text = exception.Message;
             _error.Show();
+            return false;
         }
     }
 
@@ -326,7 +442,7 @@ public partial class MapDetails : VBoxContainer
     {
         _replacementAudioPath = path;
         _audioFilePath.Text = path;
-        Save();
+        UpdatePendingChanges();
     }
 
     private void OnCoverImageSelected(string path)
@@ -340,23 +456,7 @@ public partial class MapDetails : VBoxContainer
 
         _replacementCoverPath = path;
         _cover.Texture = texture;
-
-        if (_beatmapInfo is null || _manager is null)
-        {
-            return;
-        }
-
-        try
-        {
-            _manager.ReplaceCoverImage(_beatmapInfo, path);
-            _replacementCoverPath = string.Empty;
-            _error.Hide();
-            CoverChanged?.Invoke();
-        }
-        catch (Exception exception)
-        {
-            ShowError(exception.Message);
-        }
+        UpdatePendingChanges();
     }
 
     private IEnumerable<LineEdit> GetMetadataEdits()

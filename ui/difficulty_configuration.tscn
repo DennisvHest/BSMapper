@@ -42,6 +42,7 @@ min_value = 1.0
 max_value = 50.0
 step = 0.1
 value = 10.0
+update_on_text_changed = true
 
 [node name="OffsetContainer" type="VBoxContainer" parent="Margin/Fields" unique_id=796188344]
 custom_minimum_size = Vector2(120, 0)
@@ -60,3 +61,4 @@ size_flags_horizontal = 3
 min_value = -4.0
 max_value = 4.0
 step = 0.01
+update_on_text_changed = true

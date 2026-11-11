@@ -6,7 +6,7 @@ BSMapper is a room-scale Beat Saber map editor built with Godot and C#. It prese
 
 Users point BSMapper at a Beat Saber installation, browse maps in its `CustomWIPLevels` folder, and open a map difficulty in the editor. In the headset, notes, bombs, and walls move through a lane in time with the song. Users can switch between playback and editing, place new notes or bombs on a 4-by-3 grid, move objects, select and adjust them, use bulk selection and clipboard operations, and save changes to the selected difficulty. A beat grid and optional song spectrogram help line up objects with the music.
 
-The start screen also supports creating maps and configuring their metadata, audio, cover image, and Standard difficulties. Map metadata and difficulty files are written in Beat Saber v2 JSON format.
+The start screen also supports creating maps and configuring their metadata, audio, cover image, and Standard difficulties. Changes to existing map details remain pending until the Save button is clicked. Switching maps, starting a new map, or opening the VR editor with unsaved details prompts the user to save and continue, discard changes, or cancel. Unfinished new maps are also protected when navigating away. Unchecking an existing difficulty shows a warning that saving will permanently delete the difficulty and all its objects. Map metadata and difficulty files are written in Beat Saber v2 JSON format.
 
 ## Main user flow
 

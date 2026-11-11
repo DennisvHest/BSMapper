@@ -26,7 +26,7 @@ public partial class Main : Control
         _mapDetails.OpenMapRequested += OpenMapInEditor;
         _mapDetails.MapCreated += _mapList.Refresh;
         _mapDetails.MapDeleted += _mapList.Refresh;
-        _mapDetails.CoverChanged += RefreshMapList;
+        _mapDetails.CoverChanged += _mapList.Refresh;
         GetNode<ConfirmationDialog>("HeadsetRequiredDialog").Confirmed += RestartForVr;
 
         LoadSettings();

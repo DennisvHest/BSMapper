@@ -34,6 +34,16 @@ title = "Delete map"
 ok_button_text = "Delete"
 dialog_text = "Delete this map and all of its difficulty files? This cannot be undone."
 
+[node name="UnsavedChangesDialog" type="ConfirmationDialog" parent="."]
+unique_name_in_owner = true
+title = "Unsaved map details"
+initial_position = 2
+size = Vector2i(540, 180)
+ok_button_text = "Save and continue"
+dialog_text = "You have unsaved map details. Save your changes before continuing, discard them, or cancel to keep editing."
+dialog_autowrap = true
+dialog_hide_on_ok = false
+
 [node name="ScrollContainer" type="ScrollContainer" parent="." unique_id=1028730367]
 layout_mode = 2
 size_flags_vertical = 3
@@ -275,6 +285,13 @@ layout_mode = 2
 DifficultyLevel = 4
 DefaultNjs = 18.0
 
+[node name="DifficultyDeletionWarning" type="Label" parent="."]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.72, 0.25, 1)
+autowrap_mode = 3
+
 [node name="MarginContainer" type="MarginContainer" parent="." unique_id=249613977]
 layout_mode = 2
 theme_override_constants/margin_left = 20
@@ -317,6 +334,14 @@ visible = false
 custom_minimum_size = Vector2(136, 35)
 layout_mode = 2
 LabelText = "Create map"
+IconName = "floppy-disk"
+
+[node name="SaveMap" parent="MarginContainer/HBoxContainer/Right" instance=ExtResource("3_icon_button")]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(100, 35)
+layout_mode = 2
+LabelText = "Save"
 IconName = "floppy-disk"
 
 [node name="OpenMap" parent="MarginContainer/HBoxContainer/Right" unique_id=2067435989 instance=ExtResource("3_icon_button")]
