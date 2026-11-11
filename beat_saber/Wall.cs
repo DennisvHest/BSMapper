@@ -40,10 +40,16 @@ public partial class Wall : BeatmapObject
         position.X += wall.Width * BeatmapObjectLineSize / 2.0f - BeatmapObjectLineSize / 2.0f;
         Position = position;
 
-        var durationInSeconds = (float)(wall.Duration / mapInfo.Bpm * 60.0);
-        _durationInMeters = durationInSeconds * mapInfo.Njs;
+        RefreshJumpSettings();
+    }
+
+    public void RefreshJumpSettings()
+    {
+        var wall = (BeatMapWall)BeatmapData;
+        var speed = IsInsideTree() ? PlaybackManager.GetScrollSpeed(MapInfo) : MapInfo.Njs;
+        _durationInMeters = (float)(wall.Duration / MapInfo.Bpm * 60.0) * speed;
         var scale = Scale;
-        scale.Z *= _durationInMeters;
+        scale.Z = _durationInMeters;
         Scale = scale;
     }
 
@@ -68,6 +74,12 @@ public partial class Wall : BeatmapObject
     protected override void OnSelectionChanged()
     {
         UpdateHighlightVisible();
+    }
+
+    protected override void OnPlaybackModeChanged()
+    {
+        base.OnPlaybackModeChanged();
+        RefreshJumpSettings();
     }
 
     private void OnVisibilityChanged()

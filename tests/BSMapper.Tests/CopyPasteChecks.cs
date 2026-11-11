@@ -253,6 +253,29 @@ public partial class CopyPasteChecks : Node
         var sourceBeats = sources.Select(source => source.BeatmapData.Beat).ToArray();
         plane.SetBulkSelectionModeEnabled(true);
         editor.UpdateBulkSelection(sources);
+        // ProcessFrame is emitted before node processing; let the newly loaded visuals settle first.
+        await ToSignal(GetTree(), SceneTree.SignalName.ProcessFrame);
+        var positionsBeforeJumpChange = sources.Select(source => source.Position).ToArray();
+        var gridRoot = lane.GetNode<Node3D>("FloorBeatGrid/GridVisuals/FloorBeatGrid");
+        float BeatFourZ() => gridRoot.GetChildren().OfType<Label3D>()
+            .First(label => label.Text == "4" && !label.IsQueuedForDeletion()).Position.Z;
+        var beatFourBeforeJumpChange = BeatFourZ();
+        manager.SetCurrentJumpSettings(12.0f, -0.25f);
+        await ToSignal(GetTree(), SceneTree.SignalName.ProcessFrame);
+        var wallObject = sources.OfType<Wall>().Single();
+        Check(Mathf.IsEqualApprox(wallObject.Scale.Z, 10.0f)
+            && sources.All(source => source.IsSelected)
+            && sources.Select((source, index) => source.Position.IsEqualApprox(positionsBeforeJumpChange[index])).All(value => value)
+            && Mathf.IsEqualApprox(BeatFourZ(), beatFourBeforeJumpChange),
+            "Changing jump settings preserves editing object positions, wall lengths, beat spacing and selection");
+        playback.ChangeMode(PlaybackManager.EditMode.Playing);
+        Check(Mathf.IsEqualApprox(wallObject.Scale.Z, 12.0f)
+            && Mathf.IsEqualApprox(BeatFourZ(), -24.0f),
+            "Playback applies the configured NJS to walls and the beat grid");
+        playback.ChangeMode(PlaybackManager.EditMode.Editing);
+        Check(Mathf.IsEqualApprox(wallObject.Scale.Z, 10.0f)
+            && Mathf.IsEqualApprox(BeatFourZ(), beatFourBeforeJumpChange),
+            "Returning to editing restores the fixed timeline scale");
         playback.SetBeatSubdivision(4);
         panelUi.GetNode<Button>("%MoveForwardButton").EmitSignal(Button.SignalName.Pressed);
         Check(sources.Select((source, index) => source.BeatmapData.Beat == sourceBeats[index] + 0.25).All(value => value)

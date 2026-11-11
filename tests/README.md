@@ -9,7 +9,7 @@ dotnet test BSMapper.slnx
 
 Use the Godot **.NET** executable matching the application's SDK. `GODOT_BIN` is optional when `godot` is on `PATH`.
 
-The xUnit cases cover selection ranges, additive selection, selector controls and native clicks, settings toggles, clipboard data, clipboard controls, editor integration, and autosaving. The autosave check waits for the real 30-second timer, exercises the VR save button, and verifies failure recovery and map-switch resets. Assertions use xUnit inside headless Godot because the application models, collections, and scenes require Godot's native runtime. Each case runs in a fresh process, with failures and engine output reported by xUnit. A missing engine or a timeout fails the test.
+The xUnit cases cover selection ranges, additive selection, selector controls and native clicks, settings toggles, VR jump settings and save/reload, clipboard data, clipboard controls, editor integration, and autosaving. The autosave check waits for the real 30-second timer, exercises the VR save button, and verifies failure recovery and map-switch resets. Assertions use xUnit inside headless Godot because the application models, collections, and scenes require Godot's native runtime. Each case runs in a fresh process, with failures and engine output reported by xUnit. A missing engine or a timeout fails the test.
 
 The fixture copies resources into an isolated directory beneath the test build output, imports them once, and removes the copy after the run. It does not modify the application's Godot configuration or assemblies. No headset is required; rendering and controller behavior still need manual checks.
 

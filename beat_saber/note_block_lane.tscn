@@ -10,6 +10,7 @@
 [ext_resource type="PackedScene" uid="uid://cy7olui1optyr" path="res://editor/ObjectEditPlane/beat_subdivision_selector.tscn" id="8_subdivision"]
 [ext_resource type="PackedScene" path="res://editor/ObjectEditPlane/spectrogram_settings_panel.tscn" id="9_spectrogram"]
 [ext_resource type="PackedScene" uid="uid://cjnuw4ac8co64" path="res://editor/ObjectEditPlane/playback_progress_bar.tscn" id="10_progress"]
+[ext_resource type="PackedScene" path="res://editor/ObjectEditPlane/jump_settings_panel.tscn" id="11_jump"]
 
 [node name="NoteBlockLane" type="Node3D" unique_id=1456432369]
 script = ExtResource("1_p2bkp")
@@ -18,6 +19,8 @@ BombScene = ExtResource("5_bomb")
 WallScene = ExtResource("6_wall")
 
 [node name="FloorBeatGrid" parent="." unique_id=1772332104 instance=ExtResource("4_qtils")]
+
+[node name="JumpSettingsPanel" parent="." instance=ExtResource("11_jump")]
 
 [node name="ObjectEditPlane" parent="." unique_id=1491362910 instance=ExtResource("3_3sbvc")]
 

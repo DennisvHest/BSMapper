@@ -38,6 +38,7 @@ public partial class BeatMapDifficultyInfo : RefCounted
     private float _halfJumpDistance;
     private float _jumpDistanceMeters;
     private float _halfJumpDistanceMeters;
+    private Dictionary _originalObject;
 
     [Export]
     public Difficulty DifficultyLevel { get; set; }
@@ -119,13 +120,12 @@ public partial class BeatMapDifficultyInfo : RefCounted
 
     public Dictionary ToV2Object()
     {
-        return new Dictionary
-        {
-            ["_difficulty"] = GetDifficultyName(DifficultyLevel),
-            ["_beatmapFilename"] = BeatMapFileName,
-            ["_noteJumpMovementSpeed"] = Njs,
-            ["_noteJumpStartBeatOffset"] = NoteJumpStartBeatOffset,
-        };
+        var data = _originalObject ??= new Dictionary();
+        data["_difficulty"] = GetDifficultyName(DifficultyLevel);
+        data["_beatmapFilename"] = BeatMapFileName;
+        data["_noteJumpMovementSpeed"] = Njs;
+        data["_noteJumpStartBeatOffset"] = NoteJumpStartBeatOffset;
+        return data;
     }
 
     public static BeatMapDifficultyInfo NewDifficulty(
@@ -152,6 +152,7 @@ public partial class BeatMapDifficultyInfo : RefCounted
         var data = original.AsGodotDictionary();
         var info = new BeatMapDifficultyInfo
         {
+            _originalObject = data,
             DifficultyLevel = GetDifficulty(data["_difficulty"].AsString()),
             BeatMapFileName = data["_beatmapFilename"].AsString(),
             Njs = (float)data["_noteJumpMovementSpeed"].AsDouble(),

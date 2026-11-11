@@ -26,6 +26,7 @@ public partial class BulkSelectionChecks : Node
                 case "CheckSelector": CheckSelector(); break;
                 case "CheckSelectorClicks": await CheckSelectorClicks(); break;
                 case "CheckSettingsToggles": CheckSettingsToggles(); break;
+                case "CheckJumpSettings": await CheckJumpSettings(); break;
                 default: throw new ArgumentException($"Unknown test case: {arguments[0]}");
             }
             GD.Print($"BSMAPPER_TEST_PASSED: {arguments[0]} ({_checks} assertions)");
@@ -300,6 +301,102 @@ public partial class BulkSelectionChecks : Node
         playbackToggle.SetPressedNoSignal(true);
         Check(playbackToggle.ButtonPressed, "Playback visibility supports native pressed state");
         settings.Free();
+    }
+
+    private async Task CheckJumpSettings()
+    {
+        var manager = GetNode<BeatMapManager>("/root/BeatMapManager");
+        var playback = GetNode<PlaybackManager>("/root/PlaybackManager");
+        var info = BeatMapInfo.NewMap("res://", "Jump test", "", "", "song.ogg", 120);
+        var difficulty = BeatMapDifficultyInfo.NewDifficulty(BeatMapDifficultyInfo.Difficulty.Expert,
+            BeatMapDifficultySet.BeatmapMode.Standard, 10, 0, 120);
+        info.AddDifficulty(difficulty, BeatMapDifficultySet.BeatmapMode.Standard);
+        difficulty.ToV2Object()["_customData"] = new Godot.Collections.Dictionary { ["keep"] = true };
+        // Reload so this also exercises the original JSON entry used by existing maps.
+        info = BeatMapInfo.FromFile(info.OriginalObject, "res://jump-test-info.dat");
+        difficulty = info.DifficultyBeatMapSets[0].DifficultyBeatMaps[0];
+        manager.CurrentBeatmapInfo = info;
+        manager.CurrentBeatmapDifficultyInfo = difficulty;
+        manager.CurrentBeatmapFilePath = "res://jump-test-difficulty.dat";
+        manager.CurrentBeatmap = new BeatMap();
+        manager.CurrentBeatmap.InitializeEmpty();
+        manager.EmitSignal(BeatMapManager.SignalName.CurrentBeatmapDifficultyInfoChanged, difficulty);
+        var panel = GD.Load<PackedScene>("res://editor/ObjectEditPlane/jump_settings_panel.tscn")
+            .Instantiate<JumpSettingsPanel>();
+        AddChild(panel);
+        var ui = (Control)panel.GetNode<Node>("ViewportPanel").Call("get_scene_instance").AsGodotObject();
+        Check(panel.Basis.Z.X < -0.7f, "Right-side jump panel faces inward toward the player");
+        Check(!panel.Visible, "Jump settings hidden during playback");
+        playback.ChangeMode(PlaybackManager.EditMode.Editing);
+        Check(panel.Visible && ui.GetNode<LineEdit>("%NjsValue").Text == "10.0",
+            "Jump settings show the loaded difficulty in editing mode");
+        var originalReactionTime = difficulty.ReactionTime;
+        ui.GetNode<Button>("%NjsPlus").EmitSignal(Button.SignalName.Pressed);
+        ui.GetNode<Button>("%OffsetMinus").EmitSignal(Button.SignalName.Pressed);
+        Check(Mathf.IsEqualApprox(difficulty.Njs, 10.1f)
+            && Mathf.IsEqualApprox(difficulty.NoteJumpStartBeatOffset, -0.01f), "VR buttons change both settings");
+        Check(difficulty.ReactionTime != originalReactionTime, "Jump timing recalculates immediately");
+        manager.SetCurrentJumpSettings(0, 1);
+        manager.SetCurrentJumpSettings(float.NaN, 1);
+        Check(Mathf.IsEqualApprox(difficulty.Njs, 10.1f), "Invalid speeds cannot corrupt jump timing");
+        manager.SaveBeatmap();
+        var saved = manager.ReadBeatmapInfo(info.FilePath);
+        var savedDifficulty = saved.DifficultyBeatMapSets[0].DifficultyBeatMaps[0];
+        Check(Mathf.IsEqualApprox(savedDifficulty.Njs, 10.1f)
+            && Mathf.IsEqualApprox(savedDifficulty.NoteJumpStartBeatOffset, -0.01f), "Editor save persists both values");
+        Check(savedDifficulty.ToV2Object()["_customData"].AsGodotDictionary()["keep"].AsBool(),
+            "Saving jump settings preserves custom difficulty metadata");
+
+        var speedInput = ui.GetNode<LineEdit>("%NjsValue");
+        var offsetInput = ui.GetNode<LineEdit>("%OffsetValue");
+        var keyboard = panel.GetNode<Node3D>("Keyboard");
+        var keyboardUi = (Node)keyboard.Call("get_scene_instance").AsGodotObject();
+        var keyboardSize = keyboard.Get("screen_size").AsVector2();
+        var panelSize = panel.GetNode<Node>("ViewportPanel").Get("screen_size").AsVector2();
+        Check(keyboard.Position.X - keyboardSize.X / 2.0f > panelSize.X / 2.0f,
+            "Numeric keyboard sits entirely to the right of the settings UI");
+        var theme = GD.Load<Theme>("res://bs_mapper_theme.tres");
+        Check(ui.Theme == theme && ui.GetThemeStylebox("panel") == theme.GetStylebox("panel", "EditorPanel")
+            && speedInput.GetThemeStylebox("normal") == theme.GetStylebox("normal", "EditorNumberInput"),
+            "Standalone UI uses the shared editor theme");
+        Check(keyboardUi.FindChildren("*", "Button").Count == 14,
+            "Numeric keyboard contains digits, minus, decimal, backspace and Enter only");
+        speedInput.GrabFocus();
+        Check(keyboard.Visible, "Focusing a number opens the bundled XR keyboard");
+        foreach (var key in new[] { "One", "Six", "Decimal", "Five" })
+        {
+            keyboardUi.GetNode<Button>($"%{key}").EmitSignal(Button.SignalName.Pressed);
+            await ToSignal(GetTree(), SceneTree.SignalName.ProcessFrame);
+        }
+        keyboardUi.GetNode<Button>("%Enter").EmitSignal(Button.SignalName.Pressed);
+        await ToSignal(GetTree(), SceneTree.SignalName.ProcessFrame);
+        Check(Mathf.IsEqualApprox(difficulty.Njs, 16.5f) && !keyboard.Visible,
+            "XR keyboard enters and commits an exact speed, then closes");
+        offsetInput.GrabFocus();
+        foreach (var key in new[] { "Minus", "Zero", "Decimal", "Seven", "Five" })
+        {
+            keyboardUi.GetNode<Button>($"%{key}").EmitSignal(Button.SignalName.Pressed);
+            await ToSignal(GetTree(), SceneTree.SignalName.ProcessFrame);
+        }
+        speedInput.GrabFocus();
+        Check(Mathf.IsEqualApprox(difficulty.NoteJumpStartBeatOffset, -0.75f) && keyboard.Visible,
+            "Switching fields commits negative offsets and keeps the keyboard open");
+        await ToSignal(GetTree(), SceneTree.SignalName.ProcessFrame);
+        Check(ui.GetCombinedMinimumSize().X <= 480 && ui.GetCombinedMinimumSize().Y <= 240
+            && keyboardUi.GetNode<Control>("Panel").GetCombinedMinimumSize().X <= 360
+            && keyboardUi.GetNode<Control>("Panel").GetCombinedMinimumSize().Y <= 480,
+            "Themed controls fit inside both VR viewports");
+        speedInput.Text = "invalid";
+        speedInput.ReleaseFocus();
+        Check(Mathf.IsEqualApprox(difficulty.Njs, 16.5f) && speedInput.Text == "16.5",
+            "Invalid numeric input restores the previous value");
+        offsetInput.GrabFocus();
+        playback.ChangeMode(PlaybackManager.EditMode.Playing);
+        Check(!panel.Visible && !keyboard.Visible && !offsetInput.HasFocus(),
+            "Playback closes the keyboard and releases number input focus");
+        panel.Free();
+        System.IO.File.Delete(ProjectSettings.GlobalizePath(info.FilePath));
+        System.IO.File.Delete(ProjectSettings.GlobalizePath(manager.CurrentBeatmapFilePath));
     }
 
     private void CheckToggleTheme(Button button)

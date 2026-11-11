@@ -1,0 +1,231 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://addons/godot-xr-tools/objects/keyboard/virtual_keyboard_2d.gd" id="1_keyboard"]
+[ext_resource type="Theme" path="res://bs_mapper_theme.tres" id="2_theme"]
+[ext_resource type="PackedScene" path="res://ui/icon_button.tscn" id="3_icon"]
+
+[node name="NumericKeyboardUI" type="CanvasLayer"]
+script = ExtResource("1_keyboard")
+
+[node name="Panel" type="PanelContainer" parent="."]
+offset_right = 360.0
+offset_bottom = 480.0
+theme = ExtResource("2_theme")
+theme_type_variation = &"EditorPanel"
+
+[node name="Margin" type="MarginContainer" parent="Panel"]
+layout_mode = 2
+theme_override_constants/margin_left = 18
+theme_override_constants/margin_right = 18
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_bottom = 16
+
+[node name="Rows" type="VBoxContainer" parent="Panel/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Title" type="Label" parent="Panel/Margin/Rows"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "Numeric input"
+horizontal_alignment = 1
+
+[node name="Keys" type="GridContainer" parent="Panel/Margin/Rows"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/h_separation = 8
+theme_override_constants/v_separation = 8
+columns = 3
+
+[node name="Seven" type="Button" parent="Panel/Margin/Rows/Keys"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(96, 70)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+focus_mode = 0
+theme_type_variation = &"EditorToggleButton"
+theme_override_font_sizes/font_size = 28
+text = "7"
+metadata/key = "7"
+metadata/unicode = 55
+
+[node name="Eight" type="Button" parent="Panel/Margin/Rows/Keys"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(96, 70)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+focus_mode = 0
+theme_type_variation = &"EditorToggleButton"
+theme_override_font_sizes/font_size = 28
+text = "8"
+metadata/key = "8"
+metadata/unicode = 56
+
+[node name="Nine" type="Button" parent="Panel/Margin/Rows/Keys"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(96, 70)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+focus_mode = 0
+theme_type_variation = &"EditorToggleButton"
+theme_override_font_sizes/font_size = 28
+text = "9"
+metadata/key = "9"
+metadata/unicode = 57
+
+[node name="Four" type="Button" parent="Panel/Margin/Rows/Keys"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(96, 70)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+focus_mode = 0
+theme_type_variation = &"EditorToggleButton"
+theme_override_font_sizes/font_size = 28
+text = "4"
+metadata/key = "4"
+metadata/unicode = 52
+
+[node name="Five" type="Button" parent="Panel/Margin/Rows/Keys"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(96, 70)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+focus_mode = 0
+theme_type_variation = &"EditorToggleButton"
+theme_override_font_sizes/font_size = 28
+text = "5"
+metadata/key = "5"
+metadata/unicode = 53
+
+[node name="Six" type="Button" parent="Panel/Margin/Rows/Keys"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(96, 70)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+focus_mode = 0
+theme_type_variation = &"EditorToggleButton"
+theme_override_font_sizes/font_size = 28
+text = "6"
+metadata/key = "6"
+metadata/unicode = 54
+
+[node name="One" type="Button" parent="Panel/Margin/Rows/Keys"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(96, 70)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+focus_mode = 0
+theme_type_variation = &"EditorToggleButton"
+theme_override_font_sizes/font_size = 28
+text = "1"
+metadata/key = "1"
+metadata/unicode = 49
+
+[node name="Two" type="Button" parent="Panel/Margin/Rows/Keys"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(96, 70)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+focus_mode = 0
+theme_type_variation = &"EditorToggleButton"
+theme_override_font_sizes/font_size = 28
+text = "2"
+metadata/key = "2"
+metadata/unicode = 50
+
+[node name="Three" type="Button" parent="Panel/Margin/Rows/Keys"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(96, 70)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+focus_mode = 0
+theme_type_variation = &"EditorToggleButton"
+theme_override_font_sizes/font_size = 28
+text = "3"
+metadata/key = "3"
+metadata/unicode = 51
+
+[node name="Minus" type="Button" parent="Panel/Margin/Rows/Keys"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(96, 70)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+focus_mode = 0
+theme_type_variation = &"EditorToggleButton"
+theme_override_font_sizes/font_size = 28
+text = "-"
+metadata/key = "Minus"
+metadata/unicode = 45
+
+[node name="Zero" type="Button" parent="Panel/Margin/Rows/Keys"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(96, 70)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+focus_mode = 0
+theme_type_variation = &"EditorToggleButton"
+theme_override_font_sizes/font_size = 28
+text = "0"
+metadata/key = "0"
+metadata/unicode = 48
+
+[node name="Decimal" type="Button" parent="Panel/Margin/Rows/Keys"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(96, 70)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+focus_mode = 0
+theme_type_variation = &"EditorToggleButton"
+theme_override_font_sizes/font_size = 28
+text = "."
+metadata/key = "Period"
+metadata/unicode = 46
+
+[node name="Actions" type="HBoxContainer" parent="Panel/Margin/Rows"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Backspace" parent="Panel/Margin/Rows/Actions" instance=ExtResource("3_icon")]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(96, 70)
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+theme_type_variation = &"EditorToggleButton"
+theme_override_font_sizes/font_size = 24
+IconName = "delete-left"
+IconSize = 28
+LabelText = ""
+HorizontalPadding = 10
+VerticalPadding = 12
+metadata/key = "BackSpace"
+metadata/unicode = 0
+
+[node name="Enter" parent="Panel/Margin/Rows/Actions" instance=ExtResource("3_icon")]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(96, 70)
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+theme_type_variation = &"EditorToggleButton"
+theme_override_font_sizes/font_size = 24
+IconName = "check"
+IconSize = 28
+LabelText = "Enter"
+HorizontalPadding = 10
+VerticalPadding = 12
+metadata/key = "Enter"
+metadata/unicode = 0
+

@@ -167,7 +167,8 @@ public partial class BulkSelection : Node3D
     private void UpdateVisuals(BulkSelectionRange range)
     {
         var difficulty = _lane.DifficultyInfo;
-        var metersPerBeat = difficulty.Bpm > 0.0f ? 60.0f / difficulty.Bpm * difficulty.Njs : 0.0f;
+        var metersPerBeat = difficulty.Bpm > 0.0f
+            ? 60.0f / difficulty.Bpm * _playback.GetScrollSpeed(difficulty) : 0.0f;
         var anchorZ = (float)((_playback.PlaybackBeat - _anchorBeat) * metersPerBeat);
         var min = new Vector3(
             range.MinColumn * NoteBlockLane.BeatmapObjectLineSize - NoteBlockLane.LaneWidth / 2.0f,
